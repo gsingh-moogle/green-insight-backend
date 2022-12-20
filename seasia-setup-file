@@ -1,0 +1,1 @@
+migration connection string: sequelize model:create --name MyUser --attributes first_name:string,last_name:string,bio:text
