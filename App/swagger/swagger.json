@@ -1,0 +1,48 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+      "title": "Green Insight",
+      "description": "ALl Crud Operation Api's",
+      "version": "0.0.1"
+    },
+    "paths": {
+      "/login": {
+        "post": {
+          "description": "login",
+          "responses": {
+            "200": {
+              "description": "Successfully fetched all posts from JSONPlaceholder",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "number"
+                        },
+                        "password": {
+                          "type": "number"
+                        }
+                      },
+                      "example": {
+                        "email":  {
+                            "type":"string",
+                            "example":"abc123@gmail.com"
+                        },
+                        "password":  {
+                            "type":"string",
+                            "example":"123456"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
