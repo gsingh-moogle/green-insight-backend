@@ -14,7 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Emission.init({
-    emission_type: DataTypes.ENUM,
+    emission_type: {
+      type:DataTypes.ENUM,
+      values:['region','facilities','vendor','lane']
+    },
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
     vendor_id: DataTypes.INTEGER,
