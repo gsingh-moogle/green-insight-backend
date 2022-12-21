@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "King#123",
-    "database": "Green_insight",
+    "database": "green-insight",
     "host": "localhost",
     "dialect": "mysql"
   },

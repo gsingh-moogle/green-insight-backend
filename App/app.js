@@ -16,8 +16,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var greenRoute=require("./routes/route");
-
 const AzureRepository=require("./azurerepository");
+
 
 
 // initialize express
@@ -36,6 +36,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
 
 /**
  * Using express-session middleware for persistent user session. Be sure to
@@ -70,6 +71,11 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/api/v1', greenRoute);
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger/swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));
@@ -85,5 +91,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+app.use(function(req,res){return res.status(400).json({error:'Something went Wrong,Try again'});});
 
 module.exports = app;
