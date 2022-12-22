@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Emission extends Model {
+class Emission extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,7 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Emission.init({
-    emission_type: DataTypes.ENUM,
+    emission_type: {
+      type: DataTypes.ENUM,
+      values:['region','facilities','vendor','lane']
+    },
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
     vendor_id: DataTypes.INTEGER,
@@ -34,5 +37,27 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Emission',
     tableName:'emissions'
   });
+
+
+
+  Emission.associate = function(models) {
+    Emission.hasOne(models.Region, {
+      foreignKey: 'id'
+    });
+
+    Emission.hasOne(models.Facility, {
+      foreignKey: 'id'
+    });
+
+    Emission.hasOne(models.Vendor, {
+      foreignKey: 'id'
+    });
+
+    Emission.hasOne(models.Lane, {
+      foreignKey: 'id'
+    });
+
+    
+  };
   return Emission;
 };
