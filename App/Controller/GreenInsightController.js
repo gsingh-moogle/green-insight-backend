@@ -21,7 +21,7 @@ exports.login=async(req,res) => {
                             getUser.dataValues.token=token;
                             return Response.customSuccessResponseWithData(res,'User has been Login by Sustainable Account',getUser,200)
                         }
-                    } else {return Response.errorRespose("Password should be matched");}
+                    } else {return Response.errorRespose(res,"Password should be matched");}
                 } else {
                     return Response.errorRespose(res,'Email address is not exists');
                 }
