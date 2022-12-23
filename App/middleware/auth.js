@@ -22,3 +22,5 @@ const validateAdmin=async(req, res, next) => {
       return helper.unAuthorizedResponse(res, 'Unauthorized')
     }
   }
+
+  exports.validateAdmin;
