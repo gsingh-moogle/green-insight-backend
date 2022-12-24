@@ -13,6 +13,9 @@ module.exports = {
         type: Sequelize.ENUM,
         values:['region','facilities','vendor','lane']
       },
+      company_id: {
+        type: Sequelize.INTEGER,
+      },
       region_id: {
         type: Sequelize.INTEGER,
         allowNull:false,
@@ -58,6 +61,12 @@ module.exports = {
       },
       intensity: {
         type: Sequelize.FLOAT
+      },
+      truck_load: {
+        type: Sequelize.INTEGER
+      },
+      inter_modal: {
+        type: Sequelize.INTEGER
       },
       cost: {
         type: Sequelize.FLOAT

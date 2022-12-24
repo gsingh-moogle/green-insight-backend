@@ -1,4 +1,5 @@
 const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const Emission =require("../models").Emission;
 const Region =require("../models").Region;
 const Facility =require("../models").Facility;
@@ -28,18 +29,30 @@ exports.getRegions=async(req,res) => {
 
 exports.getRegionEmissions=async(req,res) => {
     try {
-            let {region_id}=req.body;
-            if(!region_id) {
-                return Response.errorRespose(res,'region_id is required!');
+            let {region_id, company_id}=req.body;
+            const where = {emission_type:'region'}
+            if (region_id || company_id) {
+                where[Op.and] = []
+                if (region_id) {
+                    where[Op.and].push({
+                        region_id: region_id
+                    })
+                }
+                if (company_id) {
+                    where[Op.and].push({
+                        company_id: company_id
+                    })
+                }
             }
             //console.log(type,email,password);return 
             let getRegionEmissions = await Emission.findAll({
                 attributes: ['id','contributor','detractor'],
-                where:{emission_type:'region'}, include: [
+                where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']
                     }],
+                    group: ['region_id'],
                     raw: true
                 });
               //  console.log('getRegionEmissions',getRegionEmissions);
@@ -81,18 +94,101 @@ exports.getRegionEmissions=async(req,res) => {
     }
 }
 
+
+exports.getRegionIntensity=async(req,res) => {
+    try {
+            let {region_id, company_id, year}=req.body;
+            const where = {emission_type:'region'}
+            if (region_id || company_id || year) {
+                where[Op.and] = []
+                if (region_id) {
+                    where[Op.and].push({
+                        region_id: region_id
+                    })
+                }
+                if (company_id) {
+                    where[Op.and].push({
+                        company_id: company_id
+                    })
+                }
+                if (year) {
+                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
+                    )
+                }
+            }
+            
+            let getRegionEmissions = await Emission.findAll({
+                attributes: ['id','truck_load','inter_modal'],
+                where:where, include: [
+                    {
+                        model: Region,
+                        attributes: ['name']
+                    }],
+                    group: ['region_id'],
+                    raw: true
+                });
+              //  console.log('getRegionEmissions',getRegionEmissions);
+            //check password is matched or not then exec
+            if(getRegionEmissions){
+                let label = [];
+                for (let i = 0; i < getRegionEmissions.length; i++) {
+                    label.push(getRegionEmissions[i]);
+                }
+                let contributor = getRegionEmissions.map(a => a.truck_load);
+                let detractor = getRegionEmissions.map(a => a.inter_modal);
+                let min = Math.min(...contributor);
+                let max = Math.max(...detractor);
+                let data ={
+                    title : 'Region Intensity Graph',
+                    type : 'Horizontal Bar Chart',
+                    min:min,
+                    max:max,
+                    dataset:[
+                        {
+                          label: 'TruckLoad',
+                          data: contributor,
+                          borderColor: '#5888d6',
+                          backgroundColor: '#f7faf9',
+                        },
+                        {
+                          label: 'InterModal',
+                          data: detractor,
+                          borderColor: '#2fa18c',
+                          backgroundColor: '#f7faf9',
+                        }
+                      ]
+                    
+                }
+                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            } else { return Response.errorRespose(res,'No Record Found!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
 exports.getRegionEmissionsMonthly=async(req,res) => {
     try {
             //console.log(type,email,password);return 
-            let {region_id}=req.body;
-            if(!region_id) {
-                return Response.errorRespose(res,'region_id is required!');
+            let {region_id, company_id}=req.body;
+            const where = {emission_type:'region'}
+            if (region_id || company_id) {
+                where[Op.and] = []
+                if (region_id) {
+                    where[Op.and].push({
+                        region_id: region_id
+                    })
+                }
+                if (company_id) {
+                    where[Op.and].push({
+                        company_id: company_id
+                    })
+                }
             }
             let getRegionEmissions = await Emission.findAll({
                 attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],
                 [ sequelize.literal('( SELECT SUM(detractor) )'),'detractor'],
                 [ sequelize.literal('( SELECT MONTHNAME(date) )'),'month']],
-                where:{emission_type:'region', region_id:region_id}, include: [
+                where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']

@@ -10,6 +10,7 @@ router.post("/login",GreenInsightController.login);
 router.get("/get-regions",RegionController.getRegions);
 router.post("/get-region-emission-graph",RegionController.getRegionEmissions);
 router.post("/get-region-emission-monthly",RegionController.getRegionEmissionsMonthly);
+router.post("/get-region-intensity",RegionController.getRegionIntensity);
 router.get("/get-facility-emission-graph",RegionController.getFacilityEmissions);
 router.get("/get-vendor-emission-graph",RegionController.getVendorEmissions);
 router.get("/get-lane-emission-graph",RegionController.getLaneEmissions);
