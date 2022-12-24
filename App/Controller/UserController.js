@@ -10,7 +10,6 @@ exports.getProfileDetails=async(req,res) => {
                 });
             //check password is matched or not then exec
             if(getProfile){
-                
                 return Response.customSuccessResponseWithData(res,'User Profile',getProfile,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {

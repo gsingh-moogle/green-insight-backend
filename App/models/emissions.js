@@ -41,7 +41,7 @@ class Emission extends Model {
 
 
   Emission.associate = function(models) {
-    Emission.hasOne(models.Region, {
+    Emission.hasMany(models.Region, {
       foreignKey: 'id'
     });
 

@@ -7,11 +7,11 @@ module.exports = {
     let arrayValues = ['region','facilities','vendor','lane'];
       for (let i = 0; i < 100; i++) {
           data.push({
-              user_id: faker.datatype.number({ min: 1, max: 100 }),
+              user_id: faker.datatype.number({ min: 1, max: 10 }),
               name: faker.address.cityName(),
-              region_id: faker.datatype.number({ min: 1, max: 100 }),
-              facilities_id: faker.datatype.number({ min: 1, max: 100 }),
-              vendor_id: faker.datatype.number({ min: 1, max: 100 }),
+              region_id: faker.datatype.number({ min: 1, max: 10 }),
+              facilities_id: faker.datatype.number({ min: 1, max: 10 }),
+              vendor_id: faker.datatype.number({ min: 1, max: 10 }),
               latitude:faker.address.latitude(),
               longitude:faker.address.longitude(),
               location:faker.address.county(),
