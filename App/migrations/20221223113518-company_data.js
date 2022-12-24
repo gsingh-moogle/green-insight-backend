@@ -13,6 +13,9 @@ module.exports = {
       company_id: {
         type: Sequelize.INTEGER
       },
+      region_id: {
+        type: Sequelize.INTEGER
+      },
       co2_emission: {
         type: Sequelize.FLOAT
       },

@@ -7,6 +7,7 @@ module.exports = {
       for (let i = 0; i < 10; i++) {
           data.push({
               company_id: i+1,
+              region_id:faker.datatype.number({ min: 1, max: 10 }),
               co2_emission: faker.datatype.number({ min: 1, max: 1000 }),
               emission_target_reduction: faker.datatype.number({ min: 1, max: 100 }),
               emission_reduction: faker.datatype.number({ min: 1, max: 45 }),

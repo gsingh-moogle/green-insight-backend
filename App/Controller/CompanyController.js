@@ -1,17 +1,32 @@
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const Company =require("../models").Company;
 const CompanyData =require("../models").CompanyData;
 const Response=require("../helper/api-response");
 
 exports.getCompanyData=async(req,res) => {
     try {
-            let {company_id}=req.body;
-            if(!company_id) {
-                return Response.errorRespose(res,'Company_id is required!');
+            let {company_id,region_id}=req.body;
+            const where = {}
+            if (region_id || company_id) {
+                where[Op.and] = []
+                if (region_id) {
+                    where[Op.and].push({
+                        region_id: region_id
+                    })
+                }
+                if (company_id) {
+                    where[Op.and].push({
+                        company_id: company_id
+                    })
+                }
+            } else {
+                const where = {company_id:'1'}
             }
             
             //console.log(type,email,password);return 
             let getCompanyData = await CompanyData.findOne({
-                where:{company_id:company_id},
+                where:where,
                 include: [
                 {
                     model: Company,

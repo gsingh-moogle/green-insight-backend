@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   CompanyData.init({
     company_id: DataTypes.INTEGER,
+    region_id: DataTypes.INTEGER,
     co2_emission: DataTypes.INTEGER,
     emission_target_reduction: DataTypes.INTEGER,
     emission_reduction: DataTypes.INTEGER,
