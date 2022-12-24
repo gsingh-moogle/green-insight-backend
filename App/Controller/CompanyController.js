@@ -20,11 +20,13 @@ exports.getCompanyData=async(req,res) => {
                         company_id: company_id
                     })
                 }
-            } else {
-                const where = {company_id:'1'}
+            } else if(!company_id) {
+                where[Op.and] = []
+                where[Op.and].push({
+                    company_id: 10
+                })
             }
             
-            //console.log(type,email,password);return 
             let getCompanyData = await CompanyData.findOne({
                 where:where,
                 include: [
