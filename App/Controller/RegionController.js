@@ -115,6 +115,10 @@ exports.getRegionIntensity=async(req,res) => {
                     where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
                     )
                 }
+            } else {
+                where[Op.and] = []
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), new Date().getFullYear())
+                    )
             }
             
             let getRegionEmissions = await Emission.findAll({
@@ -169,9 +173,9 @@ exports.getRegionIntensity=async(req,res) => {
 exports.getRegionEmissionsMonthly=async(req,res) => {
     try {
             //console.log(type,email,password);return 
-            let {region_id, company_id}=req.body;
+            let {region_id, company_id, year}=req.body;
             const where = {emission_type:'region'}
-            if (region_id || company_id) {
+            if (region_id || company_id || year) {
                 where[Op.and] = []
                 if (region_id) {
                     where[Op.and].push({
@@ -183,6 +187,14 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                         company_id: company_id
                     })
                 }
+                if (year) {
+                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
+                    )
+                }
+            } else {
+                where[Op.and] = []
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), new Date().getFullYear())
+                    )
             }
             let getRegionEmissions = await Emission.findAll({
                 attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],

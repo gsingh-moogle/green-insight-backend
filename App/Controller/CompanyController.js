@@ -7,26 +7,7 @@ const Response=require("../helper/api-response");
 exports.getCompanyData=async(req,res) => {
     try {
             let {company_id,region_id}=req.body;
-            const where = {}
-            if (region_id || company_id) {
-                where[Op.and] = []
-                if (region_id) {
-                    where[Op.and].push({
-                        region_id: region_id
-                    })
-                }
-                if (company_id) {
-                    where[Op.and].push({
-                        company_id: company_id
-                    })
-                }
-            } else if(!company_id) {
-                where[Op.and] = []
-                where[Op.and].push({
-                    company_id: 10
-                })
-            }
-            
+            const where = {company_id: 1}            
             let getCompanyData = await CompanyData.findOne({
                 where:where,
                 include: [
