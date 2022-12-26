@@ -3,7 +3,7 @@
     "username": "moogle",
     "password": "admin",
     "database": "green_sight",
-    "host": "localhost",
+    "host": "4.240.72.215",
     "dialect": "mysql"
   },
   "test": {
