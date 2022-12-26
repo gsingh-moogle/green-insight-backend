@@ -235,12 +235,14 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                         {
                           label: 'Contributor',
                           data: contributor,
+                          month:monthDate,
                           borderColor: '#5888d6',
                           backgroundColor: '#f7faf9',
                         },
                         {
                           label: 'Detractor',
                           data: detractor,
+                          month:monthDate,
                           borderColor: '#2fa18c',
                           backgroundColor: '#f7faf9',
                         }
