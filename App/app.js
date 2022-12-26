@@ -2,8 +2,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-require('dotenv').config();
-
+var path = require('path');
+require('dotenv').config({ path: require('find-config')('.env') });
 var path = require('path');
 var express = require('express');
 var session = require('express-session');
@@ -66,7 +66,7 @@ app.get('/readFileFromAzureContainer',async (req,res) => {
     }
 });
 
-// app.use('/', indexRouter);
+app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/api/v1', greenRoute);

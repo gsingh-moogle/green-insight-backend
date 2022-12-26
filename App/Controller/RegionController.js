@@ -13,7 +13,7 @@ exports.getRegions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
         let getRegionEmissions = await Region.findAll();
-        let getCompanies = await Company.findAll();
+        let getCompanies = await Company.find({where:{'id':1}});
         //check password is matched or not then exec
         if(getRegionEmissions){
             let data = {
