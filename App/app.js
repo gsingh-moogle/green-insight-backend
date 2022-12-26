@@ -66,7 +66,7 @@ app.get('/readFileFromAzureContainer',async (req,res) => {
     }
 });
 
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/api/v1', greenRoute);
