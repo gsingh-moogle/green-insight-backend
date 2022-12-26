@@ -2,7 +2,7 @@
   "development": {
     "username": "moogle",
     "password": "admin",
-    "database": "green-sight",
+    "database": "green_sight",
     "host": "localhost",
     "dialect": "mysql"
   },
@@ -16,7 +16,7 @@
   "production": {
     "username": "moogle",
     "password": "admin",
-    "database": "green-sight",
+    "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
