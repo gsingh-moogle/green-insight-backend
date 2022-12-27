@@ -6,6 +6,7 @@ module.exports = {
       let userData = [];
       for (let i = 0; i < 100; i++) {
           userData.push({
+              name: faker.name.fullName(),
               password: faker.internet.password(),
               role: 0,
               email:faker.internet.exampleEmail(),

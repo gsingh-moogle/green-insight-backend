@@ -44,20 +44,20 @@ class Emission extends Model {
 
 
   Emission.associate = function(models) {
-    Emission.hasMany(models.Region, {
-      foreignKey: 'id'
+    Emission.belongsTo(models.Region, {
+      foreignKey: 'region_id'
     });
 
-    Emission.hasOne(models.Facility, {
-      foreignKey: 'id'
+    Emission.belongsTo(models.Facility, {
+      foreignKey: 'facilities_id'
     });
 
-    Emission.hasOne(models.Vendor, {
-      foreignKey: 'id'
+    Emission.belongsTo(models.Vendor, {
+      foreignKey: 'vendor_id'
     });
 
-    Emission.hasOne(models.Lane, {
-      foreignKey: 'id'
+    Emission.belongsTo(models.Lane, {
+      foreignKey: 'lane_id'
     });
 
     

@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
     emission_reduction: DataTypes.INTEGER,
     project_in_progress: DataTypes.INTEGER,
     gap_to_target: DataTypes.INTEGER,
+    company_level:DataTypes.INTEGER,
+    target_level:DataTypes.INTEGER,
+    base_level:DataTypes.INTEGER,
     status: DataTypes.BOOLEAN
   }, {
     sequelize,

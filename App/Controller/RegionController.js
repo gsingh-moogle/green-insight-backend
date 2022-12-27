@@ -1,11 +1,13 @@
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
+const User = require("../models").User;
 const Emission =require("../models").Emission;
 const Region =require("../models").Region;
 const Facility =require("../models").Facility;
 const Vendor =require("../models").Vendor;
 const Lane =require("../models").Lane;
 const Company =require("../models").Company;
+const CompanyData =require("../models").CompanyData;
 const Response=require("../helper/api-response");
 
 
@@ -13,7 +15,7 @@ exports.getRegions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
         let getRegionEmissions = await Region.findAll();
-        let getCompanies = await Company.find({where:{'id':1}});
+        let getCompanies = await Company.findOne({where:{'id':1}});
         //check password is matched or not then exec
         if(getRegionEmissions){
             let data = {
@@ -191,31 +193,75 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
                     )
                 }
-            } else {
-                where[Op.and] = []
-                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), new Date().getFullYear())
-                    )
             }
             let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],
-                [ sequelize.literal('( SELECT SUM(detractor) )'),'detractor'],
-                [ sequelize.literal('( SELECT MONTHNAME(date) )'),'month']],
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity'],
+                [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
+                'region_id'],
                 where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']
                     }],
-                group: [sequelize.fn('MONTHNAME', sequelize.col('date'))],
+                group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
                 raw: true
-                });
+            });
+
+            let getCompanyData = await CompanyData.findOne({
+                attributes: ['target_level','base_level'],
+                where:{company_id:1},
+                raw: true
+            });
+                console.log('getCompanyData',getCompanyData);
             //check password is matched or not then exec
             if(getRegionEmissions){
+                let dataObject = [];
+                const lables = [...new Set(getRegionEmissions.map(item => item.year))]
+                const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
+                console.log('labels', lables);
+                console.log('regions', regions);
+                
+                for (let i = 0; i < regions.length; i++) {
+                    let tempDataObject = {};
+                    let tempArray = [];
+                    for (const property of getRegionEmissions) {
+                        if(property['Region.name'] == regions[i]) {
+                            tempArray.push(property.intensity);
+                            if(tempDataObject["name"] === undefined){
+                                tempDataObject.name = property['Region.name'];
+                            }
+                            if(tempDataObject["year"] === undefined){
+                                tempDataObject.year = property.year;
+                            }
+                        }  
+                    }
+                    tempDataObject.data = tempArray;
+                    dataObject.push(tempDataObject);
+                }
+
+                for (var key in getCompanyData) {
+                    let tmpData = [];
+                    let tmpDataObject = {};
+                    for (let i = 0; i < lables.length; i++) {
+                        tmpData.push(getCompanyData[key])
+                        if(tmpDataObject.year === undefined){
+                            tmpDataObject.year = lables[i];
+                        }
+                    }
+                    tmpDataObject.name = key;
+                    tmpDataObject.data = tmpData;
+                    dataObject.push(tmpDataObject);
+                };
+                    
+
+
                 let contributor = [];
                 let detractor = [];
-                let monthDate= ["January","February","March","April","May","June","July",
-                "August","September","October","November","December"];
-                for (let i = 0; i < monthDate.length; i++) {
-                    let month = getRegionEmissions.find(o => o.month == monthDate[i]);
+                // let monthDate= ["January","February","March","April","May","June","July",
+                // "August","September","October","November","December"];
+                let monthDate= [];
+                for (let i = 0; i < getRegionEmissions.length; i++) {
+                    let month = monthDate.push(getRegionEmissions.year);
                     intensity1 = 0;
                     intensity2 = 0;
                     if(month && month.contributor) intensity1 = month.contributor;
@@ -249,7 +295,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                       ]
                     
                 }
-                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+                return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
@@ -388,6 +434,83 @@ exports.getLaneEmissions=async(req,res) => {
             }
             return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+exports.getRegionTableData=async(req,res) => {
+    try {
+        let {region_id, year}=req.body;
+        const where = {emission_type:'region'}
+        if (region_id || year) {
+            where[Op.and] = []
+            if (region_id) {
+                where[Op.and].push({
+                    region_id: region_id
+                })
+            }
+            if (year) {
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
+                )
+            }
+        }
+        //console.log(type,email,password);return 
+        let getRegionTableData = await Emission.findAll({
+            attributes: ['id', 'gap_to_target', 'intensity','cost','service'],
+            where:where, include: [
+                {
+                    model: Region,
+                    attributes: ['name'],
+                    include: [
+                    {
+                        model: User,
+                        attributes: ['name']
+                    }]
+                }]
+            });
+        //check password is matched or not then exec
+        if(getRegionTableData){
+            return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
+        } else { return Response.errorRespose(res,'No Record Found!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+exports.getRegionEmissionData=async(req,res) => {
+    try {
+        let {region_id, year}=req.body;
+        const where = {emission_type:'region'}
+        if (region_id || year) {
+            where[Op.and] = []
+            if (region_id) {
+                where[Op.and].push({
+                    region_id: region_id
+                })
+            }
+            if (year) {
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
+                )
+            }
+        }
+            //console.log(type,email,password);return 
+            let getRegionEmissions = await Emission.findAll({
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity']],
+                where:where, include: [
+                    {
+                        model: Region,
+                        attributes: ['name']
+                    }],
+                    group: ['region_id'],
+                    raw: true
+                });
+              //  console.log('getRegionEmissions',getRegionEmissions);
+            //check password is matched or not then exec
+            if(getRegionEmissions){
+                let label = [];
+                return Response.customSuccessResponseWithData(res,'Region Emissions',getRegionEmissions,200)
+            } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }

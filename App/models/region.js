@@ -25,5 +25,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Region',
     tableName:'regions'
   });
+
+  Region.associate = function(models) {
+    Region.hasOne(models.User, {
+      foreignKey: 'id'
+    });
+  };
   return Region;
 };

@@ -13,6 +13,9 @@ module.exports = {
               emission_reduction: faker.datatype.number({ min: 1, max: 45 }),
               project_in_progress: faker.datatype.number({ min: 1, max: 20 }),
               gap_to_target: faker.datatype.number({ min: 1, max: 100 }),
+              company_level: faker.datatype.number({ min: 1, max: 5 }),
+              target_level: faker.datatype.number({ min: 500, max: 1000 }),
+              base_level: faker.datatype.number({ min: 700, max: 1000 }),
               status: 1,
               createdAt:faker.date.between(),
               updatedAt:faker.date.between()

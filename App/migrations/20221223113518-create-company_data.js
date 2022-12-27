@@ -11,10 +11,24 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       company_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'company',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
       },
       region_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'regions',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
       },
       co2_emission: {
         type: Sequelize.FLOAT
@@ -29,6 +43,15 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       gap_to_target: {
+        type: Sequelize.INTEGER
+      },
+      company_level : {
+        type: Sequelize.INTEGER
+      },
+      target_level: {
+        type: Sequelize.INTEGER
+      },
+      base_level: {
         type: Sequelize.INTEGER
       },
       status: {

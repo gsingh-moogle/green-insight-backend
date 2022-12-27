@@ -2,7 +2,7 @@ const jwt=require("jsonwebtoken");
 const User=require("../models").User;
 const helper=require("../helper/api-response");
 
-const validateAdmin=async(req, res, next) => {
+const validateAdmin= async (req, res, next) => {
     try {
      const token = req.headers["authorization"]?req.headers["authorization"].split(" ")[1]:'';
       if (!token) {
@@ -23,4 +23,4 @@ const validateAdmin=async(req, res, next) => {
     }
   }
 
-  exports.validateAdmin;
+  module.exports = { validateAdmin };
