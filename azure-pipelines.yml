@@ -59,5 +59,7 @@ stages:
                 sudo rm -rf .git/
                 sudo rm -rf .gitignore
                 sudo unzip /home/azureuser/azagent/_work/3/drop/green-insight-backend.zip -d /home/azureuser/green-insight-backend
-                
+                cd /home/azureuser/green-insight-backend/App
+                sudo rm -rf node_modules
+                sudo npm install
                 pm2 restart 0
