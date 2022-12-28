@@ -216,6 +216,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             //check password is matched or not then exec
             if(getRegionEmissions){
                 let dataObject = [];
+                const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80']
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
                 console.log('labels', lables);
@@ -236,6 +237,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                         }  
                     }
                     tempDataObject.data = tempArray;
+                    tempDataObject.color = colors[i];
                     dataObject.push(tempDataObject);
                 }
 
