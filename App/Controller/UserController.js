@@ -8,6 +8,7 @@ exports.getProfileDetails=async(req,res) => {
             let getProfile = await Profile.findOne({
                 where:{id:1}
                 });
+                
             //check password is matched or not then exec
             if(getProfile){
                 return Response.customSuccessResponseWithData(res,'User Profile',getProfile,200)
