@@ -9,7 +9,6 @@
   "license": "MIT",
   "dependencies": {
     "@azure/ms-rest-nodeauth": "^3.1.1",
-    
     "@azure/msal-node": "^1.9.0",
     "axios": "^0.27.2",
     "azure-storage": "^2.10.7",
