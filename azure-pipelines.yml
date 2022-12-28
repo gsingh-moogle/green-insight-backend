@@ -54,6 +54,9 @@ stages:
               script: |
                 # Modify deployment script based on the app type
                 echo "Starting deployment script run"
-                sudo unzip /home/azureuser/azagent/_work/3/drop/green-insight-backend.zip -d /home/azureuser/green-insight-backend
                 cd /home/azureuser/green-insight-backend
+                sudo rm -rf *
+                sudo rm -rf .git/
+                sudo rm -rf .gitignore
+                sudo unzip /home/azureuser/azagent/_work/3/drop/green-insight-backend.zip -d /home/azureuser/green-insight-backend
                 pm2 restart 0
