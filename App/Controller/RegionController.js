@@ -443,9 +443,9 @@ exports.getLaneEmissions=async(req,res) => {
 
 exports.getRegionTableData=async(req,res) => {
     try {
-        let {region_id, year}=req.body;
+        let {region_id, year, quarter}=req.body;
         const where = {emission_type:'region'}
-        if (region_id || year) {
+        if (region_id || year || quarter) {
             where[Op.and] = []
             if (region_id) {
                 where[Op.and].push({
@@ -456,10 +456,15 @@ exports.getRegionTableData=async(req,res) => {
                 where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
                 )
             }
+            if (quarter) {
+                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter)
+                )
+            }
         }
         //console.log(type,email,password);return 
         let getRegionTableData = await Emission.findAll({
-            attributes: ['id', 'gap_to_target', 'intensity','cost','service'],
+            attributes: ['id', 'gap_to_target', 'intensity','cost','service',
+            [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
                     model: Region,
@@ -474,6 +479,11 @@ exports.getRegionTableData=async(req,res) => {
             });
         //check password is matched or not then exec
         if(getRegionTableData){
+            for (const property of getRegionTableData) {
+                property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+            }
             return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -483,9 +493,9 @@ exports.getRegionTableData=async(req,res) => {
 
 exports.getRegionEmissionData=async(req,res) => {
     try {
-        let {region_id, year}=req.body;
+        let {region_id, year, quarter}=req.body;
         const where = {emission_type:'region'}
-        if (region_id || year) {
+        if (region_id || year || quarter) {
             where[Op.and] = []
             if (region_id) {
                 where[Op.and].push({
@@ -494,6 +504,10 @@ exports.getRegionEmissionData=async(req,res) => {
             }
             if (year) {
                 where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
+                )
+            }
+            if (quarter) {
+                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter)
                 )
             }
         }
@@ -512,7 +526,6 @@ exports.getRegionEmissionData=async(req,res) => {
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
-                let label = [];
                 const data = getRegionEmissions.map((item) => [item["Region.name"],item.intensity]);
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
