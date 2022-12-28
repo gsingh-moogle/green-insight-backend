@@ -469,7 +469,8 @@ exports.getRegionTableData=async(req,res) => {
                         model: User,
                         attributes: ['name']
                     }]
-                }]
+                }],
+                limit : 10,
             });
         //check password is matched or not then exec
         if(getRegionTableData){
@@ -505,13 +506,15 @@ exports.getRegionEmissionData=async(req,res) => {
                         attributes: ['name']
                     }],
                     group: ['region_id'],
+                    limit : 10,
                     raw: true
                 });
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
                 let label = [];
-                return Response.customSuccessResponseWithData(res,'Region Emissions',getRegionEmissions,200)
+                const data = getRegionEmissions.map((item) => [item["Region.name"],item.intensity]);
+                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
