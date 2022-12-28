@@ -6,6 +6,8 @@ const Response=require("../helper/api-response");
 
 exports.getCompanyData=async(req,res) => {
     try {
+
+        
             let {company_id,region_id}=req.body;
             const where = {company_id: 1}            
             let getCompanyData = await CompanyData.findOne({
