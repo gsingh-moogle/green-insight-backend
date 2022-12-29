@@ -28,5 +28,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Lane',
     tableName:'lanes'
   });
+
+  Lane.associate = function(models) {
+    Lane.hasOne(models.User, {
+      foreignKey: 'id'
+    });
+  };
   return Lane;
 };
