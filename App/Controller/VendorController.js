@@ -45,7 +45,7 @@ exports.getVendorTableData=async(req,res) => {
                 limit : 10,
             });
         //check getVendorTableData is matched or not then exec
-        if(getFacilitiesTableData){
+        if(getVendorTableData){
             for (const property of getVendorTableData) {
                 property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
                 property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
