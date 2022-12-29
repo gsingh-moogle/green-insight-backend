@@ -27,5 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Vendor',
     tableName:'vendors'
   });
+  Vendor.associate = function(models) {
+    Vendor.hasOne(models.User, {
+      foreignKey: 'id'
+    });
+  };
   return Vendor;
 };

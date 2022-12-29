@@ -6,6 +6,7 @@ const RegionController=require("../Controller/RegionController");
 const UserController=require("../Controller/UserController");
 const CompanyController=require("../Controller/CompanyController");
 const FacilitiesController=require("../Controller/FacilitiesController");
+const VendorController=require("../Controller/VendorController");
 
 //Auth API's
 router.post("/login",GreenInsightController.login);
@@ -27,5 +28,9 @@ router.post("/get-region-emission-data",RegionController.getRegionEmissionData);
 //By Facilities API's
 router.post("/get-facilities-table-data",FacilitiesController.getFacilitiesTableData);
 router.post("/get-facilities-emission-data",FacilitiesController.getFacilitiesEmissionData);
+
+//By Vendor API's
+router.post("/get-vendor-table-data",VendorController.getVendorTableData);
+router.post("/get-vendor-emission-data",VendorController.getVendorEmissionData);
 
 module.exports=router;
