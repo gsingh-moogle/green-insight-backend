@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     Lane.hasOne(models.User, {
       foreignKey: 'id'
     });
+    Lane.hasMany (models.Emission, {
+      foreignKey: 'lane_id'
+    });
   };
+
   return Lane;
 };

@@ -57,7 +57,7 @@ class Emission extends Model {
     });
 
     Emission.belongsTo(models.Lane, {
-      foreignKey: 'lane_id'
+      foreignKey: 'lane_id',
     });
 
     

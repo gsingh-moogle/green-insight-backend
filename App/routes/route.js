@@ -7,6 +7,7 @@ const UserController=require("../Controller/UserController");
 const CompanyController=require("../Controller/CompanyController");
 const FacilitiesController=require("../Controller/FacilitiesController");
 const VendorController=require("../Controller/VendorController");
+const LaneController=require("../Controller/LaneController");
 
 //Auth API's
 router.post("/login",GreenInsightController.login);
@@ -32,5 +33,10 @@ router.post("/get-facilities-emission-data",FacilitiesController.getFacilitiesEm
 //By Vendor API's
 router.post("/get-vendor-table-data",VendorController.getVendorTableData);
 router.post("/get-vendor-emission-data",VendorController.getVendorEmissionData);
+
+//By Lane API's
+router.post("/get-lane-table-data-hight-intensity",LaneController.getLaneTableDataHighIntensity);
+ router.post("/get-lane-table-data-low-intensity",LaneController.getLaneTableDataLowIntensity);
+router.post("/get-lane-emission-data",LaneController.getLaneEmissionData);
 
 module.exports=router;
