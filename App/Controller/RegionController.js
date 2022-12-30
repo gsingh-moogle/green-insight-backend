@@ -533,3 +533,68 @@ exports.getRegionEmissionData=async(req,res) => {
         console.log('____________________________________________________________error',error);
     }
 }
+
+exports.getRegionIntensityByYear=async(req,res) => {
+    try {
+            let {region_id, company_id, year}=req.body;
+            let current_year = parseInt(new Date().getFullYear());
+            let past_year = new Date().getFullYear()-1;
+            const where = {emission_type:'region'}
+            if (region_id || company_id || year) {
+                where[Op.and] = []
+                where[Op.or] = []
+                if (region_id) {
+                    where[Op.and].push({
+                        region_id: region_id
+                    })
+                }
+                if (company_id) {
+                    where[Op.and].push({
+                        company_id: company_id
+                    })
+                }
+                if (year) {
+                    current_year = parseInt(year);
+                    past_year = year-1;
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), past_year)
+                    )
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year)
+                    )
+                    
+                }
+            } else {
+                where[Op.and] = []
+                where[Op.or] = []
+                where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), past_year)
+                    )
+                where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year)
+                    )
+            }
+
+            
+            let getRegionEmissions = await Emission.findAll({
+                attributes: ['id',
+                [ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year']],
+                where:where, include: [
+                    {
+                        model: Region,
+                        attributes: ['name']
+                    }],
+                    group: [sequelize.fn('YEAR', sequelize.col('date'))],
+                    raw: true
+                });
+                console.log('getRegionEmissions',getRegionEmissions);
+            //check password is matched or not then exec
+            if(getRegionEmissions){
+                let data = [];
+                data.push({
+                    dataset:getRegionEmissions,
+                    label:[past_year,current_year],
+                    industrialAverage: 200
+                })
+                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            } else { return Response.errorRespose(res,'No Record Found!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
