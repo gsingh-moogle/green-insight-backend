@@ -5,7 +5,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     let data = [];
     let arrayValues = ['region','facilities','vendor','lane'];
-      for (let i = 0; i < 2000; i++) {
+      for (let i = 0; i < 5000; i++) {
           data.push({
               emission_type: arrayValues[faker.datatype.number({ min: 0, max: 3 })],
               company_id: faker.datatype.number({ min: 1, max: 10 }),

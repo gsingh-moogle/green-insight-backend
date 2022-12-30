@@ -269,10 +269,17 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let baseLine = base+(base*(20/100));
                     
                 dataObject.push({
-                    companyLevel:maxArray,
-                    targetLine:targetLevel,
-                    baseLine:baseLine
-                })
+                    name:'company_level',
+                    data:maxArray,
+                });
+                dataObject.push({
+                    name:'target_level',
+                    data:targetLevel,
+                });
+                dataObject.push({
+                    name:'base_level',
+                    data:baseLine,
+                });
                 return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
