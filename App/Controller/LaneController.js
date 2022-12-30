@@ -31,7 +31,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getLaneTableData = await Lane.findAll({
-            attributes: ['name','id'], 
+            attributes: ['name','vendor_id'], 
             //include: [
                 // {
                 //     model: Emission,
@@ -50,8 +50,8 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
             let data = []
             for (const property of getLaneTableData) {
                 let data = await Emission.findAll({
-                    where:{'lane_id':property.id},
-                    attributes: ['cost',['gap_to_target','share_of_tonnage'],['createdAt','contract']], 
+                    where:{'vendor_id':property.vendor_id},
+                    attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
                     include: [
                         {
                             model: Vendor,
@@ -95,7 +95,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getLaneTableData = await Lane.findAll({
-            attributes: ['name','id'], 
+            attributes: ['name','vendor_id'], 
             //include: [
                 // {
                 //     model: Emission,
@@ -114,8 +114,8 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             let data = []
             for (const property of getLaneTableData) {
                 let data = await Emission.findAll({
-                    where:{'lane_id':property.id},
-                    attributes: ['cost',['gap_to_target','share_of_tonnage'],['createdAt','contract']], 
+                    where:{'vendor_id':property.vendor_id},
+                    attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
                     include: [
                         {
                             model: Vendor,
