@@ -61,9 +61,10 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                         limit:3
                     });
                 property.VendorEmission = data;
-            //     property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-            //     property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-            //     property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                for (const dataValue of property.VendorEmission) {
+                    dataValue['intensity'] = (dataValue.intensity <= 500)?{value:dataValue.intensity,color:'#D88D49'}:(dataValue.intensity > 500 && dataValue.intensity >= 700)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
+                    dataValue['cost'] = (dataValue.cost <= 5000)?{value:dataValue.cost,color:'#D88D49'}:(dataValue.cost > 5000 && property.cost >= 7000)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
+                }
             }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
@@ -124,10 +125,11 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
                         raw: true,
                         limit:3
                     });
-                property.VendorEmission = data;
-            //     property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-            //     property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-            //     property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                    property.VendorEmission = data;
+                    for (const dataValue of property.VendorEmission) {
+                        dataValue['intensity'] = (dataValue.intensity <= 500)?{value:dataValue.intensity,color:'#D88D49'}:(dataValue.intensity > 500 && dataValue.intensity >= 700)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
+                        dataValue['cost'] = (dataValue.cost <= 5000)?{value:dataValue.cost,color:'#D88D49'}:(dataValue.cost > 5000 && property.cost >= 7000)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
+                    }
             }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
