@@ -213,7 +213,6 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 raw: true
             });
                 console.log('getCompanyData',getCompanyData);
-            //check password is matched or not then exec
             if(getRegionEmissions){
                 let dataObject = [];
                 const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80']
@@ -587,10 +586,17 @@ exports.getRegionIntensityByYear=async(req,res) => {
             //check password is matched or not then exec
             if(getRegionEmissions){
                 let data = [];
+                let contributor = getRegionEmissions[0]['contributor'];
+                let detractor = getRegionEmissions.map(a => a.detractor);
+                let min = Math.min(getRegionEmissions[0]['contributor'],getRegionEmissions[1]['contributor']);
+                let max = Math.max(getRegionEmissions[0]['contributor'],getRegionEmissions[1]['contributor']);
+                let industrialAverage = min*(20/100);
+                let baseLine = max*(20/100);
                 data.push({
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
-                    industrialAverage: 200
+                    industrialAverage: min-industrialAverage,
+                    baseLine:max+baseLine
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
