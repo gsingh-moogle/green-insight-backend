@@ -215,6 +215,9 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 console.log('getCompanyData',getCompanyData);
             if(getRegionEmissions){
                 let dataObject = [];
+                let minArray = [];
+                let maxArray = [];
+                let targetLevel = [];
                 const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80']
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
@@ -235,67 +238,41 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             }
                         }  
                     }
+                    let min = Math.min(...tempArray);
+
+                    let max = Math.max(...tempArray);
+                    let target = max-(max*(10/100));
+                    minArray.push(min);
+                    maxArray.push(max);
+                    targetLevel.push(target);
                     tempDataObject.data = tempArray;
                     tempDataObject.color = colors[i];
                     dataObject.push(tempDataObject);
                 }
 
-                for (var key in getCompanyData) {
-                    let tmpData = [];
-                    let tmpDataObject = {};
-                    for (let i = 0; i < lables.length; i++) {
-                        tmpData.push(getCompanyData[key])
-                        if(tmpDataObject.year === undefined){
-                            tmpDataObject.year = lables[i];
-                        }
-                    }
-                    tmpDataObject.name = key;
-                    tmpDataObject.data = tmpData;
-                    dataObject.push(tmpDataObject);
-                };
-                    
+                // for (var key in getCompanyData) {
+                //     let tmpData = [];
+                //     let tmpDataObject = {};
+                //     for (let i = 0; i < lables.length; i++) {
+                //         tmpData.push(getCompanyData[key])
+                //         if(tmpDataObject.year === undefined){
+                //             tmpDataObject.year = lables[i];
+                //         }
+                //     }
+                //     tmpDataObject.name = key;
+                //     tmpDataObject.data = tmpData;
+                //     dataObject.push(tmpDataObject);
+                // };
 
+                let base = Math.max(...maxArray);
 
-                let contributor = [];
-                let detractor = [];
-                // let monthDate= ["January","February","March","April","May","June","July",
-                // "August","September","October","November","December"];
-                let monthDate= [];
-                for (let i = 0; i < getRegionEmissions.length; i++) {
-                    let month = monthDate.push(getRegionEmissions.year);
-                    intensity1 = 0;
-                    intensity2 = 0;
-                    if(month && month.contributor) intensity1 = month.contributor;
-                    if(month && month.detractor) intensity2 = month.detractor;
-                    contributor.push(intensity1);
-                    detractor.push(intensity2);
-                }
-                let min = Math.min(...contributor);
-                let max = Math.max(...detractor);
-                let data ={
-                    title : 'Region Emmision',
-                    type : 'Horizontal Bar Chart',
-                    label:monthDate,
-                    min:min,
-                    max:max,
-                    dataset:[
-                        {
-                          label: 'Contributor',
-                          data: contributor,
-                          month:monthDate,
-                          borderColor: '#5888d6',
-                          backgroundColor: '#f7faf9',
-                        },
-                        {
-                          label: 'Detractor',
-                          data: detractor,
-                          month:monthDate,
-                          borderColor: '#2fa18c',
-                          backgroundColor: '#f7faf9',
-                        }
-                      ]
+                let baseLine = base+(base*(20/100));
                     
-                }
+                dataObject.push({
+                    companyLevel:maxArray,
+                    targetLine:targetLevel,
+                    baseLine:baseLine
+                })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
