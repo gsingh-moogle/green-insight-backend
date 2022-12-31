@@ -217,13 +217,15 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let dataObject = [];
                 let minArray = [];
                 let maxArray = [];
+                let allDataArray = [];
+                let maxCountArray = [];
                 let targetLevel = [];
                 const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80']
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
                 console.log('labels', lables);
                 console.log('regions', regions);
-                
+                console.log('getRegionEmissions', getRegionEmissions);
                 for (let i = 0; i < regions.length; i++) {
                     let tempDataObject = {};
                     let tempArray = [];
@@ -238,18 +240,23 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             }
                         }  
                     }
-                    let min = Math.min(...tempArray);
-
-                    let max = Math.max(...tempArray);
-                    let target = max-(max*(10/100));
-                    minArray.push(min);
-                    maxArray.push(max);
-                    targetLevel.push(target);
+                    allDataArray.push(tempArray);
+                    maxCountArray.push(0);
                     tempDataObject.data = tempArray;
                     tempDataObject.color = colors[i];
                     dataObject.push(tempDataObject);
                 }
 
+                
+                for (let i = 0; i < allDataArray.length; i++) {
+                   for (let j = 0; j < allDataArray[i].length; j++) {
+                       maxCountArray[i] += allDataArray[i][i];
+                   }
+                }
+
+                for (let i = 0; i < maxCountArray.length; i++) {
+                    targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(10/100)));
+                 }
                 // for (var key in getCompanyData) {
                 //     let tmpData = [];
                 //     let tmpDataObject = {};
@@ -264,13 +271,12 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 //     dataObject.push(tmpDataObject);
                 // };
 
-                let base = Math.max(...maxArray);
-
-                let baseLine = base+(base*(20/100));
+                let base = Math.max(...maxCountArray);
+                let baseLine = base+(base*(15/100));
                     
                 dataObject.push({
                     name:'company_level',
-                    data:maxArray,
+                    data:maxCountArray,
                 });
                 dataObject.push({
                     name:'target_level',
