@@ -220,7 +220,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let allDataArray = [];
                 let maxCountArray = [];
                 let targetLevel = [];
-                const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80']
+                const colors = ['#215154','#5F9A80','#D88D49','#C1D3C0','#367C90','#FFCB77','#215154','#5F9A80','#D88D49','#C1D3C0']
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
                 console.log('labels', lables);
@@ -469,9 +469,9 @@ exports.getRegionTableData=async(req,res) => {
         //check password is matched or not then exec
         if(getRegionTableData){
             for (const property of getRegionTableData) {
-                property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-                property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 12 && property.intensity >= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#D88D49'}:(property.cost > 5 && property.cost >= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                property['service'] = (property.service <= 15)?{value:property.service,color:'#D88D49'}:(property.service > 15 && property.service >= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             }
             return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
@@ -502,7 +502,7 @@ exports.getRegionEmissionData=async(req,res) => {
         }
             //console.log(type,email,password);return 
             let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity']],
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
                 where:where, include: [
                     {
                         model: Region,
@@ -515,7 +515,29 @@ exports.getRegionEmissionData=async(req,res) => {
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
-                const data = getRegionEmissions.map((item) => [item["Region.name"],item.intensity]);
+                let count = 0;
+                let contributor = [];
+                let detractor = [];
+                for (const property of getRegionEmissions) {
+                    if(count < (getRegionEmissions.length/2)){
+                        contributor.push({
+                            name:property["Region.name"],
+                            value:property.contributor,
+                            color:'#215154'
+                        })
+                    } else {
+                        detractor.push({
+                            name:property["Region.name"],
+                            value:property.detractor,
+                            color:'#d88d49'
+                        })
+                    } 
+                    count++;
+                }
+                const data = {
+                    contributor:contributor,
+                    detractor:detractor
+                };
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {

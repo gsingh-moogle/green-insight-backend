@@ -31,7 +31,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getLaneTableData = await Lane.findAll({
-            attributes: ['name','vendor_id'], 
+            attributes: ['name','vendor_id','id'], 
             //include: [
                 // {
                 //     model: Emission,
@@ -50,7 +50,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
             let data = []
             for (const property of getLaneTableData) {
                 let data = await Emission.findAll({
-                    where:{'vendor_id':property.vendor_id},
+                    where:{'lane_id':property.id,intensity: {[Op.gte]: 12}},
                     attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
                     include: [
                         {
@@ -62,8 +62,8 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                     });
                 property.VendorEmission = data;
                 for (const dataValue of property.VendorEmission) {
-                    dataValue['intensity'] = (dataValue.intensity <= 500)?{value:dataValue.intensity,color:'#D88D49'}:(dataValue.intensity > 500 && dataValue.intensity >= 700)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
-                    dataValue['cost'] = (dataValue.cost <= 5000)?{value:dataValue.cost,color:'#D88D49'}:(dataValue.cost > 5000 && property.cost >= 7000)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
+                    dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#D88D49'}:(dataValue.intensity > 12 && dataValue.intensity >= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
+                    dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#D88D49'}:(dataValue.cost > 5 && property.cost >= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
                 }
             }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
@@ -115,7 +115,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             let data = []
             for (const property of getLaneTableData) {
                 let data = await Emission.findAll({
-                    where:{'vendor_id':property.vendor_id},
+                    where:{'vendor_id':property.vendor_id,intensity: {[Op.lt]: 12}},
                     attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
                     include: [
                         {
@@ -127,8 +127,8 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
                     });
                     property.VendorEmission = data;
                     for (const dataValue of property.VendorEmission) {
-                        dataValue['intensity'] = (dataValue.intensity <= 500)?{value:dataValue.intensity,color:'#D88D49'}:(dataValue.intensity > 500 && dataValue.intensity >= 700)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
-                        dataValue['cost'] = (dataValue.cost <= 5000)?{value:dataValue.cost,color:'#D88D49'}:(dataValue.cost > 5000 && property.cost >= 7000)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
+                        dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#D88D49'}:(dataValue.intensity > 12 && dataValue.intensity >= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
+                    dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#D88D49'}:(dataValue.cost > 5 && property.cost >= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
                     }
             }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
