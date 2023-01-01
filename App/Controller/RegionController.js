@@ -222,7 +222,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let targetLevel = [];
               //  const colors = ['#215154','#5F9A80','#D88D49','#C1D3C0','#367C90','#FFCB77','#215154','#5F9A80','#D88D49','#C1D3C0']
              //   const colors = ['#FFCB77','#367C90','#C1D3C0','#D88D49','#5F9A80','#215154','#FFCB77','#367C90','#C1D3C0','#D88D49']
-                const colors = ['#215154','#5f9a80','#d8856b','#c1d3c0','#367c90','#ffcb77','#215154','#5f9a80','#d8856b','#c1d3c0']
+              //  const colors = ['#215154','#5f9a80','#d8856b','#c1d3c0','#367c90','#ffcb77','#215154','#5f9a80','#d8856b','#c1d3c0']
+                const colors = ['#ffcb77','#367c90','#c1d3c0','#d8856b','#5f9a80','#215154','#ffcb77','#367c90','#c1d3c0','#d8856b']
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
                 console.log('labels', lables);
@@ -328,13 +329,13 @@ exports.getFacilityEmissions=async(req,res) => {
                     {
                       label: 'Contributor',
                       data: contributor,
-                      borderColor: '#5888d6',
+                      borderColor: '#215154',
                       backgroundColor: '#f7faf9',
                     },
                     {
                       label: 'Detractor',
                       data: detractor,
-                      borderColor: '#2fa18c',
+                      borderColor: '#d8856b',
                       backgroundColor: '#f7faf9',
                     }
                   ]
