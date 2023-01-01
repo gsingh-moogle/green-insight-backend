@@ -536,11 +536,11 @@ exports.getRegionEmissionData=async(req,res) => {
                     } 
                     count++;
                 }
-                // const data = {
-                //     contributor:contributor,
-                //     detractor:detractor
-                // };
-                const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
+                const data = {
+                    contributor:contributor,
+                    detractor:detractor
+                };
+                //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
