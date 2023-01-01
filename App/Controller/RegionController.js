@@ -531,13 +531,13 @@ exports.getRegionEmissionData=async(req,res) => {
                         contributor.push({
                             name:property["Region.name"],
                             value:property.contributor,
-                            color:'#215154'
+                            color:'#d8856b'
                         })
                     } else {
                         detractor.push({
                             name:property["Region.name"],
                             value:property.detractor,
-                            color:'#d8856b'
+                            color:'#215154'
                         })
                     } 
                     count++;

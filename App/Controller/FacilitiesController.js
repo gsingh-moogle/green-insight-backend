@@ -104,13 +104,13 @@ exports.getFacilitiesEmissionData=async(req,res) => {
                     contributor.push({
                         name:property["Facility.name"],
                         value:property.contributor,
-                        color:'#215154'
+                        color:'#d8856b'
                     })
                 } else {
                     detractor.push({
                         name:property["Facility.name"],
                         value:property.detractor,
-                        color:'#d8856b'
+                        color:'#215154'
                     })
                 } 
                 count++;
