@@ -115,11 +115,11 @@ exports.getFacilitiesEmissionData=async(req,res) => {
                 } 
                 count++;
             }
-            // const data = {
-            //     contributor:contributor,
-            //     detractor:detractor
-            // };
-            const data = getFacilitiesEmissionData.map((item) => [item["Facility.name"],item.contributor]);
+            const data = {
+                contributor:contributor,
+                detractor:detractor
+            };
+          //  const data = getFacilitiesEmissionData.map((item) => [item["Facility.name"],item.contributor]);
             return Response.customSuccessResponseWithData(res,'Facilities Emissions',data,200);
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
