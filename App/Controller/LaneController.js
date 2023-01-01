@@ -160,7 +160,7 @@ exports.getLaneEmissionData=async(req,res) => {
         }
             //console.log(type,email,password);return 
             let getLaneEmissionData = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity']],
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
                 where:where, include: [
                     {
                         model: Lane,
@@ -173,7 +173,31 @@ exports.getLaneEmissionData=async(req,res) => {
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getLaneEmissionData){
-                const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.intensity]);
+
+                let count = 0;
+                let contributor = [];
+                let detractor = [];
+                for (const property of getLaneEmissionData) {
+                    if(count < (getLaneEmissionData.length/2)){
+                        contributor.push({
+                            name:property["Lane.name"],
+                            value:property.contributor,
+                            color:'#215154'
+                        })
+                    } else {
+                        detractor.push({
+                            name:property["Lane.name"],
+                            value:property.detractor,
+                            color:'#d88d49'
+                        })
+                    } 
+                    count++;
+                }
+                const data = {
+                    contributor:contributor,
+                    detractor:detractor
+                };
+              //  const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.intensity]);
                 return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200);
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
