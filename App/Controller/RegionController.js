@@ -261,7 +261,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 }
 
                 for (let i = 0; i < maxCountArray.length; i++) {
-                    targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(10/100)));
+                    targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(20/100)));
                  }
                 // for (var key in getCompanyData) {
                 //     let tmpData = [];

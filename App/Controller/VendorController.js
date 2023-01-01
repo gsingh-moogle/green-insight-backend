@@ -96,7 +96,8 @@ exports.getVendorEmissionData=async(req,res) => {
             //check password is matched or not then exec
             if(getVendorEmissionData){
                 let data = [];
-                const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80'];
+           //     const colors = ['#D88D49','#EFEDE9','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#215254','#215154','#215254'];
+                const colors = ['#D88D49','#D88D49','#D88D49','#D88D49','#EFEDE9','#EFEDE9','#215254','#215254','#215254','#215254'];
                 let i =0;
                 for (const property of getVendorEmissionData) {
                     data.push({
