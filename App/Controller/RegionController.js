@@ -600,8 +600,12 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let data = [];
                 let contributor = getRegionEmissions[0]['contributor'];
                 let detractor = getRegionEmissions.map(a => a.detractor);
-                let min = Math.min(getRegionEmissions[0]['contributor'],getRegionEmissions[1]['contributor']);
-                let max = Math.max(getRegionEmissions[0]['contributor'],getRegionEmissions[1]['contributor']);
+                let baseData = [];
+                for(const property of getRegionEmissions) {
+                    baseData.push(property.contributor);
+                }
+                let min = Math.min(...baseData);
+                let max = Math.max(...baseData);
                 let industrialAverage = min*(20/100);
                 let baseLine = max*(20/100);
                 data.push({
