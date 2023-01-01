@@ -250,7 +250,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 
                 for (let i = 0; i < allDataArray.length; i++) {
                    for (let j = 0; j < allDataArray[i].length; j++) {
-                       maxCountArray[i] += allDataArray[i][i];
+                        console.log("+++++++",allDataArray[i][j],"+++++++")
+                       maxCountArray[j] += allDataArray[i][j];
                    }
                 }
 
