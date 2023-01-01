@@ -555,8 +555,8 @@ exports.getRegionEmissionData=async(req,res) => {
 exports.getRegionIntensityByYear=async(req,res) => {
     try {
             let {region_id, company_id, year}=req.body;
-            let current_year = parseInt(new Date().getFullYear());
-            let past_year = new Date().getFullYear()-1;
+            let current_year = parseInt(new Date().getFullYear()-1);
+            let past_year = new Date().getFullYear()-2;
             const where = {emission_type:'region'}
             if (region_id || company_id || year) {
                 where[Op.and] = []
