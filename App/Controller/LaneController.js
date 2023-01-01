@@ -166,8 +166,8 @@ exports.getLaneEmissionData=async(req,res) => {
                         model: Lane,
                         attributes: ['name']
                     }],
-                    group: ['lane_id'],
-                    limit : 10,
+                    group: ['region_id'],
+                    limit : 6,
                     raw: true
                 });
               //  console.log('getRegionEmissions',getRegionEmissions);

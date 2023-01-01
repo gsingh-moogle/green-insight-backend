@@ -89,7 +89,7 @@ exports.getFacilitiesEmissionData=async(req,res) => {
                     model: Facility,
                     attributes: ['name']
                 }],
-                group: ['facilities_id'],
+                group: ['region_id'],
                 limit : 10,
                 raw: true
             });
@@ -110,7 +110,7 @@ exports.getFacilitiesEmissionData=async(req,res) => {
                     detractor.push({
                         name:property["Facility.name"],
                         value:property.detractor,
-                        color:'#d88d49'
+                        color:'#d8856b'
                     })
                 } 
                 count++;
