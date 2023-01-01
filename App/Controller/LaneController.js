@@ -193,11 +193,11 @@ exports.getLaneEmissionData=async(req,res) => {
                     } 
                     count++;
                 }
-                const data = {
-                    contributor:contributor,
-                    detractor:detractor
-                };
-              //  const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.intensity]);
+                // const data = {
+                //     contributor:contributor,
+                //     detractor:detractor
+                // };
+                const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200);
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
