@@ -89,8 +89,8 @@ exports.getFacilitiesEmissionData=async(req,res) => {
                     model: Facility,
                     attributes: ['name']
                 }],
-                group: ['region_id'],
-                limit : 10,
+                group: ['facilities_id'],
+                limit : 6,
                 raw: true
             });
             console.log('getFacilitiesEmissionData',getFacilitiesEmissionData);
