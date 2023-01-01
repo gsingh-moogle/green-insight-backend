@@ -47,9 +47,9 @@ exports.getVendorTableData=async(req,res) => {
         //check getVendorTableData is matched or not then exec
         if(getVendorTableData){
             for (const property of getVendorTableData) {
-                property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity >= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost >= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-                property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service >= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             }
             return Response.customSuccessResponseWithData(res,'Get Vendor Table Data',getVendorTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
