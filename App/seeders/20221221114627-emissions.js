@@ -20,7 +20,7 @@ module.exports = {
               cost:faker.datatype.number({ min: 0, max: 10, precision: 0.01 }),
               service:faker.datatype.number({ min: 0, max: 30, precision: 0.01 }),
               currency:'$',
-              date: faker.date.between('2017-01-01T00:00:00.000Z', '2023-12-01T00:00:00.000Z'),
+              date: faker.date.between('2017-01-01T00:00:00.000Z', '2022-12-01T00:00:00.000Z'),
               emission_toggle:1,
               detractor:faker.datatype.number({ min: 1, max: 3}),
               contributor:faker.datatype.number({ min: 1, max: 3 }),
