@@ -9,6 +9,7 @@ const Lane =require("../models").Lane;
 const Company =require("../models").Company;
 const CompanyData =require("../models").CompanyData;
 const EmissionReduction =require("../models").EmissionReduction;
+const EmissionIntensity =require("../models").EmissionIntensity;
 const Response=require("../helper/api-response");
 
 
@@ -560,7 +561,8 @@ exports.getRegionIntensityByYear=async(req,res) => {
             let {region_id, company_id, year}=req.body;
             let current_year = parseInt(new Date().getFullYear()-1);
             let past_year = new Date().getFullYear()-2;
-            const where = {emission_type:'region'}
+           // const where = {emission_type:'region'}
+            const where = {}
             if (region_id || company_id || year) {
                 where[Op.and] = []
                 where[Op.or] = []
@@ -577,34 +579,37 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 if (year) {
                     current_year = parseInt(year);
                     past_year = year-1;
-                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), past_year)
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year)
                     )
-                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year)
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year)
                     )
                     
                 }
             } else {
                 where[Op.and] = []
                 where[Op.or] = []
-                where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), past_year)
+                where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year)
                     )
-                where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year)
+                where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year)
                     )
             }
 
-            
-            let getRegionEmissions = await Emission.findAll({
+
+            //NEW STATIC DATA CODE
+            let getRegionEmissions = await EmissionIntensity.findAll({
                 attributes: ['id',
-                [ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year']],
+                [ 'emission_intensity','contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year']],
                 where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']
                     }],
-                    group: [sequelize.fn('YEAR', sequelize.col('date'))],
+                    group: [sequelize.fn('YEAR', sequelize.col('year'))],
                     raw: true
                 });
                 console.log('getRegionEmissions',getRegionEmissions);
+
+                
             //check password is matched or not then exec
             if(getRegionEmissions){
                 let data = [];
@@ -626,6 +631,45 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
+            //NEW STATIC DATA CODE END
+
+
+            //OLD CODE START
+            // let getRegionEmissions = await Emission.findAll({
+            //     attributes: ['id',
+            //     [ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year']],
+            //     where:where, include: [
+            //         {
+            //             model: Region,
+            //             attributes: ['name']
+            //         }],
+            //         group: [sequelize.fn('YEAR', sequelize.col('date'))],
+            //         raw: true
+            //     });
+            //     console.log('getRegionEmissions',getRegionEmissions);
+
+                
+            // //check password is matched or not then exec
+            // if(getRegionEmissions){
+            //     let data = [];
+            //     let contributor = getRegionEmissions[0]['contributor'];
+            //     let detractor = getRegionEmissions.map(a => a.detractor);
+            //     let baseData = [];
+            //     for(const property of getRegionEmissions) {
+            //         baseData.push(property.contributor);
+            //     }
+            //     let min = Math.min(...baseData);
+            //     let max = Math.max(...baseData);
+            //     let industrialAverage = min*(20/100);
+            //     let baseLine = max*(20/100);
+            //     data.push({
+            //         dataset:getRegionEmissions,
+            //         label:[past_year,current_year],
+            //         industrialAverage: min-industrialAverage,
+            //         baseLine:max+baseLine
+            //     })
+            //     return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            // } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }

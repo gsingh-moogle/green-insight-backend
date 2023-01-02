@@ -19,8 +19,14 @@ module.exports = (sequelize, DataTypes) => {
     emission_intensity: DataTypes.FLOAT
   }, {
     sequelize,
-    modelName: 'emission_intensity',
+    modelName: 'EmissionIntensity',
     tableName: 'emission_intensities'
   });
+
+  EmissionIntensity.associate = function(models) {
+    EmissionIntensity.belongsTo(models.Region, {
+      foreignKey: 'region_id'
+    });
+  };
   return EmissionIntensity;
 };
