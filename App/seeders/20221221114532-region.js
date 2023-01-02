@@ -5,10 +5,11 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     let data = [];
     let arrayValues = ['region','facilities','vendor','lane'];
+    let regionName = ['Pacific','Southwest','South','Midwest','Mountains','Northeast'];
       for (let i = 0; i < 6; i++) {
           data.push({
               user_id: faker.datatype.number({ min: 1, max: 100 }),
-              name: faker.address.cityName(),
+              name: regionName[i],
               latitude:faker.address.latitude(),
               longitude:faker.address.longitude(),
               location:faker.address.county(),

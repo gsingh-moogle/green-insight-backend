@@ -8,6 +8,7 @@ const Vendor =require("../models").Vendor;
 const Lane =require("../models").Lane;
 const Company =require("../models").Company;
 const CompanyData =require("../models").CompanyData;
+const EmissionReduction =require("../models").EmissionReduction;
 const Response=require("../helper/api-response");
 
 
@@ -584,6 +585,56 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+exports.getRegionEmissionReduction=async(req,res) => {
+    try {
+        //console.log(type,email,password);return 
+        let {region_id}=req.body;
+        const where = {}
+        if (region_id) {
+            where[Op.and] = []
+            if (region_id) {
+                where[Op.and].push({
+                    region_id: region_id
+                })
+            }
+        }
+        let getRegionEmissionsReduction = await EmissionReduction.findAll({
+            attributes: ['type', ['quater1','Q1'], ['quater2','Q2'],['quater3','Q3'],['quater4','Q4'],'now'],
+            where:where});
+        //check password is matched or not then exec
+        if(getRegionEmissionsReduction){
+            // let contributor = getRegionEmissions.map(a => a.contributor);
+            // let detractor = getRegionEmissions.map(a => a.detractor);
+            // let min = Math.min(...contributor);
+            // let max = Math.max(...detractor);
+            // let data ={
+            //     title : 'Lane Emmision',
+            //     type : 'Horizontal Bar Chart',
+            //     min:min,
+            //     max:max,
+            //     dataset:[
+            //         {
+            //           label: 'Contributor',
+            //           data: contributor,
+            //           borderColor: '#5888d6',
+            //           backgroundColor: '#f7faf9',
+            //         },
+            //         {
+            //           label: 'Detractor',
+            //           data: detractor,
+            //           borderColor: '#2fa18c',
+            //           backgroundColor: '#f7faf9',
+            //         }
+            //       ]
+                
+            // }
+            return Response.customSuccessResponseWithData(res,'Emissions Reduction',getRegionEmissionsReduction,200)
+        } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
