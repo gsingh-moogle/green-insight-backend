@@ -96,29 +96,37 @@ exports.getVendorEmissionData=async(req,res) => {
             //check password is matched or not then exec
             if(getVendorEmissionData){
                 let data = [];
-           //     const colors = ['#D88D49','#EFEDE9','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#215254','#215154','#215254'];
-                const colors = ['#d8856b','#d8856b','#d8856b','#d8856b','#dcdcdc','#dcdcdc','#215154','#215154','#215154','#215154'];
-                let i =0;
-                for (const property of getVendorEmissionData) {
-                    if(property['Vendor.name'] == 'Ames') {
-                        data.push({
-                            x:(property.intensity/20),
-                            y:(property.service/20),
-                            z:(property.gap_to_target/30),
-                            name:property['Vendor.name'],
-                            color: colors[i]
-                        })
-                    } else {
-                        data.push({
-                            x:(property.intensity/10),
-                            y:(property.service/10),
-                            z:(property.gap_to_target/10),
-                            name:property['Vendor.name'],
-                            color: colors[i]
-                        })
-                    }
+                if (region_id || year || quarter) {
+                   
                     
-                    i++;
+            //     const colors = ['#D88D49','#EFEDE9','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#215254','#215154','#215254'];
+                    const colors = ['#d8856b','#d8856b','#d8856b','#d8856b','#dcdcdc','#dcdcdc','#215154','#215154','#215154','#215154'];
+                    let i =0;
+                    for (const property of getVendorEmissionData) {
+
+                            data.push({
+                                x:(property.intensity/10),
+                                y:(property.service/10),
+                                z:(property.gap_to_target/10),
+                                name:property['Vendor.name'],
+                                color: colors[i]
+                            })
+                    
+                        
+                        i++;
+                    }
+                } else {
+                    data = [
+                        { x: 42, y: 35, z: 28.5, name:"Ascend",color: '#d8856b'},
+                        { x: 50, y: 45, z: 28.5, name:"Marten Transport",color: '#dcdcdc'},
+                        { x: 55, y: 55, z: 22.5, name:"Cowan Systems",color: '#215154'},
+                        { x: 65, y: 60, z: 22.5, name:"USA Truck",color: '#215154'},
+                        { x: 70, y: 50, z: 22.5, name:"C.R England",color: '#215154'},
+                        { x: 70, y: 70, z: 25.5, name:"Western Express",color: '#215154'},
+                        { x: 60, y: 70, z: 35.5, name:"Dart Transport Co",color: '#215154'},
+                        { x: 45, y: 45, z: 28.5, name:"Evan Delivery",color: '#dcdcdc'},
+                        { x: 35, y: 35, z: 31.3, name: 'R&R Express',color: '#d8856b'}
+                      ];
                 }
                // const data = getFacilitiesEmissionData.map((item) => [item["Vendor.name"],item.intensity]);
                 return Response.customSuccessResponseWithData(res,'Vendor Emissions',data,200);
