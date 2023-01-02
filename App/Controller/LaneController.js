@@ -5,6 +5,7 @@ const Emission =require("../models").Emission;
 const Region =require("../models").Region;
 const Lane =require("../models").Lane;
 const Vendor =require("../models").Vendor;
+const LaneEmissionStatic =require("../models").LaneEmissionStatic;
 const Response=require("../helper/api-response");
 
 
@@ -141,7 +142,8 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
 exports.getLaneEmissionData=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-        const where = {emission_type:'lane'}
+      //  const where = {emission_type:'lane'}
+        const where = {}
         if (region_id || year || quarter) {
             where[Op.and] = []
             if (region_id) {
@@ -158,16 +160,18 @@ exports.getLaneEmissionData=async(req,res) => {
                 )
             }
         }
-            //console.log(type,email,password);return 
-            let getLaneEmissionData = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+
+            //NEW CODE
+            let getLaneEmissionData = await LaneEmissionStatic.findAll({
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
                 where:where, include: [
                     {
                         model: Lane,
                         attributes: ['name']
                     }],
                     group: [`lane_id`],
-                    limit : 6,
+                    limit : 8,
+                    order:[['contributor','desc']],
                     raw: true
                 });
               //  console.log('getRegionEmissions',getRegionEmissions);
@@ -178,20 +182,49 @@ exports.getLaneEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 for (const property of getLaneEmissionData) {
-                    if(count < (getLaneEmissionData.length/2)){
+                    // if(count < (getLaneEmissionData.length/2)){
+                    //     contributor.push({
+                    //         name:property["Lane.name"],
+                    //         value:property.contributor,
+                    //         color:'#d8856b'
+                    //     })
+                    // } else {
+                    //     detractor.push({
+                    //         name:property["Lane.name"],
+                    //         value:property.detractor,
+                    //         color:'#215154'
+                    //     })
+                    // } 
+                    // count++;
+
+                    if(property.contributor> 40){
                         contributor.push({
                             name:property["Lane.name"],
                             value:property.contributor,
                             color:'#d8856b'
                         })
+                    } else if(property.contributor <= 40 && property.contributor >= 32){
+                        if(count == 0) {
+                            contributor.push({
+                                name:property["Lane.name"],
+                                value:property.contributor,
+                                color:'#efede9'
+                            });
+                            count++;
+                        } else if (count == 1) {
+                            detractor.push({
+                                name:property["Lane.name"],
+                                value:property.contributor,
+                                color:'#efede9'
+                            })
+                        }
                     } else {
                         detractor.push({
                             name:property["Lane.name"],
-                            value:property.detractor,
+                            value:property.contributor,
                             color:'#215154'
                         })
                     } 
-                    count++;
                 }
                 const data = {
                     contributor:contributor,
@@ -200,6 +233,49 @@ exports.getLaneEmissionData=async(req,res) => {
                // const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200);
             } else { return Response.errorRespose(res,'No Record Found!');}
+
+            //OLD CODE
+            // let getLaneEmissionData = await Emission.findAll({
+            //     attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+            //     where:where, include: [
+            //         {
+            //             model: Lane,
+            //             attributes: ['name']
+            //         }],
+            //         group: [`lane_id`],
+            //         limit : 6,
+            //         raw: true
+            //     });
+            //   //  console.log('getRegionEmissions',getRegionEmissions);
+            // //check password is matched or not then exec
+            // if(getLaneEmissionData){
+
+            //     let count = 0;
+            //     let contributor = [];
+            //     let detractor = [];
+            //     for (const property of getLaneEmissionData) {
+            //         if(count < (getLaneEmissionData.length/2)){
+            //             contributor.push({
+            //                 name:property["Lane.name"],
+            //                 value:property.contributor,
+            //                 color:'#d8856b'
+            //             })
+            //         } else {
+            //             detractor.push({
+            //                 name:property["Lane.name"],
+            //                 value:property.detractor,
+            //                 color:'#215154'
+            //             })
+            //         } 
+            //         count++;
+            //     }
+            //     const data = {
+            //         contributor:contributor,
+            //         detractor:detractor
+            //     };
+            //    // const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.contributor]);
+            //     return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200);
+            // } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }

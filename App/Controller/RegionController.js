@@ -3,6 +3,7 @@ const Op = sequelize.Op;
 const User = require("../models").User;
 const Emission =require("../models").Emission;
 const Region =require("../models").Region;
+const RegionByStatic =require("../models").RegionByStatic;
 const Facility =require("../models").Facility;
 const Vendor =require("../models").Vendor;
 const Lane =require("../models").Lane;
@@ -11,6 +12,7 @@ const CompanyData =require("../models").CompanyData;
 const EmissionReduction =require("../models").EmissionReduction;
 const EmissionIntensity =require("../models").EmissionIntensity;
 const EmissionRegionStatic =require("../models").EmissionRegionStatic;
+const RegionEmissionStatic =require("../models").RegionEmissionStatic;
 const Response=require("../helper/api-response");
 
 
@@ -601,7 +603,8 @@ exports.getRegionTableData=async(req,res) => {
 exports.getRegionEmissionData=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-        const where = {emission_type:'region'}
+      //  const where = {emission_type:'region'}
+        const where = {}
         if (region_id || year || quarter) {
             where[Op.and] = []
             if (region_id) {
@@ -618,16 +621,19 @@ exports.getRegionEmissionData=async(req,res) => {
                 )
             }
         }
+
+            //NEW CODE
             //console.log(type,email,password);return 
-            let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+            let getRegionEmissions = await RegionEmissionStatic.findAll({
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
                 where:where, include: [
                     {
-                        model: Region,
-                        attributes: ['name']
+                        model: RegionByStatic,
+                        attributes: ['region_name']
                     }],
-                    group: ['region_id'],
-                    limit : 10,
+                    group: ['region_by'],
+                    limit : 8,
+                    order:[['contributor','desc']],
                     raw: true
                 });
               //  console.log('getRegionEmissions',getRegionEmissions);
@@ -637,20 +643,34 @@ exports.getRegionEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 for (const property of getRegionEmissions) {
-                    if(count < (getRegionEmissions.length/2)){
+                    if(property.contributor> 50){
                         contributor.push({
-                            name:property["Region.name"],
+                            name:property["RegionByStatic.region_name"],
                             value:property.contributor,
                             color:'#d8856b'
                         })
+                    } else if(property.contributor <= 50 && property.contributor >= 40){
+                        if(count == 0) {
+                            contributor.push({
+                                name:property["RegionByStatic.region_name"],
+                                value:property.contributor,
+                                color:'#efede9'
+                            });
+                            count++;
+                        } else if (count == 1) {
+                            detractor.push({
+                                name:property["RegionByStatic.region_name"],
+                                value:property.contributor,
+                                color:'#efede9'
+                            })
+                        }
                     } else {
                         detractor.push({
-                            name:property["Region.name"],
-                            value:property.detractor,
+                            name:property["RegionByStatic.region_name"],
+                            value:property.contributor,
                             color:'#215154'
                         })
                     } 
-                    count++;
                 }
                 const data = {
                     contributor:contributor,
@@ -659,6 +679,48 @@ exports.getRegionEmissionData=async(req,res) => {
                 //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
+            //OLD Code
+            // //console.log(type,email,password);return 
+            // let getRegionEmissions = await Emission.findAll({
+            //     attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+            //     where:where, include: [
+            //         {
+            //             model: Region,
+            //             attributes: ['name']
+            //         }],
+            //         group: ['region_id'],
+            //         limit : 10,
+            //         raw: true
+            //     });
+            //   //  console.log('getRegionEmissions',getRegionEmissions);
+            // //check password is matched or not then exec
+            // if(getRegionEmissions){
+            //     let count = 0;
+            //     let contributor = [];
+            //     let detractor = [];
+            //     for (const property of getRegionEmissions) {
+            //         if(count < (getRegionEmissions.length/2)){
+            //             contributor.push({
+            //                 name:property["Region.name"],
+            //                 value:property.contributor,
+            //                 color:'#d8856b'
+            //             })
+            //         } else {
+            //             detractor.push({
+            //                 name:property["Region.name"],
+            //                 value:property.detractor,
+            //                 color:'#215154'
+            //             })
+            //         } 
+            //         count++;
+            //     }
+            //     const data = {
+            //         contributor:contributor,
+            //         detractor:detractor
+            //     };
+            //     //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
+            //     return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            // } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }

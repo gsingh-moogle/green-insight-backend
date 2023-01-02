@@ -5,10 +5,11 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     let data = [];
     let arrayValues = ['region','facilities','vendor','lane'];
+    let vendorValues = ['Dart Transit Co','Western Express','Cowan System','USA Truck','Marten Transport','Arthur Express','Ascend','P&R Express',faker.address.cityName(),faker.address.cityName()];
       for (let i = 0; i < 10; i++) {
           data.push({
               user_id: faker.datatype.number({ min: 1, max: 100 }),
-              name: faker.address.cityName(),
+              name: vendorValues[i],
               region_id: faker.datatype.number({ min: 1, max: 6 }),
               facilities_id: faker.datatype.number({ min: 1, max: 10 }),
               latitude:faker.address.latitude(),

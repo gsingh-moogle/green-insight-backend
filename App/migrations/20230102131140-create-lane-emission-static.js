@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('vendor_emission_statics', {
+    await queryInterface.createTable('lane_emission_statics', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,24 +10,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       region_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'regions',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
+        type: Sequelize.INTEGER
       },
-      vendor_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'vendors',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
+      lane_id: {
+        type: Sequelize.INTEGER
       },
       date: {
         type: Sequelize.DATE
@@ -46,6 +32,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('vendor_emission_statics');
+    await queryInterface.dropTable('lane_emission_statics');
   }
 };

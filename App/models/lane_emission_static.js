@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class VendorEmissionStatic extends Model {
+  class LaneEmissionStatic extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,23 +13,24 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  VendorEmissionStatic.init({
+  LaneEmissionStatic.init({
     region_id: DataTypes.INTEGER,
-    vendor_id: DataTypes.INTEGER,
+    lane_id: DataTypes.INTEGER,
     date: DataTypes.DATE,
     contributor: DataTypes.FLOAT
   }, {
     sequelize,
-    modelName: 'VendorEmissionStatic',
-    tableName: 'vendor_emission_statics',
+    modelName: 'LaneEmissionStatic',
+    tableName:'lane_emission_statics',
   });
-  VendorEmissionStatic.associate = function(models) {
-    VendorEmissionStatic.belongsTo(models.Region, {
+
+  LaneEmissionStatic.associate = function(models) {
+    LaneEmissionStatic.belongsTo(models.Region, {
       foreignKey: 'region_id'
     });
-    VendorEmissionStatic.belongsTo(models.Facility, {
-      foreignKey: 'vendor_id'
+    LaneEmissionStatic.belongsTo(models.Lane, {
+      foreignKey: 'lane_id'
     });
   };
-  return VendorEmissionStatic;
+  return LaneEmissionStatic;
 };
