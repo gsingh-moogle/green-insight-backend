@@ -118,13 +118,13 @@ exports.getVendorEmissionData=async(req,res) => {
                 } else {
                     data = [
                         { x: 42, y: 35, z: 28.5, name:"Ascend",color: '#d8856b'},
-                        { x: 50, y: 45, z: 28.5, name:"Marten Transport",color: '#dcdcdc'},
+                        { x: 50, y: 45, z: 30.5, name:"Marten Transport",color: '#dcdcdc'},
                         { x: 55, y: 55, z: 27.5, name:"Cowan Systems",color: '#215154'},
                         { x: 65, y: 60, z: 28.5, name:"USA Truck",color: '#215154'},
                         { x: 70, y: 50, z: 26.5, name:"C.R England",color: '#215154'},
-                        { x: 70, y: 70, z: 25.5, name:"Western Express",color: '#215154'},
+                        { x: 70, y: 70, z: 28.5, name:"Western Express",color: '#215154'},
                         { x: 60, y: 70, z: 35.5, name:"Dart Transport Co",color: '#215154'},
-                        { x: 45, y: 45, z: 28.5, name:"Evan Delivery",color: '#dcdcdc'},
+                        { x: 45, y: 45, z: 29.5, name:"Evan Delivery",color: '#dcdcdc'},
                         { x: 35, y: 35, z: 31.3, name: 'R&R Express',color: '#d8856b'}
                       ];
                 }
