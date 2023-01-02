@@ -46,9 +46,9 @@ exports.getFacilitiesTableData=async(req,res) => {
         //check password is matched or not then exec
         if(getFacilitiesTableData){
             for (const property of getFacilitiesTableData) {
-                property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-                property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             }
             return Response.customSuccessResponseWithData(res,'Get Facilities Table Data',getFacilitiesTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
@@ -77,24 +77,51 @@ exports.getFacilitiesEmissionData=async(req,res) => {
                 )
             }
         }
-            //console.log(type,email,password);return 
-            let getFacilitiesEmissionData = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity']],
-                where:where, include: [
-                    {
-                        model: Facility,
-                        attributes: ['name']
-                    }],
-                    group: ['facilities_id'],
-                    limit : 10,
-                    raw: true
-                });
-              //  console.log('getRegionEmissions',getRegionEmissions);
-            //check password is matched or not then exec
-            if(getFacilitiesEmissionData){
-                const data = getFacilitiesEmissionData.map((item) => [item["Facility.name"],item.intensity]);
-                return Response.customSuccessResponseWithData(res,'Facilities Emissions',data,200);
-            } else { return Response.errorRespose(res,'No Record Found!');}
+
+
+
+
+        //console.log(type,email,password);return 
+        let getFacilitiesEmissionData = await Emission.findAll({
+            attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+            where:where, include: [
+                {
+                    model: Facility,
+                    attributes: ['name']
+                }],
+                group: ['facilities_id'],
+                limit : 6,
+                raw: true
+            });
+            console.log('getFacilitiesEmissionData',getFacilitiesEmissionData);
+        //check password is matched or not then exec
+        if(getFacilitiesEmissionData){
+            let count = 0;
+            let contributor = [];
+            let detractor = [];
+            for (const property of getFacilitiesEmissionData) {
+                if(count < (getFacilitiesEmissionData.length/2)){
+                    contributor.push({
+                        name:property["Facility.name"],
+                        value:property.contributor,
+                        color:'#d8856b'
+                    })
+                } else {
+                    detractor.push({
+                        name:property["Facility.name"],
+                        value:property.detractor,
+                        color:'#215154'
+                    })
+                } 
+                count++;
+            }
+            const data = {
+                contributor:contributor,
+                detractor:detractor
+            };
+          //  const data = getFacilitiesEmissionData.map((item) => [item["Facility.name"],item.contributor]);
+            return Response.customSuccessResponseWithData(res,'Facilities Emissions',data,200);
+        } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }

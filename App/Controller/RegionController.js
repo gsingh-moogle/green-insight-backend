@@ -218,13 +218,18 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let dataObject = [];
                 let minArray = [];
                 let maxArray = [];
+                let allDataArray = [];
+                let maxCountArray = [];
                 let targetLevel = [];
-                const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80']
+              //  const colors = ['#215154','#5F9A80','#D88D49','#C1D3C0','#367C90','#FFCB77','#215154','#5F9A80','#D88D49','#C1D3C0']
+             //   const colors = ['#FFCB77','#367C90','#C1D3C0','#D88D49','#5F9A80','#215154','#FFCB77','#367C90','#C1D3C0','#D88D49']
+              //  const colors = ['#215154','#5f9a80','#d8856b','#c1d3c0','#367c90','#ffcb77','#215154','#5f9a80','#d8856b','#c1d3c0']
+                const colors = ['#ffcb77','#367c90','#c1d3c0','#d8856b','#5f9a80','#215154','#ffcb77','#367c90','#c1d3c0','#d8856b']
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
                 console.log('labels', lables);
                 console.log('regions', regions);
-                
+                console.log('getRegionEmissions', getRegionEmissions);
                 for (let i = 0; i < regions.length; i++) {
                     let tempDataObject = {};
                     let tempArray = [];
@@ -239,18 +244,28 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             }
                         }  
                     }
-                    let min = Math.min(...tempArray);
-
-                    let max = Math.max(...tempArray);
-                    let target = max-(max*(10/100));
-                    minArray.push(min);
-                    maxArray.push(max);
-                    targetLevel.push(target);
+                    allDataArray.push(tempArray);
+                //    maxCountArray.push(0);
                     tempDataObject.data = tempArray;
                     tempDataObject.color = colors[i];
                     dataObject.push(tempDataObject);
                 }
+              //  maxCountArray.push(0);
+                
+                for (let i = 0; i < allDataArray.length; i++) {
 
+                   for (let j = 0; j < allDataArray[i].length; j++) {
+                        if(maxCountArray[j] === undefined) {
+                            maxCountArray[j] = allDataArray[i][j];
+                        } else {
+                            maxCountArray[j] += allDataArray[i][j];
+                        }
+                   }
+                }
+
+                for (let i = 0; i < maxCountArray.length; i++) {
+                    targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(20/100)));
+                 }
                 // for (var key in getCompanyData) {
                 //     let tmpData = [];
                 //     let tmpDataObject = {};
@@ -265,13 +280,12 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 //     dataObject.push(tmpDataObject);
                 // };
 
-                let base = Math.max(...maxArray);
-
-                let baseLine = base+(base*(20/100));
+                let base = Math.max(...maxCountArray);
+                let baseLine = base+(base*(15/100));
                     
                 dataObject.push({
                     name:'company_level',
-                    data:maxArray,
+                    data:maxCountArray,
                 });
                 dataObject.push({
                     name:'target_level',
@@ -316,13 +330,13 @@ exports.getFacilityEmissions=async(req,res) => {
                     {
                       label: 'Contributor',
                       data: contributor,
-                      borderColor: '#5888d6',
+                      borderColor: '#215154',
                       backgroundColor: '#f7faf9',
                     },
                     {
                       label: 'Detractor',
                       data: detractor,
-                      borderColor: '#2fa18c',
+                      borderColor: '#d8856b',
                       backgroundColor: '#f7faf9',
                     }
                   ]
@@ -464,9 +478,9 @@ exports.getRegionTableData=async(req,res) => {
         //check password is matched or not then exec
         if(getRegionTableData){
             for (const property of getRegionTableData) {
-                property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-                property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             }
             return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
@@ -497,7 +511,7 @@ exports.getRegionEmissionData=async(req,res) => {
         }
             //console.log(type,email,password);return 
             let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity']],
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
                 where:where, include: [
                     {
                         model: Region,
@@ -510,7 +524,30 @@ exports.getRegionEmissionData=async(req,res) => {
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
-                const data = getRegionEmissions.map((item) => [item["Region.name"],item.intensity]);
+                let count = 0;
+                let contributor = [];
+                let detractor = [];
+                for (const property of getRegionEmissions) {
+                    if(count < (getRegionEmissions.length/2)){
+                        contributor.push({
+                            name:property["Region.name"],
+                            value:property.contributor,
+                            color:'#d8856b'
+                        })
+                    } else {
+                        detractor.push({
+                            name:property["Region.name"],
+                            value:property.detractor,
+                            color:'#215154'
+                        })
+                    } 
+                    count++;
+                }
+                const data = {
+                    contributor:contributor,
+                    detractor:detractor
+                };
+                //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -521,8 +558,8 @@ exports.getRegionEmissionData=async(req,res) => {
 exports.getRegionIntensityByYear=async(req,res) => {
     try {
             let {region_id, company_id, year}=req.body;
-            let current_year = parseInt(new Date().getFullYear());
-            let past_year = new Date().getFullYear()-1;
+            let current_year = parseInt(new Date().getFullYear()-1);
+            let past_year = new Date().getFullYear()-2;
             const where = {emission_type:'region'}
             if (region_id || company_id || year) {
                 where[Op.and] = []
@@ -573,8 +610,12 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let data = [];
                 let contributor = getRegionEmissions[0]['contributor'];
                 let detractor = getRegionEmissions.map(a => a.detractor);
-                let min = Math.min(getRegionEmissions[0]['contributor'],getRegionEmissions[1]['contributor']);
-                let max = Math.max(getRegionEmissions[0]['contributor'],getRegionEmissions[1]['contributor']);
+                let baseData = [];
+                for(const property of getRegionEmissions) {
+                    baseData.push(property.contributor);
+                }
+                let min = Math.min(...baseData);
+                let max = Math.max(...baseData);
                 let industrialAverage = min*(20/100);
                 let baseLine = max*(20/100);
                 data.push({

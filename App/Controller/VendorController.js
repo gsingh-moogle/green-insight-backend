@@ -47,9 +47,9 @@ exports.getVendorTableData=async(req,res) => {
         //check getVendorTableData is matched or not then exec
         if(getVendorTableData){
             for (const property of getVendorTableData) {
-                property['intensity'] = (property.intensity <= 500)?{value:property.intensity,color:'#D88D49'}:(property.intensity > 500 && property.intensity >= 700)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                property['cost'] = (property.cost <= 5000)?{value:property.cost,color:'#D88D49'}:(property.cost > 5000 && property.cost >= 7000)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-                property['service'] = (property.service <= 500)?{value:property.service,color:'#D88D49'}:(property.service > 500 && property.service >= 700)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             }
             return Response.customSuccessResponseWithData(res,'Get Vendor Table Data',getVendorTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
@@ -96,7 +96,8 @@ exports.getVendorEmissionData=async(req,res) => {
             //check password is matched or not then exec
             if(getVendorEmissionData){
                 let data = [];
-                const colors = ['#FFCB77','#367C90','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#367C90','#215154','#5F9A80'];
+           //     const colors = ['#D88D49','#EFEDE9','#215154','#5F9A80','#D88D49','#215154','#FFCB77','#215254','#215154','#215254'];
+                const colors = ['#d8856b','#d8856b','#d8856b','#d8856b','#dcdcdc','#dcdcdc','#215154','#215154','#215154','#215154'];
                 let i =0;
                 for (const property of getVendorEmissionData) {
                     data.push({
