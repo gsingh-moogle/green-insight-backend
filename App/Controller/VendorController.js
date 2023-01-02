@@ -100,13 +100,24 @@ exports.getVendorEmissionData=async(req,res) => {
                 const colors = ['#d8856b','#d8856b','#d8856b','#d8856b','#dcdcdc','#dcdcdc','#215154','#215154','#215154','#215154'];
                 let i =0;
                 for (const property of getVendorEmissionData) {
-                    data.push({
-                        x:(property.intensity/5),
-                        y:(property.service/5),
-                        z:(property.gap_to_target/30),
-                        name:property['Vendor.name'],
-                        color: colors[i]
-                    })
+                    if(property['Vendor.name'] == 'Ames') {
+                        data.push({
+                            x:(property.intensity/20),
+                            y:(property.service/20),
+                            z:(property.gap_to_target/30),
+                            name:property['Vendor.name'],
+                            color: colors[i]
+                        })
+                    } else {
+                        data.push({
+                            x:(property.intensity/10),
+                            y:(property.service/10),
+                            z:(property.gap_to_target/10),
+                            name:property['Vendor.name'],
+                            color: colors[i]
+                        })
+                    }
+                    
                     i++;
                 }
                // const data = getFacilitiesEmissionData.map((item) => [item["Vendor.name"],item.intensity]);
