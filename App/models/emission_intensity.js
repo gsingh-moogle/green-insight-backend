@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   EmissionIntensity.init({
     region_id: DataTypes.INTEGER,
     year: DataTypes.DATE,
-    emission_intensity: DataTypes.FLOAT
+    emission_intensity: DataTypes.DECIMAL(10,1)
   }, {
     sequelize,
     modelName: 'EmissionIntensity',

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   EmissionRegionStatic.init({
     region_id: DataTypes.INTEGER,
     date: DataTypes.DATE,
-    intensity: DataTypes.INTEGER
+    intensity: DataTypes.DECIMAL(10,1)
   }, {
     sequelize,
     modelName: 'EmissionRegionStatic',

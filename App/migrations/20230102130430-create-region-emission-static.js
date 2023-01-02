@@ -26,7 +26,7 @@ module.exports = {
         type: Sequelize.DATE
       },
       contributor: {
-        type: Sequelize.FLOAT
+        type: Sequelize.DECIMAL(10,1)
       },
       createdAt: {
         allowNull: false,

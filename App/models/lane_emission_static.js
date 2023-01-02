@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     region_id: DataTypes.INTEGER,
     lane_id: DataTypes.INTEGER,
     date: DataTypes.DATE,
-    contributor: DataTypes.FLOAT
+    contributor: DataTypes.DECIMAL(10,1)
   }, {
     sequelize,
     modelName: 'LaneEmissionStatic',

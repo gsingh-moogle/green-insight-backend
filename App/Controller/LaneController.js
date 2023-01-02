@@ -197,13 +197,13 @@ exports.getLaneEmissionData=async(req,res) => {
                     // } 
                     // count++;
 
-                    if(property.contributor> 40){
+                    if(property.contributor> 36){
                         contributor.push({
                             name:property["Lane.name"],
                             value:property.contributor,
                             color:'#d8856b'
                         })
-                    } else if(property.contributor <= 40 && property.contributor >= 32){
+                    } else if(property.contributor <= 36 && property.contributor >= 35){
                         if(count == 0) {
                             contributor.push({
                                 name:property["Lane.name"],

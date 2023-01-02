@@ -100,13 +100,13 @@ exports.getFacilitiesEmissionData=async(req,res) => {
             let detractor = [];
             let count = 0;
             for (const property of getFacilitiesEmissionData) {
-                if(parseFloat(property.contributor)> 50){
+                if(parseFloat(property.contributor)> 45){
                     contributor.push({
                         name:property["Facility.name"],
                         value:parseFloat(property.contributor),
                         color:'#d8856b'
                     })
-                } else if(parseFloat(property.contributor) <= 50 && parseFloat(property.contributor) >= 40){
+                } else if(parseFloat(property.contributor) <= 45 && parseFloat(property.contributor) >= 40){
                     if(count == 0) {
                         contributor.push({
                             name:property["Facility.name"],

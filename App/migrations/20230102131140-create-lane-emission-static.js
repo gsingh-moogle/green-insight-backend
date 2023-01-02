@@ -10,16 +10,23 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       region_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'regions',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
       },
       lane_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       date: {
         type: Sequelize.DATE
       },
       contributor: {
-        type: Sequelize.FLOAT
+        type: Sequelize.DECIMAL(10,1)
       },
       createdAt: {
         allowNull: false,

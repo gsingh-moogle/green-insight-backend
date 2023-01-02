@@ -643,13 +643,13 @@ exports.getRegionEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 for (const property of getRegionEmissions) {
-                    if(property.contributor> 50){
+                    if(property.contributor> 48){
                         contributor.push({
                             name:property["RegionByStatic.region_name"],
                             value:property.contributor,
                             color:'#d8856b'
                         })
-                    } else if(property.contributor <= 50 && property.contributor >= 40){
+                    } else if(property.contributor <= 48 && property.contributor >= 46){
                         if(count == 0) {
                             contributor.push({
                                 name:property["RegionByStatic.region_name"],

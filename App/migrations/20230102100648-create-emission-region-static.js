@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.DATE
       },
       intensity: {
-        type: Sequelize.FLOAT
+        type: Sequelize.DECIMAL(10,1)
       },
       createdAt: {
         allowNull: false,
