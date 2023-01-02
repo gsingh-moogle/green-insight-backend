@@ -4,6 +4,7 @@ const User = require("../models").User;
 const Emission =require("../models").Emission;
 const Region =require("../models").Region;
 const Facility =require("../models").Facility;
+const VendorEmissionStatic =require("../models").VendorEmissionStatic;
 const Response=require("../helper/api-response");
 
 
@@ -60,7 +61,8 @@ exports.getFacilitiesTableData=async(req,res) => {
 exports.getFacilitiesEmissionData=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-        const where = {emission_type:'facilities'}
+       // const where = {emission_type:'facilities'}
+       const where = {}
         if (region_id || year || quarter) {
             where[Op.and] = []
             if (region_id) {
@@ -78,42 +80,54 @@ exports.getFacilitiesEmissionData=async(req,res) => {
             }
         }
 
-
-
-
-        //console.log(type,email,password);return 
-        let getFacilitiesEmissionData = await Emission.findAll({
-            attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+        //New Code
+        let getFacilitiesEmissionData = await VendorEmissionStatic.findAll({
+            attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
             where:where, include: [
                 {
                     model: Facility,
                     attributes: ['name']
                 }],
-                group: ['facilities_id'],
-                limit : 6,
+                group: ['vendor_id'],
+                limit : 8,
+                order:[['contributor','desc']],
                 raw: true
             });
             console.log('getFacilitiesEmissionData',getFacilitiesEmissionData);
         //check password is matched or not then exec
         if(getFacilitiesEmissionData){
-            let count = 0;
             let contributor = [];
             let detractor = [];
+            let count = 0;
             for (const property of getFacilitiesEmissionData) {
-                if(count < (getFacilitiesEmissionData.length/2)){
+                if(property.contributor> 50){
                     contributor.push({
                         name:property["Facility.name"],
                         value:property.contributor,
                         color:'#d8856b'
                     })
+                } else if(property.contributor <= 50 && property.contributor >= 40){
+                    if(count == 0) {
+                        contributor.push({
+                            name:property["Facility.name"],
+                            value:property.contributor,
+                            color:'#efede9'
+                        });
+                        count++;
+                    } else if (count == 1) {
+                        detractor.push({
+                            name:property["Facility.name"],
+                            value:property.contributor,
+                            color:'#efede9'
+                        })
+                    }
                 } else {
                     detractor.push({
                         name:property["Facility.name"],
-                        value:property.detractor,
+                        value:property.contributor,
                         color:'#215154'
                     })
                 } 
-                count++;
             }
             const data = {
                 contributor:contributor,
@@ -122,6 +136,49 @@ exports.getFacilitiesEmissionData=async(req,res) => {
           //  const data = getFacilitiesEmissionData.map((item) => [item["Facility.name"],item.contributor]);
             return Response.customSuccessResponseWithData(res,'Facilities Emissions',data,200);
         } else { return Response.errorRespose(res,'No Record Found!');}
+
+        // //OLD CODE
+        // let getFacilitiesEmissionData = await Emission.findAll({
+        //     attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+        //     where:where, include: [
+        //         {
+        //             model: Facility,
+        //             attributes: ['name']
+        //         }],
+        //         group: ['facilities_id'],
+        //         limit : 6,
+        //         order:['contributor'],
+        //         raw: true
+        //     });
+        //     console.log('getFacilitiesEmissionData',getFacilitiesEmissionData);
+        // //check password is matched or not then exec
+        // if(getFacilitiesEmissionData){
+        //     let count = 0;
+        //     let contributor = [];
+        //     let detractor = [];
+        //     for (const property of getFacilitiesEmissionData) {
+        //         if(count < (getFacilitiesEmissionData.length/2)){
+        //             contributor.push({
+        //                 name:property["Facility.name"],
+        //                 value:property.contributor,
+        //                 color:'#d8856b'
+        //             })
+        //         } else {
+        //             detractor.push({
+        //                 name:property["Facility.name"],
+        //                 value:property.contributor,
+        //                 color:'#215154'
+        //             })
+        //         } 
+        //         count++;
+        //     }
+        //     const data = {
+        //         contributor:contributor,
+        //         detractor:detractor
+        //     };
+        //   //  const data = getFacilitiesEmissionData.map((item) => [item["Facility.name"],item.contributor]);
+        //     return Response.customSuccessResponseWithData(res,'Facilities Emissions',data,200);
+        // } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
