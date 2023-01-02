@@ -10,6 +10,7 @@ const Company =require("../models").Company;
 const CompanyData =require("../models").CompanyData;
 const EmissionReduction =require("../models").EmissionReduction;
 const EmissionIntensity =require("../models").EmissionIntensity;
+const EmissionRegionStatic =require("../models").EmissionRegionStatic;
 const Response=require("../helper/api-response");
 
 
@@ -178,7 +179,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
     try {
             //console.log(type,email,password);return 
             let {region_id, company_id, year}=req.body;
-            const where = {emission_type:'region'}
+            //const where = {emission_type:'region'}
+            const where = {}
             if (region_id || company_id || year) {
                 where[Op.and] = []
                 if (region_id) {
@@ -196,8 +198,10 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     )
                 }
             }
-            let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity'],
+
+            //New Code Start
+            let getRegionEmissions = await EmissionRegionStatic.findAll({
+                attributes: ['id','intensity',
                 [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                 'region_id'],
                 where:where, include: [
@@ -298,6 +302,110 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 });
                 return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
+            //New Code End
+            //OLD code Start
+            // let getRegionEmissions = await Emission.findAll({
+            //     attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'intensity'],
+            //     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
+            //     'region_id'],
+            //     where:where, include: [
+            //         {
+            //             model: Region,
+            //             attributes: ['name']
+            //         }],
+            //     group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
+            //     raw: true
+            // });
+
+            // let getCompanyData = await CompanyData.findOne({
+            //     attributes: ['target_level','base_level'],
+            //     where:{company_id:1},
+            //     raw: true
+            // });
+            //     console.log('getCompanyData',getCompanyData);
+            // if(getRegionEmissions){
+            //     let dataObject = [];
+            //     let minArray = [];
+            //     let maxArray = [];
+            //     let allDataArray = [];
+            //     let maxCountArray = [];
+            //     let targetLevel = [];
+            //   //  const colors = ['#215154','#5F9A80','#D88D49','#C1D3C0','#367C90','#FFCB77','#215154','#5F9A80','#D88D49','#C1D3C0']
+            //  //   const colors = ['#FFCB77','#367C90','#C1D3C0','#D88D49','#5F9A80','#215154','#FFCB77','#367C90','#C1D3C0','#D88D49']
+            //   //  const colors = ['#215154','#5f9a80','#d8856b','#c1d3c0','#367c90','#ffcb77','#215154','#5f9a80','#d8856b','#c1d3c0']
+            //     const colors = ['#ffcb77','#367c90','#c1d3c0','#d8856b','#5f9a80','#215154','#ffcb77','#367c90','#c1d3c0','#d8856b']
+            //     const lables = [...new Set(getRegionEmissions.map(item => item.year))]
+            //     const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
+            //     console.log('labels', lables);
+            //     console.log('regions', regions);
+            //     console.log('getRegionEmissions', getRegionEmissions);
+            //     for (let i = 0; i < regions.length; i++) {
+            //         let tempDataObject = {};
+            //         let tempArray = [];
+            //         for (const property of getRegionEmissions) {
+            //             if(property['Region.name'] == regions[i]) {
+            //                 tempArray.push(property.intensity);
+            //                 if(tempDataObject["name"] === undefined){
+            //                     tempDataObject.name = property['Region.name'];
+            //                 }
+            //                 if(tempDataObject["year"] === undefined){
+            //                     tempDataObject.year = property.year;
+            //                 }
+            //             }  
+            //         }
+            //         allDataArray.push(tempArray);
+            //     //    maxCountArray.push(0);
+            //         tempDataObject.data = tempArray;
+            //         tempDataObject.color = colors[i];
+            //         dataObject.push(tempDataObject);
+            //     }
+            //   //  maxCountArray.push(0);
+                
+            //     for (let i = 0; i < allDataArray.length; i++) {
+
+            //        for (let j = 0; j < allDataArray[i].length; j++) {
+            //             if(maxCountArray[j] === undefined) {
+            //                 maxCountArray[j] = allDataArray[i][j];
+            //             } else {
+            //                 maxCountArray[j] += allDataArray[i][j];
+            //             }
+            //        }
+            //     }
+
+            //     for (let i = 0; i < maxCountArray.length; i++) {
+            //         targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(20/100)));
+            //      }
+            //     // for (var key in getCompanyData) {
+            //     //     let tmpData = [];
+            //     //     let tmpDataObject = {};
+            //     //     for (let i = 0; i < lables.length; i++) {
+            //     //         tmpData.push(getCompanyData[key])
+            //     //         if(tmpDataObject.year === undefined){
+            //     //             tmpDataObject.year = lables[i];
+            //     //         }
+            //     //     }
+            //     //     tmpDataObject.name = key;
+            //     //     tmpDataObject.data = tmpData;
+            //     //     dataObject.push(tmpDataObject);
+            //     // };
+
+            //     let base = Math.max(...maxCountArray);
+            //     let baseLine = base+(base*(15/100));
+                    
+            //     dataObject.push({
+            //         name:'company_level',
+            //         data:maxCountArray,
+            //     });
+            //     dataObject.push({
+            //         name:'target_level',
+            //         data:targetLevel,
+            //     });
+            //     dataObject.push({
+            //         name:'base_level',
+            //         data:baseLine,
+            //     });
+            //     return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
+            // } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
@@ -627,7 +735,6 @@ exports.getRegionIntensityByYear=async(req,res) => {
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
                     industrialAverage: min-industrialAverage,
-                    baseLine:max+baseLine,
                     percent:4
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)

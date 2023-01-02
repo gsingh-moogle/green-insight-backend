@@ -11,7 +11,7 @@ module.exports = {
         let email = faker.internet.exampleEmail();
         if(i == 0) {
             email = 'sustainable@mooglelab.com';
-            pass = '$2a$12$KlFiLz2EQv.zEaw9EU5Id.RlNfBYlN4AkzzRKpvJQ1YB8DUJj0OlG';
+            pass = '$2a$12$5kgPtE9x4tlFQoSl9Zh6Gur2nPI9o0Vel9okpp7UjBQeYJ5CXcl7y';
         }
           userData.push({
               name: fullName,
