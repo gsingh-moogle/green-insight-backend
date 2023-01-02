@@ -101,9 +101,9 @@ exports.getVendorEmissionData=async(req,res) => {
                 let i =0;
                 for (const property of getVendorEmissionData) {
                     data.push({
-                        x:(property.intensity/10),
-                        y:(property.service/10),
-                        z:(property.gap_to_target/10),
+                        x:(property.intensity/5),
+                        y:(property.service/5),
+                        z:(property.gap_to_target/30),
                         name:property['Vendor.name'],
                         color: colors[i]
                     })
