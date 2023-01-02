@@ -197,20 +197,20 @@ exports.getLaneEmissionData=async(req,res) => {
                     // } 
                     // count++;
 
-                    if(parseInt(property.contributor)> 36){
+                    if(parseInt(property.contributor)> 34){
                         contributor.push({
                             name:property["Lane.name"],
                             value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
-                    } else if(parseInt(property.contributor) <= 36 && parseInt(property.contributor) >= 35){
+                    } else if(parseInt(property.contributor) <= 34 && parseInt(property.contributor) >= 33){
                         if(count == 0) {
                             contributor.push({
                                 name:property["Lane.name"],
                                 value:parseInt(property.contributor),
                                 color:'#efede9'
                             });
-                            count++;
+                            
                         } else if (count == 1) {
                             detractor.push({
                                 name:property["Lane.name"],
@@ -218,6 +218,7 @@ exports.getLaneEmissionData=async(req,res) => {
                                 color:'#efede9'
                             })
                         }
+                        count++;
                     } else {
                         detractor.push({
                             name:property["Lane.name"],
@@ -225,6 +226,7 @@ exports.getLaneEmissionData=async(req,res) => {
                             color:'#215154'
                         })
                     } 
+                    
                 }
                 const data = {
                     contributor:contributor,

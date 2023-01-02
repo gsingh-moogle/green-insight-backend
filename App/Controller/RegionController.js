@@ -643,20 +643,20 @@ exports.getRegionEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 for (const property of getRegionEmissions) {
-                    if(property.contributor> 48){
+                    if(parseInt(property.contributor)> 47){
                         contributor.push({
                             name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
-                    } else if(property.contributor <= 48 && property.contributor >= 46){
+                    } else if(parseInt(property.contributor) <= 47 && parseInt(property.contributor) >= 44){
                         if(count == 0) {
                             contributor.push({
                                 name:property["RegionByStatic.region_name"],
                                 value:parseInt(property.contributor),
                                 color:'#efede9'
                             });
-                            count++;
+                            
                         } else if (count == 1) {
                             detractor.push({
                                 name:property["RegionByStatic.region_name"],
@@ -664,6 +664,7 @@ exports.getRegionEmissionData=async(req,res) => {
                                 color:'#efede9'
                             })
                         }
+                        count++;
                     } else {
                         detractor.push({
                             name:property["RegionByStatic.region_name"],
