@@ -197,31 +197,31 @@ exports.getLaneEmissionData=async(req,res) => {
                     // } 
                     // count++;
 
-                    if(property.contributor> 36){
+                    if(parseInt(property.contributor)> 36){
                         contributor.push({
                             name:property["Lane.name"],
-                            value:property.contributor,
+                            value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
-                    } else if(property.contributor <= 36 && property.contributor >= 35){
+                    } else if(parseInt(property.contributor) <= 36 && parseInt(property.contributor) >= 35){
                         if(count == 0) {
                             contributor.push({
                                 name:property["Lane.name"],
-                                value:property.contributor,
+                                value:parseInt(property.contributor),
                                 color:'#efede9'
                             });
                             count++;
                         } else if (count == 1) {
                             detractor.push({
                                 name:property["Lane.name"],
-                                value:property.contributor,
+                                value:parseInt(property.contributor),
                                 color:'#efede9'
                             })
                         }
                     } else {
                         detractor.push({
                             name:property["Lane.name"],
-                            value:property.contributor,
+                            value:parseInt(property.contributor),
                             color:'#215154'
                         })
                     } 

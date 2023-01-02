@@ -242,7 +242,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     let tempArray = [];
                     for (const property of getRegionEmissions) {
                         if(property['Region.name'] == regions[i]) {
-                            tempArray.push(property.intensity);
+                            tempArray.push(parseInt(property.intensity));
                             if(tempDataObject["name"] === undefined){
                                 tempDataObject.name = property['Region.name'];
                             }
@@ -646,28 +646,28 @@ exports.getRegionEmissionData=async(req,res) => {
                     if(property.contributor> 48){
                         contributor.push({
                             name:property["RegionByStatic.region_name"],
-                            value:property.contributor,
+                            value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
                     } else if(property.contributor <= 48 && property.contributor >= 46){
                         if(count == 0) {
                             contributor.push({
                                 name:property["RegionByStatic.region_name"],
-                                value:property.contributor,
+                                value:parseInt(property.contributor),
                                 color:'#efede9'
                             });
                             count++;
                         } else if (count == 1) {
                             detractor.push({
                                 name:property["RegionByStatic.region_name"],
-                                value:property.contributor,
+                                value:parseInt(property.contributor),
                                 color:'#efede9'
                             })
                         }
                     } else {
                         detractor.push({
                             name:property["RegionByStatic.region_name"],
-                            value:property.contributor,
+                            value:parseInt(property.contributor),
                             color:'#215154'
                         })
                     } 
@@ -767,8 +767,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
 
             //NEW STATIC DATA CODE
             let getRegionEmissions = await EmissionIntensity.findAll({
-                attributes: ['id',
-                [ 'emission_intensity','contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year']],
+                attributes: ['id',[sequelize.cast(sequelize.col('EmissionIntensity.emission_intensity'), 'float'),'contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year']],
                 where:where, include: [
                     {
                         model: Region,
@@ -787,7 +786,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let detractor = getRegionEmissions.map(a => a.detractor);
                 let baseData = [];
                 for(const property of getRegionEmissions) {
-                    baseData.push(property.contributor);
+                    baseData.push(parseInt(property.contributor));
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
