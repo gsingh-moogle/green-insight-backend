@@ -627,7 +627,8 @@ exports.getRegionIntensityByYear=async(req,res) => {
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
                     industrialAverage: min-industrialAverage,
-                    baseLine:max+baseLine
+                    baseLine:max+baseLine,
+                    percent:4
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
