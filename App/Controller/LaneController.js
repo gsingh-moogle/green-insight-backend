@@ -12,7 +12,8 @@ const Response=require("../helper/api-response");
 exports.getLaneTableDataHighIntensity=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-        const where = {intensity: {[Op.gte]: 500}};
+       // const where = {emission_type:'lane',intensity: {[Op.gte]: 500}};
+        const where = {emission_type:'lane'};
         if (region_id || year) {
             where[Op.and] = []
             if (region_id) {
@@ -30,22 +31,41 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 )
             }
         }
-        //console.log(type,email,password);return 
-        let getLaneTableData = await Lane.findAll({
-            attributes: ['name','vendor_id','id'], 
-            //include: [
-                // {
-                //     model: Emission,
-                //     attributes: ['cost',['gap_to_target','share_of_tonnage'],['createdAt','contract']],
-                //     where: {intensity: {
-                //         [Op.gt]: [500]
-                //       }}
-                // }],
-              //  group: ['lane_id'],
-                raw: true,
-                limit: 10
+        //console.log(type,email,password);return
+        let getLaneTableData = await Emission.findAll({
+            where:where,
+            attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
+            include: [
+                {
+                    model: Vendor,
+                    attributes: ['name'],
+                    include: [
+                    {
+                        model: Emission,
+                        as: 'VendorEmission',
+                        attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']],
+                            
+                    }],
+                }],
+                group: ['lane_id'],
+                raw: true
             });
             console.log('getLaneTableData',getLaneTableData);
+        // let getLaneTableData = await Lane.findAll({
+        //     attributes: ['name','vendor_id','id'], 
+        //     //include: [
+        //         // {
+        //         //     model: Emission,
+        //         //     attributes: ['cost',['gap_to_target','share_of_tonnage'],['createdAt','contract']],
+        //         //     where: {intensity: {
+        //         //         [Op.gt]: [500]
+        //         //       }}
+        //         // }],
+        //       //  group: ['lane_id'],
+        //         raw: true,
+        //         limit: 10
+        //     });
+        //     console.log('getLaneTableData',getLaneTableData);
         //check getVendorTableData is matched or not then exec
         if(getLaneTableData){
             let data = []

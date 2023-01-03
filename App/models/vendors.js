@@ -32,6 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     Vendor.hasOne(models.User, {
       foreignKey: 'id'
     });
+    Vendor.hasMany(models.Emission, {
+      foreignKey: 'vendor_id'
+    });
   };
   return Vendor;
 };
