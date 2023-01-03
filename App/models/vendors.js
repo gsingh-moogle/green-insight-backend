@@ -29,12 +29,14 @@ module.exports = (sequelize, DataTypes) => {
     tableName:'vendors'
   });
   Vendor.associate = function(models) {
-    Vendor.hasOne(models.User, {
+    // Vendor.hasOne(models.User, {
+    //   as: 'UserData',
+    //   foreignKey: 'id'
+    // });
+    Vendor.hasOne(models.Lane, {
       foreignKey: 'id'
     });
-    Vendor.hasMany(models.Emission, {
-      foreignKey: 'vendor_id'
-    });
+    Vendor.hasMany(models.Emission, {foreignKey: 'vendor_id'});
   };
   return Vendor;
 };

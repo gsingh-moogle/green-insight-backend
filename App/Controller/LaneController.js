@@ -12,77 +12,45 @@ const Response=require("../helper/api-response");
 exports.getLaneTableDataHighIntensity=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-       // const where = {emission_type:'lane',intensity: {[Op.gte]: 500}};
-        const where = {emission_type:'lane'};
+        const where = {intensity: {[Op.gte]: 12}};
+        const regionWhere = {};
         if (region_id || year) {
             where[Op.and] = []
+            regionWhere[Op.and] = []
             if (region_id) {
                 where[Op.and].push({
                     region_id: region_id
                 })
             }
             if (year) {
-                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('Emission.date')), year)
                 )
             }
 
             if (quarter) {
-                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter)
+                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('Emission.date')), quarter)
                 )
             }
         }
         //console.log(type,email,password);return
-        let getLaneTableData = await Emission.findAll({
-            where:where,
-            attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
+        let getLaneTableData = await Vendor.findAll({
+            attributes: ['name','lane_id'],
             include: [
-                {
-                    model: Vendor,
-                    attributes: ['name'],
-                    include: [
-                    {
-                        model: Emission,
-                        as: 'VendorEmission',
-                        attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']],
-                            
-                    }],
-                }],
-                group: ['lane_id'],
-                raw: true
-            });
-            console.log('getLaneTableData',getLaneTableData);
-        // let getLaneTableData = await Lane.findAll({
-        //     attributes: ['name','vendor_id','id'], 
-        //     //include: [
-        //         // {
-        //         //     model: Emission,
-        //         //     attributes: ['cost',['gap_to_target','share_of_tonnage'],['createdAt','contract']],
-        //         //     where: {intensity: {
-        //         //         [Op.gt]: [500]
-        //         //       }}
-        //         // }],
-        //       //  group: ['lane_id'],
-        //         raw: true,
-        //         limit: 10
-        //     });
-        //     console.log('getLaneTableData',getLaneTableData);
-        //check getVendorTableData is matched or not then exec
+            {
+                model: Lane,
+                attributes:  ['name'],  
+            },
+            {
+                model: Emission,
+                where:where,
+                attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract']],  
+                limit:3
+            }],
+        });
         if(getLaneTableData){
-            let data = []
+            // let data = []
             for (const property of getLaneTableData) {
-                let data = await Emission.findAll({
-                    where:{'lane_id':property.id,intensity: {[Op.gte]: 12}},
-                    attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
-                    include: [
-                        {
-                            model: Vendor,
-                            attributes: ['name'],
-                        }],
-                        raw: true,
-                        limit:3
-                    });
-                property.VendorEmission = data;
-                for (const dataValue of property.VendorEmission) {
+                for (const dataValue of property.Emissions) {
                     dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
                     dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#d8856b'}:(dataValue.cost > 5 && property.cost <= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
                 }
@@ -97,7 +65,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
 exports.getLaneTableDataLowIntensity=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-        const where = {intensity: {[Op.lt]: 500}};
+        const where = {intensity: {[Op.lt]: 12}};
         if (region_id || year) {
             where[Op.and] = []
             if (region_id) {
@@ -116,41 +84,28 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             }
         }
         //console.log(type,email,password);return 
-        let getLaneTableData = await Lane.findAll({
-            attributes: ['name','vendor_id'], 
-            //include: [
-                // {
-                //     model: Emission,
-                //     attributes: ['cost',['gap_to_target','share_of_tonnage'],['createdAt','contract']],
-                //     where: {intensity: {
-                //         [Op.gt]: [500]
-                //       }}
-                // }],
-              //  group: ['lane_id'],
-                raw: true,
-                limit: 10
-            });
-            console.log('getLaneTableData',getLaneTableData);
+        let getLaneTableData = await Vendor.findAll({
+            attributes: ['name','lane_id'],
+            include: [
+            {
+                model: Lane,
+                attributes:  ['name'],  
+            },
+            {
+                model: Emission,
+                where:where,
+                attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract']],  
+                limit:3
+            }],
+        });
         //check getVendorTableData is matched or not then exec
         if(getLaneTableData){
             let data = []
             for (const property of getLaneTableData) {
-                let data = await Emission.findAll({
-                    where:{'vendor_id':property.vendor_id,intensity: {[Op.lt]: 12}},
-                    attributes: ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.createdAt`), '%M %Y'), 'contract']], 
-                    include: [
-                        {
-                            model: Vendor,
-                            attributes: ['name'],
-                        }],
-                        raw: true,
-                        limit:3
-                    });
-                    property.VendorEmission = data;
-                    for (const dataValue of property.VendorEmission) {
-                        dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
+                for (const dataValue of property.Emissions) {
+                    dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
                     dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#d8856b'}:(dataValue.cost > 5 && property.cost <= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
-                    }
+                }
             }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}

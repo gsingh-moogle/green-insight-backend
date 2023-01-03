@@ -35,6 +35,9 @@ module.exports = (sequelize, DataTypes) => {
     Lane.hasMany (models.Emission, {
       foreignKey: 'lane_id'
     });
+    Lane.belongsTo (models.Vendor, {
+      foreignKey: 'id'
+    });
   };
 
   return Lane;

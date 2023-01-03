@@ -21,7 +21,9 @@ class Emission extends Model {
     company_id: DataTypes.INTEGER,
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
-    vendor_id: DataTypes.INTEGER,
+    vendor_id: {
+      type:DataTypes.INTEGER
+    },
     lane_id: DataTypes.INTEGER,
     gap_to_target: DataTypes.INTEGER,
     intensity: DataTypes.FLOAT,
