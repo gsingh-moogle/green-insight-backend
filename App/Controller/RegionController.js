@@ -899,6 +899,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
     try {
             let {region_id, company_id, year, toggel, quarter}=req.body;
             let current_year = parseInt(new Date().getFullYear()-1);
+            let past_year = new Date().getFullYear()-2;
            // const where = {emission_type:'region'}
             const where = {}
             if (region_id || company_id || year || quarter) {
@@ -916,19 +917,16 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 }
                 if (year) {
                     current_year = parseInt(year);
-                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
+                    past_year = year-1;
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), past_year))
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
                 } else {
-                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
                 }
 
                 if (quarter) {
-                    if(quarter == 1) {
-                        where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
-                    } else {
-                        where[Op.or].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter-1))
-                        where[Op.or].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
-                    }
-                    
+                    where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))  
                 }
             } else {
                 if (quarter) {
@@ -942,8 +940,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
             if(toggel == 1) {
                 attributeArray = ['id',[ 'emission_tons','contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             } else {
-                attributeArray = ['id',[ 'emission_revenue','contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
-                
+                attributeArray = ['id',[ 'emission_revenue','contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];    
             }
 
             //NEW STATIC DATA CODE
@@ -973,7 +970,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 let maxY = max*(25/100);
                 data.push({
                     dataset:getRegionEmissions,
-                    label:[quarter-1,quarter],
+                    label:[quarter-1,parseInt(quarter)],
                     year: [current_year],
                     industrialAverage: min-industrialAverage,
                     max:max+maxY,
