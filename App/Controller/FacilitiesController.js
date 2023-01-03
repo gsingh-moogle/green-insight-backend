@@ -99,37 +99,69 @@ exports.getFacilitiesEmissionData=async(req,res) => {
             let contributor = [];
             let detractor = [];
             let count = 0;
+            //NEW CODE
             for (const property of getFacilitiesEmissionData) {
-                if(parseInt(property.contributor)> 48){
+                if(count < 3){
                     contributor.push({
                         name:property["Facility.name"],
                         value:parseInt(property.contributor),
                         color:'#d8856b'
                     })
-                } else if(parseInt(property.contributor) <= 48 && parseInt(property.contributor) >= 43){
-                    if(count == 0) {
-                        contributor.push({
-                            name:property["Facility.name"],
-                            value:parseInt(property.contributor),
-                            color:'#efede9'
-                        });
-                        
-                    } else if (count == 1) {
-                        detractor.push({
-                            name:property["Facility.name"],
-                            value:parseInt(property.contributor),
-                            color:'#efede9'
-                        })
-                    }
-                    count++;
+                } else if(count == 3){
+                    contributor.push({
+                        name:property["Facility.name"],
+                        value:parseInt(property.contributor),
+                        color:'#efede9'
+                    });
+                } else if(count == 4){
+                    detractor.push({
+                        name:property["Facility.name"],
+                        value:parseInt(property.contributor),
+                        color:'#efede9'
+                    })
                 } else {
                     detractor.push({
                         name:property["Facility.name"],
                         value:parseInt(property.contributor),
                         color:'#215154'
                     })
-                } 
+                }
+                count++; 
             }
+
+
+            //OLD CODE
+            // for (const property of getFacilitiesEmissionData) {
+            //     if(parseInt(property.contributor)> 48){
+            //         contributor.push({
+            //             name:property["Facility.name"],
+            //             value:parseInt(property.contributor),
+            //             color:'#d8856b'
+            //         })
+            //     } else if(parseInt(property.contributor) <= 48 && parseInt(property.contributor) >= 43){
+            //         if(count == 0) {
+            //             contributor.push({
+            //                 name:property["Facility.name"],
+            //                 value:parseInt(property.contributor),
+            //                 color:'#efede9'
+            //             });
+                        
+            //         } else if (count == 1) {
+            //             detractor.push({
+            //                 name:property["Facility.name"],
+            //                 value:parseInt(property.contributor),
+            //                 color:'#efede9'
+            //             })
+            //         }
+            //         count++;
+            //     } else {
+            //         detractor.push({
+            //             name:property["Facility.name"],
+            //             value:parseInt(property.contributor),
+            //             color:'#215154'
+            //         })
+            //     } 
+            // }
             const data = {
                 contributor:contributor,
                 detractor:detractor
