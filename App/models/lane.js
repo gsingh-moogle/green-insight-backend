@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Lane.init({
     user_id: DataTypes.INTEGER,
-    vendor_id: DataTypes.INTEGER,
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
     name: DataTypes.STRING,

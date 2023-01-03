@@ -8,7 +8,7 @@ module.exports = {
       for (let i = 0; i < 3000; i++) {
           data.push({
               emission_type: arrayValues[faker.datatype.number({ min: 0, max: 3 })],
-              company_id: faker.datatype.number({ min: 1, max: 10 }),
+              company_id: 1,
               region_id: faker.datatype.number({ min: 1, max: 6 }),
               facilities_id: faker.datatype.number({ min: 1, max: 10 }),
               vendor_id: faker.datatype.number({ min: 1, max: 10 }),

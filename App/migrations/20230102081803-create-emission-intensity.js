@@ -22,8 +22,14 @@ module.exports = {
       year: {
         type: Sequelize.DATE
       },
-      emission_intensity: {
-        type: Sequelize.DECIMAL(10,1)
+      emission_revenue: {
+        type: Sequelize.DECIMAL(10,2)
+      },
+      emission_tons: {
+        type: Sequelize.DECIMAL(10,2)
+      },
+      date: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,

@@ -12,7 +12,6 @@ module.exports = {
               name: laneValues[i],
               region_id: faker.datatype.number({ min: 1, max: 6 }),
               facilities_id: faker.datatype.number({ min: 1, max: 10 }),
-              vendor_id: faker.datatype.number({ min: 1, max: 10 }),
               latitude:faker.address.latitude(),
               longitude:faker.address.longitude(),
               location:faker.address.county(),

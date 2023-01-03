@@ -56,7 +56,7 @@ module.exports = {
             data.push({
               region_id:i+1,
               region_by:faker.datatype.number({ min: 1, max: 8 }),
-              date: faker.date.between(yearDataArray[j][q][0], yearDataArray[j][q][0]),
+              date: faker.date.between(yearDataArray[j][q][0], yearDataArray[j][q][1]),
               contributor: emissioData,
               createdAt:faker.date.between(),
               updatedAt:faker.date.between()

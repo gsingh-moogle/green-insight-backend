@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('lanes', {
+    await queryInterface.createTable('vendors', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,16 +14,6 @@ module.exports = {
         allowNull:false,
         references:{
           model:'Users',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
-      },
-      vendor_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'vendors',
           key:'id'
         },
         onDelete:'CASCADE',
@@ -44,6 +34,16 @@ module.exports = {
         allowNull:false,
         references:{
           model:'facilities',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
+      },
+      lane_id: {
+        type: Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'lanes',
           key:'id'
         },
         onDelete:'CASCADE',
@@ -75,6 +75,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('lanes');
+    await queryInterface.dropTable('vendors');
   }
 };
