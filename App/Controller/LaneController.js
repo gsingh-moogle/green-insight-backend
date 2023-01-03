@@ -181,53 +181,85 @@ exports.getLaneEmissionData=async(req,res) => {
                 let count = 0;
                 let contributor = [];
                 let detractor = [];
-                for (const property of getLaneEmissionData) {
-                    // if(count < (getLaneEmissionData.length/2)){
-                    //     contributor.push({
-                    //         name:property["Lane.name"],
-                    //         value:property.contributor,
-                    //         color:'#d8856b'
-                    //     })
-                    // } else {
-                    //     detractor.push({
-                    //         name:property["Lane.name"],
-                    //         value:property.detractor,
-                    //         color:'#215154'
-                    //     })
-                    // } 
-                    // count++;
 
-                    if(parseInt(property.contributor)> 34){
+                 //NEW CODE
+                 for (const property of getLaneEmissionData) {
+                    if(count < 3){
                         contributor.push({
                             name:property["Lane.name"],
                             value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
-                    } else if(parseInt(property.contributor) <= 34 && parseInt(property.contributor) >= 33){
-                        if(count == 0) {
-                            contributor.push({
-                                name:property["Lane.name"],
-                                value:parseInt(property.contributor),
-                                color:'#efede9'
-                            });
-                            
-                        } else if (count == 1) {
-                            detractor.push({
-                                name:property["Lane.name"],
-                                value:parseInt(property.contributor),
-                                color:'#efede9'
-                            })
-                        }
-                        count++;
+                    } else if(count == 3){
+                        contributor.push({
+                            name:property["Lane.name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        });
+                    } else if(count == 4){
+                        detractor.push({
+                            name:property["Lane.name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        })
                     } else {
                         detractor.push({
                             name:property["Lane.name"],
                             value:parseInt(property.contributor),
                             color:'#215154'
                         })
-                    } 
-                    
+                    }
+                    count++; 
                 }
+
+                //OLD CODE
+                // for (const property of getLaneEmissionData) {
+                //     // if(count < (getLaneEmissionData.length/2)){
+                //     //     contributor.push({
+                //     //         name:property["Lane.name"],
+                //     //         value:property.contributor,
+                //     //         color:'#d8856b'
+                //     //     })
+                //     // } else {
+                //     //     detractor.push({
+                //     //         name:property["Lane.name"],
+                //     //         value:property.detractor,
+                //     //         color:'#215154'
+                //     //     })
+                //     // } 
+                //     // count++;
+
+                //     if(parseInt(property.contributor)> 34){
+                //         contributor.push({
+                //             name:property["Lane.name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#d8856b'
+                //         })
+                //     } else if(parseInt(property.contributor) <= 34 && parseInt(property.contributor) >= 33){
+                //         if(count == 0) {
+                //             contributor.push({
+                //                 name:property["Lane.name"],
+                //                 value:parseInt(property.contributor),
+                //                 color:'#efede9'
+                //             });
+                            
+                //         } else if (count == 1) {
+                //             detractor.push({
+                //                 name:property["Lane.name"],
+                //                 value:parseInt(property.contributor),
+                //                 color:'#efede9'
+                //             })
+                //         }
+                //         count++;
+                //     } else {
+                //         detractor.push({
+                //             name:property["Lane.name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#215154'
+                //         })
+                //     } 
+                    
+                // }
                 const data = {
                     contributor:contributor,
                     detractor:detractor

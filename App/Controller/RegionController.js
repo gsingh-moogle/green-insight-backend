@@ -642,37 +642,68 @@ exports.getRegionEmissionData=async(req,res) => {
                 let count = 0;
                 let contributor = [];
                 let detractor = [];
+                //NEW CODE
                 for (const property of getRegionEmissions) {
-                    if(parseInt(property.contributor)> 47){
+                    if(count < 3){
                         contributor.push({
                             name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
-                    } else if(parseInt(property.contributor) <= 47 && parseInt(property.contributor) >= 44){
-                        if(count == 0) {
-                            contributor.push({
-                                name:property["RegionByStatic.region_name"],
-                                value:parseInt(property.contributor),
-                                color:'#efede9'
-                            });
-                            
-                        } else if (count == 1) {
-                            detractor.push({
-                                name:property["RegionByStatic.region_name"],
-                                value:parseInt(property.contributor),
-                                color:'#efede9'
-                            })
-                        }
-                        count++;
+                    } else if(count == 3){
+                        contributor.push({
+                            name:property["RegionByStatic.region_name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        });
+                    } else if(count == 4){
+                        detractor.push({
+                            name:property["RegionByStatic.region_name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        })
                     } else {
                         detractor.push({
                             name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#215154'
                         })
-                    } 
+                    }
+                    count++; 
                 }
+
+                //OLD CODE
+                // for (const property of getRegionEmissions) {
+                //     if(parseInt(property.contributor)> 47){
+                //         contributor.push({
+                //             name:property["RegionByStatic.region_name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#d8856b'
+                //         })
+                //     } else if(parseInt(property.contributor) <= 47 && parseInt(property.contributor) >= 44){
+                //         if(count == 0) {
+                //             contributor.push({
+                //                 name:property["RegionByStatic.region_name"],
+                //                 value:parseInt(property.contributor),
+                //                 color:'#efede9'
+                //             });
+                            
+                //         } else if (count == 1) {
+                //             detractor.push({
+                //                 name:property["RegionByStatic.region_name"],
+                //                 value:parseInt(property.contributor),
+                //                 color:'#efede9'
+                //             })
+                //         }
+                //         count++;
+                //     } else {
+                //         detractor.push({
+                //             name:property["RegionByStatic.region_name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#215154'
+                //         })
+                //     } 
+                // }
                 const data = {
                     contributor:contributor,
                     detractor:detractor
