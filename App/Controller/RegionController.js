@@ -837,12 +837,13 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
                 let industrialAverage = min*(20/100);
-                let baseLine = max*(20/100);
+                let baseLine = max*(15/100);
+                let maxY = max*(25/100);
                 data.push({
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
                     industrialAverage: min-industrialAverage,
-                    max:max,
+                    max:max+maxY,
                     min:min,
                     baseLine:max+baseLine,
                     percent:4
@@ -968,13 +969,14 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
                 let industrialAverage = min*(20/100);
-                let baseLine = max*(20/100);
+                let baseLine = max*(15/100);
+                let maxY = max*(25/100);
                 data.push({
                     dataset:getRegionEmissions,
                     label:[quarter-1,quarter],
                     year: [current_year],
                     industrialAverage: min-industrialAverage,
-                    max:max,
+                    max:max+maxY,
                     min:min,
                     baseLine:max+baseLine,
                     percent:4
