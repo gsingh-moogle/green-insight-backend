@@ -832,7 +832,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let data = [];
                 let baseData = [];
                 for(const property of getRegionEmissions) {
-                    baseData.push(parseInt(property.contributor));
+                    baseData.push(parseFloat(property.contributor));
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
@@ -842,6 +842,9 @@ exports.getRegionIntensityByYear=async(req,res) => {
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
                     industrialAverage: min-industrialAverage,
+                    max:max,
+                    min:min,
+                    baseLine:max+baseLine,
                     percent:4
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
@@ -960,7 +963,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 let data = [];
                 let baseData = [];
                 for(const property of getRegionEmissions) {
-                    baseData.push(parseInt(property.contributor));
+                    baseData.push(parseFloat(property.contributor));
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
@@ -971,6 +974,9 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                     label:[quarter-1,quarter],
                     year: [current_year],
                     industrialAverage: min-industrialAverage,
+                    max:max,
+                    min:min,
+                    baseLine:max+baseLine,
                     percent:4
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions Quarterly',data,200)
