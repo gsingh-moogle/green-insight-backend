@@ -92,6 +92,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getLaneTableData = await Vendor.findAll({
+            where:{id: {[Op.gt]: 3}},
             attributes: ['name','lane_id'],
             include: [
             {
