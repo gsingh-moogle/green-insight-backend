@@ -52,6 +52,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 ],
                 limit:3
             }],
+            limit:3
         });
         if(getLaneTableData){
             // let data = []
@@ -109,6 +110,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
                 ],
                 limit:3
             }],
+            limit:5
         });
         //check getVendorTableData is matched or not then exec
         if(getLaneTableData){
