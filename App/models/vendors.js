@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id'
     });
     Vendor.hasOne(models.Lane, {
-      foreignKey: 'id'
+      foreignKey: 'lane_id'
     });
     Vendor.hasMany(models.Emission, {foreignKey: 'vendor_id'});
   };
