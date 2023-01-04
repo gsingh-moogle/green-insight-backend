@@ -44,6 +44,12 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 model: Emission,
                 where:where,
                 attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract']],  
+                include:[
+                    {
+                        model: Vendor,
+                        attributes:  ['name'],  
+                    }
+                ],
                 limit:3
             }],
         });
@@ -95,6 +101,12 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
                 model: Emission,
                 where:where,
                 attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract']],  
+                include:[
+                    {
+                        model: Vendor,
+                        attributes:  ['name'],  
+                    }
+                ],
                 limit:3
             }],
         });
