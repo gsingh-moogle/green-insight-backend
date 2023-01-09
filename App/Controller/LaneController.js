@@ -52,7 +52,6 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 ],
                 limit:3
             }],
-           // raw:true
         });
         if(getLaneTableData){
             // let data = []
@@ -96,6 +95,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getLaneTableData = await Vendor.findAll({
+            where:{id: {[Op.gt]: 3}},
             attributes: ['name','lane_id'],
             include: [
             {
@@ -114,6 +114,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
                 ],
                 limit:3
             }],
+            limit:5
         });
         //check getVendorTableData is matched or not then exec
         if(getLaneTableData){

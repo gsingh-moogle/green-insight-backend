@@ -32,8 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     Vendor.hasOne(models.User, {
       foreignKey: 'id'
     });
-    Vendor.hasOne(models.Lane, {
-      foreignKey: 'id'
+    Vendor.belongsTo(models.Lane, {
+      foreignKey: 'lane_id'
     });
     Vendor.hasMany(models.Emission, {foreignKey: 'vendor_id'});
   };
