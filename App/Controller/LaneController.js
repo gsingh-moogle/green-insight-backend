@@ -52,6 +52,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 ],
                 limit:3
             }],
+            limit:3
         });
         if(getLaneTableData){
             // let data = []
