@@ -52,14 +52,19 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 ],
                 limit:3
             }],
+           // raw:true
         });
         if(getLaneTableData){
             // let data = []
+            let data = []
+            let count = 0;
             for (const property of getLaneTableData) {
+                property.Lane.dataValues['color']= '#d8856b';
                 for (const dataValue of property.Emissions) {
                     dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
                     dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#d8856b'}:(dataValue.cost > 5 && property.cost <= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
                 }
+                count++;
             }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
@@ -112,13 +117,22 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         });
         //check getVendorTableData is matched or not then exec
         if(getLaneTableData){
-            let data = []
+            
+            let count = 0;
             for (const property of getLaneTableData) {
+                //  console.log('property',property.Lane.name);
+                if(count < 2) {
+                    property.Lane.dataValues['color']= '#EFEDE9';
+                } else {
+                    property.Lane.dataValues['color']= '#215254';
+                }
                 for (const dataValue of property.Emissions) {
                     dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
                     dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#d8856b'}:(dataValue.cost > 5 && property.cost <= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
                 }
+                count++;
             }
+            
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -183,21 +197,25 @@ exports.getLaneEmissionData=async(req,res) => {
                             value:parseInt(property.contributor),
                             color:'#efede9'
                         });
-                    } else if(count == 4){
-                        detractor.push({
-                            name:property["Lane.name"],
-                            value:parseInt(property.contributor),
-                            color:'#efede9'
-                        })
-                    } else {
+                    } else if(count >= 4 && count <= 6){
                         detractor.push({
                             name:property["Lane.name"],
                             value:parseInt(property.contributor),
                             color:'#215154'
                         })
+                    } else {
+                        detractor.push({
+                            name:property["Lane.name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        })
                     }
                     count++; 
                 }
+
+                // for (const property of detractor) {
+
+                // }
 
                 //OLD CODE
                 // for (const property of getLaneEmissionData) {
