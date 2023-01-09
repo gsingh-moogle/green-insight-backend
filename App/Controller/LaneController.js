@@ -199,17 +199,18 @@ exports.getLaneEmissionData=async(req,res) => {
                             value:parseInt(property.contributor),
                             color:'#efede9'
                         });
-                    } else if(count >= 4 && count <= 6){
+                  //  } else if(count == 4 && count <= 6){
+                    } else if(count == 4){
                         detractor.push({
                             name:property["Lane.name"],
                             value:parseInt(property.contributor),
-                            color:'#215154'
+                            color:'#efede9'
                         })
                     } else {
                         detractor.push({
                             name:property["Lane.name"],
                             value:parseInt(property.contributor),
-                            color:'#efede9'
+                            color:'#215154'
                         })
                     }
                     count++; 
