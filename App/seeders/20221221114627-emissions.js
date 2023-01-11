@@ -15,6 +15,7 @@ module.exports = {
               lane_id: faker.datatype.number({ min: 1, max: 10 }),
               gap_to_target: faker.datatype.number({ min: 0, max: 10 }),
               intensity:faker.datatype.number({ min: 0, max: 25, precision: 0.01 }),
+              emission:faker.datatype.number({ min: 0, max: 25, precision: 0.01 }),
               truck_load:faker.datatype.number({ min: 10, max: 25}),
               inter_modal:faker.datatype.number({ min: 10, max: 35}),
               cost:faker.datatype.number({ min: 0, max: 10, precision: 0.01 }),

@@ -24,6 +24,7 @@ module.exports = {
           key:'id'
         },
         onDelete:'CASCADE',
+        allowNull: false,
         onUpdate:'NO ACTION'
       },
       facilities_id: {
@@ -34,6 +35,7 @@ module.exports = {
           key:'id'
         },
         onDelete:'CASCADE',
+        allowNull: false,
         onUpdate:'NO ACTION'
       },
       vendor_id: {
@@ -44,6 +46,7 @@ module.exports = {
           key:'id'
         },
         onDelete:'CASCADE',
+        allowNull: false,
         onUpdate:'NO ACTION'
       },
       lane_id: {
@@ -54,12 +57,16 @@ module.exports = {
           key:'id'
         },
         onDelete:'CASCADE',
+        allowNull: false,
         onUpdate:'NO ACTION'
       },
       gap_to_target: {
         type: Sequelize.INTEGER
       },
       intensity: {
+        type: Sequelize.FLOAT
+      },
+      emission: {
         type: Sequelize.FLOAT
       },
       truck_load: {

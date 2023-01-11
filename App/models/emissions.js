@@ -27,6 +27,7 @@ class Emission extends Model {
     lane_id: DataTypes.INTEGER,
     gap_to_target: DataTypes.INTEGER,
     intensity: DataTypes.FLOAT,
+    emission: DataTypes.FLOAT,
     truck_load: DataTypes.INTEGER,
     inter_modal: DataTypes.INTEGER,
     cost: DataTypes.FLOAT,
