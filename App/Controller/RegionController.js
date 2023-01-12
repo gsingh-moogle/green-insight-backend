@@ -628,14 +628,14 @@ exports.getRegionEmissionData=async(req,res) => {
 
             //NEW CODE
             //console.log(type,email,password);return 
-            let getRegionEmissions = await RegionEmissionStatic.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
+            let getRegionEmissions = await Emission.findAll({
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'contributor']],
                 where:where, include: [
                     {
-                        model: RegionByStatic,
-                        attributes: ['region_name']
+                        model: Region,
+                        attributes: ['name']
                     }],
-                    group: ['region_by'],
+                    group: ['region_id'],
                     limit : 8,
                     order:[['contributor','desc']],
                     raw: true
@@ -650,25 +650,25 @@ exports.getRegionEmissionData=async(req,res) => {
                 for (const property of getRegionEmissions) {
                     if(count < 3){
                         contributor.push({
-                            name:property["RegionByStatic.region_name"],
+                            name:property["Region.name"],
                             value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
                     } else if(count == 3){
                         contributor.push({
-                            name:property["RegionByStatic.region_name"],
+                            name:property["Region.name"],
                             value:parseInt(property.contributor),
                             color:'#efede9'
                         });
                     } else if(count == 4){
                         detractor.push({
-                            name:property["RegionByStatic.region_name"],
+                            name:property["Region.name"],
                             value:parseInt(property.contributor),
                             color:'#efede9'
                         })
                     } else {
                         detractor.push({
-                            name:property["RegionByStatic.region_name"],
+                            name:property["Region.name"],
                             value:parseInt(property.contributor),
                             color:'#215154'
                         })
