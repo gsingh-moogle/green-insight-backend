@@ -907,7 +907,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
-                let industrialAverage = min*(20/100);
+                let industrialAverage = min*(15/100);
                 let baseLine = max*(15/100);
                 let maxY = max*(25/100);
                 data.push({
