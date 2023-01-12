@@ -588,7 +588,6 @@ exports.getRegionTableData=async(req,res) => {
                         attributes: ['name']
                     }]
                 }],
-                limit : 10,
                 group: ['region_id'],
             });
         //check password is matched or not then exec
