@@ -76,7 +76,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
         let getLaneTableData = await VendorEmissionStatic.findAll({
             attributes: ['region_id','lane_id','vendor_id',['contributor','cost'],['contributor','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`VendorEmissionStatic.date`), '%M %Y'), 'contract'],[ sequelize.literal('( SELECT SUM(contributor) )'),'intensity']],
             where:where,
-            order:[['contributor','desc']],
+            order:[['intensity','desc']],
             group: ['lane_id'],
             limit:3,
             raw:true
@@ -209,7 +209,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         let getLaneTableData = await VendorEmissionStatic.findAll({
             attributes: ['region_id','lane_id','vendor_id',['contributor','cost'],['contributor','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`VendorEmissionStatic.date`), '%M %Y'), 'contract'],[ sequelize.literal('( SELECT SUM(contributor) )'),'intensity']],
             where:where,
-            order:[['contributor','desc']],
+            order:[['intensity','desc']],
             group: ['lane_id'],
             raw:true
         });
