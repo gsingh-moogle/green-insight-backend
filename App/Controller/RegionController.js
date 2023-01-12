@@ -884,35 +884,68 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 if (year) {
                     current_year = parseInt(year);
                     past_year = year-1;
-                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
-                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
-                    
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), past_year))
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
                 } else {
                     where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
                     where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
                 }
 
-                // if (quarter) {
-                //     if(quarter != 1) {
-                //         where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
-                //     } else {
-                //         where[Op.or].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter-1))
-                //         where[Op.or].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
-                //     }
-                    
-                // }
+                if (quarter) {
+                    where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))  
+                }
             } else {
+                if (quarter) {
                     where[Op.and] = []
-                    where[Op.or] = []
-                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
-                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
+                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
+                }
             }
+            //old filters
+            // if (region_id || company_id || year || quarter) {
+            //     where[Op.and] = []
+            //     where[Op.or] = []
+            //     if (region_id) {
+            //         where[Op.and].push({
+            //             region_id: region_id
+            //         })
+            //     }
+            //     if (company_id) {
+            //         where[Op.and].push({
+            //             company_id: company_id
+            //         })
+            //     }
+            //     if (year) {
+            //         current_year = parseInt(year);
+            //         past_year = year-1;
+            //         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
+            //         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
+                    
+            //     } else {
+            //         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
+            //         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
+            //     }
+
+            //     // if (quarter) {
+            //     //     if(quarter != 1) {
+            //     //         where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
+            //     //     } else {
+            //     //         where[Op.or].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter-1))
+            //     //         where[Op.or].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
+            //     //     }
+                    
+            //     // }
+            // } else {
+            //         where[Op.and] = []
+            //         where[Op.or] = []
+            //         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), past_year))
+            //         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('year')), current_year))
+            // }
             console.log('where',where);
             let attributeArray = [];
             if(toggel == 1) {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission_tons) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission_tons) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             } else {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission_revenue) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission_revenue) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`EmissionIntensity.year`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
                 
             }
 
