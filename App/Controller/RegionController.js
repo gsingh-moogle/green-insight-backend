@@ -182,7 +182,7 @@ exports.getRegionIntensity=async(req,res) => {
 exports.getRegionEmissionsMonthly=async(req,res) => {
     try {
             //console.log(type,email,password);return 
-            let {region_id, company_id, year}=req.body;
+            let {region_id, company_id, year, toggel_data}=req.body;
             //const where = {emission_type:'region'}
             const where = {}
             if (region_id || company_id || year) {
@@ -204,18 +204,35 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             }
 
             //New Code Start
-            let getRegionEmissions = await EmissionRegionStatic.findAll({
-                attributes: ['id','intensity',
-                [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
-                'region_id'],
-                where:where, include: [
-                    {
-                        model: Region,
-                        attributes: ['name']
-                    }],
-                group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
-                raw: true
-            });
+            let getRegionEmissions;
+            if(toggel_data == 0) {
+                getRegionEmissions = await EmissionRegionStatic.findAll({
+                    attributes: ['id','intensity',
+                    [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
+                    'region_id'],
+                    where:where, include: [
+                        {
+                            model: Region,
+                            attributes: ['name']
+                        }],
+                    group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
+                    raw: true
+                });
+            } else {
+                getRegionEmissions = await EmissionRegionStatic.findAll({
+                    attributes: ['id',['emission','intensity'],
+                    [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
+                    'region_id'],
+                    where:where, include: [
+                        {
+                            model: Region,
+                            attributes: ['name']
+                        }],
+                    group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
+                    raw: true
+                });
+            }
+            
 
             let getCompanyData = await CompanyData.findOne({
                 attributes: ['target_level','base_level'],
