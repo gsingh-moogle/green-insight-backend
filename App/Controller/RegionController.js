@@ -646,36 +646,102 @@ exports.getRegionEmissionData=async(req,res) => {
                 let count = 0;
                 let contributor = [];
                 let detractor = [];
+                let total = [];
                 //NEW CODE
                 for (const property of getRegionEmissions) {
-                    if(count < 3){
-                        contributor.push({
-                            name:property["Region.name"],
-                            value:parseInt(property.contributor),
+                    total.push(parseInt(property.contributor));
+                    // if(count < 3){
+                    //     contributor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#d8856b'
+                    //     })
+                    // } else if(count == 3){
+                    //     contributor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#efede9'
+                    //     });
+                    // } else if(count == 4){
+                    //     detractor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#efede9'
+                    //     })
+                    // } else {
+                    //     detractor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#215154'
+                    //     })
+                    // }
+                    // count++; 
+                }
+                const average = total.reduce((a, b) => a + b, 0) / total.length;
+                let avgData = [];
+                for (const property of getRegionEmissions) {
+                    avgData.push({
+                        name :property["Region.name"],
+                        value: parseInt(property.contributor-average).toFixed(2)
+                    });
+                    // if(parseInt(property.contributor) < average){
+                        
+                    //     contributor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#d8856b'
+                    //     })
+                    // } else if(parseInt(property.contributor) > average){
+                    //     detractor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#215154'
+                    //     })
+                    // } else {
+                    //     detractor.push({
+                    //         name:property["Region.name"],
+                    //         value:parseInt(property.contributor),
+                    //         color:'#215154'
+                    //     })
+                    // }
+                    // count++; 
+                }
+              //  avgData = avgData.sort((f, s) => s - f);
+                 let c =0;
+                for (const property of avgData) {
+                    if(c < 2) {
+                            contributor.push({
+                            name:property["name"],
+                            value:Math.abs(property["value"]),
+                            
                             color:'#d8856b'
                         })
-                    } else if(count == 3){
-                        contributor.push({
-                            name:property["Region.name"],
-                            value:parseInt(property.contributor),
-                            color:'#efede9'
-                        });
-                    } else if(count == 4){
-                        detractor.push({
-                            name:property["Region.name"],
-                            value:parseInt(property.contributor),
+                    } else if(c == 2) {
+                            contributor.push({
+                                name:property["name"],
+                                value:Math.abs(property["value"]),
+                                color:'#efede9'
+                            });
+                    } else if(c == 3){
+                            detractor.push({
+                                name:property["name"],
+                                value:Math.abs(property["value"]),
                             color:'#efede9'
                         })
                     } else {
-                        detractor.push({
-                            name:property["Region.name"],
-                            value:parseInt(property.contributor),
+                            detractor.push({
+                                name:property["name"],
+                                value:Math.abs(property["value"]),
                             color:'#215154'
                         })
                     }
-                    count++; 
+                    c++;
                 }
 
+            //     console.log('avgData',avgData);
+            //   //  avgData = avgData.reverse();
+                // for (const property of getRegionEmissions) {
+                // }
                 //OLD CODE
                 // for (const property of getRegionEmissions) {
                 //     if(parseInt(property.contributor)> 47){
