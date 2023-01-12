@@ -574,7 +574,7 @@ exports.getRegionTableData=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getRegionTableData = await Emission.findAll({
-            attributes: ['id', 'gap_to_target', 'intensity','cost','service',
+            attributes: ['id', 'gap_to_target', ['detractor','intensity'],['contributor','cost'],'service',
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
