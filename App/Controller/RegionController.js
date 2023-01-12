@@ -621,7 +621,7 @@ exports.getRegionTableData=async(req,res) => {
 
 exports.getRegionEmissionData=async(req,res) => {
     try {
-        let {region_id, year, quarter}=req.body;
+        let {region_id, year, quarter, toggel_data}=req.body;
       //  const where = {emission_type:'region'}
         const where = {}
         if (region_id || year || quarter) {
@@ -643,9 +643,11 @@ exports.getRegionEmissionData=async(req,res) => {
 
             //NEW CODE
             //console.log(type,email,password);return 
-            let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'contributor']],
-                where:where, include: [
+            let getRegionEmissions;
+            if(toggel_data == 0) {
+                getRegionEmissions = await Emission.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
+                    where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']
@@ -655,6 +657,21 @@ exports.getRegionEmissionData=async(req,res) => {
                     order:[['contributor','desc']],
                     raw: true
                 });
+            } else {
+                getRegionEmissions = await Emission.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'contributor']],
+                    where:where, include: [
+                    {
+                        model: Region,
+                        attributes: ['name']
+                    }],
+                    group: ['region_id'],
+                    limit : 8,
+                    order:[['contributor','desc']],
+                    raw: true
+                });
+            }
+            
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
