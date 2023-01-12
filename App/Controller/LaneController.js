@@ -77,6 +77,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
             attributes: ['region_id','lane_id','vendor_id',['contributor','cost'],['contributor','intensity'],['contributor','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`VendorEmissionStatic.date`), '%M %Y'), 'contract']],
             where:where,
             order:[['contributor','desc']],
+            limit:3,
             raw:true
         });
         if(getLaneTableData){
