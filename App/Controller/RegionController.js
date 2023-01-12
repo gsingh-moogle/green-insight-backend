@@ -629,7 +629,7 @@ exports.getRegionEmissionData=async(req,res) => {
             //NEW CODE
             //console.log(type,email,password);return 
             let getRegionEmissions = await RegionEmissionStatic.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
                 where:where, include: [
                     {
                         model: RegionByStatic,
