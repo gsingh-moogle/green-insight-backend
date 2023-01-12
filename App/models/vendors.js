@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'lane_id'
     });
     Vendor.hasMany(models.Emission, {foreignKey: 'vendor_id'});
+    Vendor.hasMany(models.VendorEmissionStatic, {foreignKey: 'vendor_id'});
   };
   return Vendor;
 };

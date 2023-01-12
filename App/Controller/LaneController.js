@@ -6,13 +6,15 @@ const Region =require("../models").Region;
 const Lane =require("../models").Lane;
 const Vendor =require("../models").Vendor;
 const LaneEmissionStatic =require("../models").LaneEmissionStatic;
+const VendorEmissionStatic =require("../models").VendorEmissionStatic;
+
 const Response=require("../helper/api-response");
 
 
 exports.getLaneTableDataHighIntensity=async(req,res) => {
     try {
         let {region_id, year, quarter}=req.body;
-        const where = {intensity: {[Op.gte]: 12}};
+        const where = {};
         const regionWhere = {};
         if (region_id || year) {
             where[Op.and] = []
@@ -23,34 +25,45 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 })
             }
             if (year) {
-                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('Emission.date')), year)
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('VendorEmissionStatics.date')), year)
                 )
             }
 
             if (quarter) {
-                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('Emission.date')), quarter)
+                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('VendorEmissionStatics.date')), quarter)
                 )
             }
         }
         //console.log(type,email,password);return
+        // let getLaneTableData = await Vendor.findAll({
+        //     attributes: ['name','lane_id'],
+        //     include: [
+        //     {
+        //         model: Lane,
+        //         attributes:  ['name'],  
+        //     },
+        //     {
+        //         model: Emission,
+        //         where:where,
+        //         attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract']],  
+        //         include:[
+        //             {
+        //                 model: Vendor,
+        //                 attributes:  ['name'],  
+        //             }
+        //         ],
+        //         limit:3
+        //     }],
+        //     limit:3
+        // });
+
         let getLaneTableData = await Vendor.findAll({
-            attributes: ['name','lane_id'],
+            attributes: ['name'],
             include: [
             {
-                model: Lane,
-                attributes:  ['name'],  
-            },
-            {
-                model: Emission,
+                model: VendorEmissionStatic,
                 where:where,
-                attributes:  ['cost','intensity',['gap_to_target','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract']],  
-                include:[
-                    {
-                        model: Vendor,
-                        attributes:  ['name'],  
-                    }
-                ],
-                limit:3
+                attributes:  [['contributor','cost'],['contributor','intensity'],['contributor','share_of_tonnage'],[sequelize.fn('date_format', sequelize.col(`VendorEmissionStatics.date`), '%M %Y'), 'contract']],  
             }],
             limit:3
         });
@@ -58,14 +71,14 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
             // let data = []
             let data = []
             let count = 0;
-            for (const property of getLaneTableData) {
-                property.Lane.dataValues['color']= '#d8856b';
-                for (const dataValue of property.Emissions) {
-                    dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
-                    dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#d8856b'}:(dataValue.cost > 5 && property.cost <= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
-                }
-                count++;
-            }
+            // for (const property of getLaneTableData) {
+            //     property.Lane.dataValues['color']= '#d8856b';
+            //     for (const dataValue of property.Emissions) {
+            //         dataValue['intensity'] = (dataValue.intensity <= 12)?{value:dataValue.intensity,color:'#d8856b'}:(dataValue.intensity > 12 && dataValue.intensity <= 17)?{value:dataValue.intensity,color:'#EFEDE9'}:{value:dataValue.intensity,color:'#215254'};
+            //         dataValue['cost'] = (dataValue.cost <= 5)?{value:dataValue.cost,color:'#d8856b'}:(dataValue.cost > 5 && property.cost <= 7)?{value:dataValue.cost,color:'#EFEDE9'}:{value:dataValue.cost,color:'#215254'};
+            //     }
+            //     count++;
+            // }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
