@@ -574,7 +574,9 @@ exports.getRegionTableData=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getRegionTableData = await Emission.findAll({
-            attributes: ['id', 'gap_to_target', 'intensity','cost','service',
+            
+            
+            attributes: ['id', 'gap_to_target', [ sequelize.literal('( SELECT SUM(intensity) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'cost'],'service',
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
@@ -586,7 +588,7 @@ exports.getRegionTableData=async(req,res) => {
                         attributes: ['name']
                     }]
                 }],
-                limit : 10,
+                group: ['region_id'],
             });
         //check password is matched or not then exec
         if(getRegionTableData){
