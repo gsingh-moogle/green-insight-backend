@@ -588,6 +588,7 @@ exports.getRegionTableData=async(req,res) => {
                         attributes: ['name']
                     }]
                 }],
+                limit : 10,
                 group: ['region_id'],
             });
         //check password is matched or not then exec
@@ -626,31 +627,20 @@ exports.getRegionEmissionData=async(req,res) => {
             }
         }
 
-
-            let getRegionEmissions = await Emission.findAll({
-            attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'contributor'],[ sequelize.literal('( SELECT SUM(emission) )'),'detractor']],
-            where:where, include: [
-                {
-                    model: Region,
-                    attributes: ['name']
-                }],
-                group: ['region_id'],
-                limit : 10,
-                raw: true
-            });
             //NEW CODE
             //console.log(type,email,password);return 
-            // let getRegionEmissions = await RegionEmissionStatic.findAll({
-            //     attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
-            //     where:where, include: [
-            //         {
-            //             model: Region,
-            //             attributes: ['name']
-            //         }],
-            //         group: ['region_id'],
-            //         order:[['contributor','desc']],
-            //         raw: true
-            //     });
+            let getRegionEmissions = await RegionEmissionStatic.findAll({
+                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
+                where:where, include: [
+                    {
+                        model: RegionByStatic,
+                        attributes: ['region_name']
+                    }],
+                    group: ['region_by'],
+                    limit : 8,
+                    order:[['contributor','desc']],
+                    raw: true
+                });
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
@@ -661,25 +651,25 @@ exports.getRegionEmissionData=async(req,res) => {
                 for (const property of getRegionEmissions) {
                     if(count < 3){
                         contributor.push({
-                            name:property["Region.name"],
+                            name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#d8856b'
                         })
                     } else if(count == 3){
                         contributor.push({
-                            name:property["Region.name"],
+                            name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#efede9'
                         });
                     } else if(count == 4){
                         detractor.push({
-                            name:property["Region.name"],
+                            name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#efede9'
                         })
                     } else {
                         detractor.push({
-                            name:property["Region.name"],
+                            name:property["RegionByStatic.region_name"],
                             value:parseInt(property.contributor),
                             color:'#215154'
                         })
@@ -719,13 +709,13 @@ exports.getRegionEmissionData=async(req,res) => {
                 //         })
                 //     } 
                 // }
-                const data = {
-                    contributor:contributor,
-                    detractor:detractor
-                };
-                //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
-                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
-            } else { return Response.errorRespose(res,'No Record Found!');}
+            //     const data = {
+            //         contributor:contributor,
+            //         detractor:detractor
+            //     };
+            //     //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
+            //     return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            // } else { return Response.errorRespose(res,'No Record Found!');}
             //OLD Code
             // //console.log(type,email,password);return 
             // let getRegionEmissions = await Emission.findAll({
@@ -739,8 +729,8 @@ exports.getRegionEmissionData=async(req,res) => {
             //         limit : 10,
             //         raw: true
             //     });
-              //  console.log('getRegionEmissions',getRegionEmissions);
-            //check password is matched or not then exec
+            //   //  console.log('getRegionEmissions',getRegionEmissions);
+            // //check password is matched or not then exec
             // if(getRegionEmissions){
             //     let count = 0;
             //     let contributor = [];
@@ -761,14 +751,14 @@ exports.getRegionEmissionData=async(req,res) => {
             //         } 
             //         count++;
             //     }
-            //     const data = {
-            //         contributor:contributor,
-            //         detractor:detractor
-            //     };
+                const data = {
+                    contributor:contributor,
+                    detractor:detractor
+                };
                 //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
-              //  return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
-            // } else { return Response.errorRespose(res,'No Record Found!');}
-      //  }
+                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            } else { return Response.errorRespose(res,'No Record Found!');}
+        
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
