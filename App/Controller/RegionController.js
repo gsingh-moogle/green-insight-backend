@@ -626,20 +626,31 @@ exports.getRegionEmissionData=async(req,res) => {
             }
         }
 
+
+            let getRegionEmissions = await Emission.findAll({
+            attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'contributor'],[ sequelize.literal('( SELECT SUM(emission) )'),'detractor']],
+            where:where, include: [
+                {
+                    model: Region,
+                    attributes: ['name']
+                }],
+                group: ['region_id'],
+                limit : 10,
+                raw: true
+            });
             //NEW CODE
             //console.log(type,email,password);return 
-            let getRegionEmissions = await RegionEmissionStatic.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
-                where:where, include: [
-                    {
-                        model: RegionByStatic,
-                        attributes: ['region_name']
-                    }],
-                    group: ['region_by'],
-                    limit : 8,
-                    order:[['contributor','desc']],
-                    raw: true
-                });
+            // let getRegionEmissions = await RegionEmissionStatic.findAll({
+            //     attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
+            //     where:where, include: [
+            //         {
+            //             model: Region,
+            //             attributes: ['name']
+            //         }],
+            //         group: ['region_id'],
+            //         order:[['contributor','desc']],
+            //         raw: true
+            //     });
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getRegionEmissions){
@@ -647,34 +658,34 @@ exports.getRegionEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 //NEW CODE
-                // for (const property of getRegionEmissions) {
-                //     if(count < 3){
-                //         contributor.push({
-                //             name:property["RegionByStatic.region_name"],
-                //             value:parseInt(property.contributor),
-                //             color:'#d8856b'
-                //         })
-                //     } else if(count == 3){
-                //         contributor.push({
-                //             name:property["RegionByStatic.region_name"],
-                //             value:parseInt(property.contributor),
-                //             color:'#efede9'
-                //         });
-                //     } else if(count == 4){
-                //         detractor.push({
-                //             name:property["RegionByStatic.region_name"],
-                //             value:parseInt(property.contributor),
-                //             color:'#efede9'
-                //         })
-                //     } else {
-                //         detractor.push({
-                //             name:property["RegionByStatic.region_name"],
-                //             value:parseInt(property.contributor),
-                //             color:'#215154'
-                //         })
-                //     }
-                //     count++; 
-                // }
+                for (const property of getRegionEmissions) {
+                    if(count < 3){
+                        contributor.push({
+                            name:property["Region.name"],
+                            value:parseInt(property.contributor),
+                            color:'#d8856b'
+                        })
+                    } else if(count == 3){
+                        contributor.push({
+                            name:property["Region.name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        });
+                    } else if(count == 4){
+                        detractor.push({
+                            name:property["Region.name"],
+                            value:parseInt(property.contributor),
+                            color:'#efede9'
+                        })
+                    } else {
+                        detractor.push({
+                            name:property["Region.name"],
+                            value:parseInt(property.contributor),
+                            color:'#215154'
+                        })
+                    }
+                    count++; 
+                }
 
                 //OLD CODE
                 // for (const property of getRegionEmissions) {
@@ -708,48 +719,6 @@ exports.getRegionEmissionData=async(req,res) => {
                 //         })
                 //     } 
                 // }
-            //     const data = {
-            //         contributor:contributor,
-            //         detractor:detractor
-            //     };
-            //     //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
-            //     return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
-            // } else { return Response.errorRespose(res,'No Record Found!');}
-            //OLD Code
-            // //console.log(type,email,password);return 
-            let getRegionEmissions = await Emission.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
-                where:where, include: [
-                    {
-                        model: Region,
-                        attributes: ['name']
-                    }],
-                    group: ['region_id'],
-                    limit : 10,
-                    raw: true
-                });
-              //  console.log('getRegionEmissions',getRegionEmissions);
-            //check password is matched or not then exec
-            if(getRegionEmissions){
-                let count = 0;
-                let contributor = [];
-                let detractor = [];
-                for (const property of getRegionEmissions) {
-                    if(count < (getRegionEmissions.length/2)){
-                        contributor.push({
-                            name:property["Region.name"],
-                            value:property.contributor,
-                            color:'#d8856b'
-                        })
-                    } else {
-                        detractor.push({
-                            name:property["Region.name"],
-                            value:property.detractor,
-                            color:'#215154'
-                        })
-                    } 
-                    count++;
-                }
                 const data = {
                     contributor:contributor,
                     detractor:detractor
@@ -757,7 +726,49 @@ exports.getRegionEmissionData=async(req,res) => {
                 //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
-        }
+            //OLD Code
+            // //console.log(type,email,password);return 
+            // let getRegionEmissions = await Emission.findAll({
+            //     attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor'],[ sequelize.literal('( SELECT SUM(detractor) )'),'detractor']],
+            //     where:where, include: [
+            //         {
+            //             model: Region,
+            //             attributes: ['name']
+            //         }],
+            //         group: ['region_id'],
+            //         limit : 10,
+            //         raw: true
+            //     });
+              //  console.log('getRegionEmissions',getRegionEmissions);
+            //check password is matched or not then exec
+            // if(getRegionEmissions){
+            //     let count = 0;
+            //     let contributor = [];
+            //     let detractor = [];
+            //     for (const property of getRegionEmissions) {
+            //         if(count < (getRegionEmissions.length/2)){
+            //             contributor.push({
+            //                 name:property["Region.name"],
+            //                 value:property.contributor,
+            //                 color:'#d8856b'
+            //             })
+            //         } else {
+            //             detractor.push({
+            //                 name:property["Region.name"],
+            //                 value:property.detractor,
+            //                 color:'#215154'
+            //             })
+            //         } 
+            //         count++;
+            //     }
+            //     const data = {
+            //         contributor:contributor,
+            //         detractor:detractor
+            //     };
+                //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
+              //  return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+            // } else { return Response.errorRespose(res,'No Record Found!');}
+      //  }
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
