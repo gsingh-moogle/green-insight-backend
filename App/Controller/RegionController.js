@@ -722,7 +722,7 @@ exports.getRegionEmissionData=async(req,res) => {
                                 value:Math.abs(property["value"]),
                                 color:'#efede9'
                             });
-                    } else if(c == 3){
+                    } else if(c == 5){
                             detractor.push({
                                 name:property["name"],
                                 value:Math.abs(property["value"]),
