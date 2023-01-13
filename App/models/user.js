@@ -32,5 +32,10 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'User',
     tableName:'users'
   });
+  User.associate = function(models) {
+    User.hasOne(models.Region, {
+      foreignKey: 'user_id'
+    });
+  };
   return User;
 };

@@ -1,5 +1,5 @@
 const User = require("../models").User;
-
+const Region =require("../models").Region;
 const Response=require("../helper/api-response");
 
 
@@ -8,8 +8,16 @@ exports.login=async(req,res) => {
         var {email,_password}=req.body;
             //code...
             //console.log(type,email,password);return 
-            let getUser=await User.findOne({where:{email:email}});
+            let getUser=await User.findOne({
+                where:{email:email},
+                include: [
+                {
+                    model: Region,
+                    attributes: ['id','name']
+                }]
+            });
             //check password is matched or not then exec
+            console.log('response', getUser)
             if(getUser){
                  if(getUser?.role==0){
                 if(getUser) {
@@ -27,7 +35,14 @@ exports.login=async(req,res) => {
                 }
             } else {
                 //code...
-            let getUser=await User.findOne({where:{email:email}});
+            let getUser=await User.findOne({
+                where:{email:email},
+                include: [
+                {
+                    model: Region,
+                    attributes: ['id','name']
+                }]
+            });
             //check password is matched or not then exec
             if(getUser.role==1){
                 if(getUser) {
