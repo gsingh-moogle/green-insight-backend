@@ -205,7 +205,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
 
             //New Code Start
             let getRegionEmissions;
-            if(toggel_data == 0) {
+            if(toggel_data == 1) {
                 getRegionEmissions = await EmissionRegionStatic.findAll({
                     attributes: ['id','intensity',
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
@@ -661,7 +661,7 @@ exports.getRegionEmissionData=async(req,res) => {
             //NEW CODE
             //console.log(type,email,password);return 
             let getRegionEmissions;
-            if(toggel_data == 0) {
+            if(toggel_data == 1) {
                 getRegionEmissions = await Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
                     where:where, include: [
