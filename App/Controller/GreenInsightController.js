@@ -9,6 +9,7 @@ exports.login=async(req,res) => {
             //code...
             //console.log(type,email,password);return 
             let getUser=await User.findOne({
+                attributes: ['id','name','email','role','createdAt'],
                 where:{email:email},
                 include: [
                 {
@@ -36,6 +37,7 @@ exports.login=async(req,res) => {
             } else {
                 //code...
             let getUser=await User.findOne({
+                attributes: ['id','name','email','role','createdAt'],
                 where:{email:email},
                 include: [
                 {
