@@ -16,12 +16,10 @@ exports.login=async(req,res) => {
                 {
                     model: Region,
                     attributes: ['id','name']
-                }],
-                include: [
-                    {
-                        model: Profile,
-                        attributes: ['first_name','last_name','image','status']
-                    }]
+                },{
+                    model: Profile,
+                    attributes: ['first_name','last_name','image','status']
+                }]
             });
             //check password is matched or not then exec
             console.log('response', getUser)
@@ -46,12 +44,10 @@ exports.login=async(req,res) => {
                // attributes: ['id','name','email','role','createdAt'],
                 where:{email:email},
                 include: [
-                {
-                    model: Region,
-                    attributes: ['id','name']
-                }],
-                include: [
                     {
+                        model: Region,
+                        attributes: ['id','name']
+                    },{
                         model: Profile,
                         attributes: ['first_name','last_name','image','status']
                     }]
