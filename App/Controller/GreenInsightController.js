@@ -1,5 +1,6 @@
 const User = require("../models").User;
 const Region =require("../models").Region;
+const Profile =require("../models").Profile;
 const Response=require("../helper/api-response");
 
 
@@ -15,6 +16,9 @@ exports.login=async(req,res) => {
                 {
                     model: Region,
                     attributes: ['id','name']
+                },{
+                    model: Profile,
+                    attributes: ['first_name','last_name','image','status']
                 }]
             });
             //check password is matched or not then exec
@@ -40,10 +44,13 @@ exports.login=async(req,res) => {
                // attributes: ['id','name','email','role','createdAt'],
                 where:{email:email},
                 include: [
-                {
-                    model: Region,
-                    attributes: ['id','name']
-                }]
+                    {
+                        model: Region,
+                        attributes: ['id','name']
+                    },{
+                        model: Profile,
+                        attributes: ['first_name','last_name','image','status']
+                    }]
             });
             //check password is matched or not then exec
             if(getUser.role==1){
