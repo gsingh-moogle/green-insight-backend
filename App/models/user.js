@@ -36,6 +36,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasOne(models.Region, {
       foreignKey: 'user_id'
     });
+    User.hasOne(models.Profile, {
+      foreignKey: 'user_id'
+    });
   };
   return User;
 };
