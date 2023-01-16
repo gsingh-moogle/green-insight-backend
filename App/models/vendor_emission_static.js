@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   VendorEmissionStatic.init({
     region_id: DataTypes.INTEGER,
     vendor_id: DataTypes.INTEGER,
+    lane_id:DataTypes.INTEGER,
     date: DataTypes.DATE,
     contributor: DataTypes.DECIMAL(10,1)
   }, {
@@ -29,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
     });
     VendorEmissionStatic.belongsTo(models.Facility, {
       foreignKey: 'vendor_id'
+    });
+    VendorEmissionStatic.hasOne(models.Lane, {
+      foreignKey: 'lane_id'
     });
   };
   return VendorEmissionStatic;

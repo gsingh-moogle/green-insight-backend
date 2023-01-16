@@ -5,9 +5,9 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     let data = [];
     let arrayValues = ['region','facilities','vendor','lane'];
-      for (let i = 0; i < 3000; i++) {
+      for (let i = 0; i < 24; i++) {
           data.push({
-              emission_type: arrayValues[faker.datatype.number({ min: 0, max: 3 })],
+              emission_type: arrayValues[0],
               company_id: 1,
               region_id: faker.datatype.number({ min: 1, max: 6 }),
               facilities_id: faker.datatype.number({ min: 1, max: 10 }),
@@ -21,7 +21,7 @@ module.exports = {
               cost:faker.datatype.number({ min: 0, max: 10, precision: 0.01 }),
               service:faker.datatype.number({ min: 0, max: 30, precision: 0.01 }),
               currency:'$',
-              date: faker.date.between('2017-01-01T00:00:00.000Z', '2022-12-01T00:00:00.000Z'),
+              date: faker.date.between('2022-01-01T00:00:00.000Z', '2022-12-01T00:00:00.000Z'),
               emission_toggle:1,
               detractor:faker.datatype.number({ min: 1, max: 3}),
               contributor:faker.datatype.number({ min: 1, max: 3 }),
