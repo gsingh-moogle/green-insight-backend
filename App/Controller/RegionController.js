@@ -1220,7 +1220,23 @@ exports.getRegionEmissionReduction=async(req,res) => {
             //       ]
                 
             // }
-            return Response.customSuccessResponseWithData(res,'Emissions Reduction',getRegionEmissionsReduction,200)
+            let data = {
+                company_level : [990,950,901,810,750],
+                targer_level : [850,780,720,680,660],
+                base_level: [1200]
+            }
+            if(region_id == 1) {
+                data = {
+                    company_level : [950, 901, 810, 750],
+                    targer_level : [500, 450, 350, 300],
+                    pacific_level :[400, 350, 250, 200],
+                    xd : ["", "", 300, 250],
+                    xe : ["", "", "", 200],
+                    base_level: [1200]
+                }
+            } 
+            
+            return Response.customSuccessResponseWithData(res,'Emissions Reduction',data,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
