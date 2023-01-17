@@ -21,7 +21,7 @@ module.exports = {
               vendor_id: faker.datatype.number({ min: 1, max: 10 }),
               lane_id: faker.datatype.number({ min: 1, max: 10 }),
               emission:emission,
-              emission_per_ton: emission_per_ton,
+              total_ton_miles: emission_per_ton,
               platform :'static',
               intensity:intensity,
               date: faker.date.between('2017-01-01T00:00:00.000Z', '2022-12-01T00:00:00.000Z'),

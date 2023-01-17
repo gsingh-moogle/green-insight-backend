@@ -329,7 +329,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
 
             //OLD code Start
             let getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(emission_per_ton) )'),'emission_per_ton'],
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
                     [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
@@ -375,7 +375,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                                 data = property.emission;
                             }   
                             
-                            tempArray.push(parseInt(data));
+                            tempArray.push(parseFloat(data));
                             if(tempDataObject["name"] === undefined){
                                 tempDataObject.name = property['Region.name'];
                             }
@@ -600,7 +600,8 @@ exports.getRegionTableData=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getRegionTableData = await Emission.findAll({
-            attributes: ['id', 'gap_to_target', [ sequelize.literal('( SELECT SUM(intensity) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'cost'],'service',
+            attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
+            [ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
@@ -618,26 +619,26 @@ exports.getRegionTableData=async(req,res) => {
         //check password is matched or not then exec
         if(getRegionTableData){
             let c = 0;
-            for (const property of getRegionTableData) {
-                let color;
-                if(c < 2) {
-                    color = '#d8856b';
-                } else if(c == 2) {
-                        color = '#efede9';
-                } else if(c == 5){
-                    color = '#efede9';
-                } else {
-                    color = '#215154';
-                }
-                property['intensity'] = {value:property.intensity,color:color};
-                property['cost'] = {value:property.cost,color:color};
-                property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
-            
-            //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-            //     property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+            // for (const property of getRegionTableData) {
+            //     let color;
+            //     if(c < 2) {
+            //         color = '#d8856b';
+            //     } else if(c == 2) {
+            //             color = '#efede9';
+            //     } else if(c == 5){
+            //         color = '#efede9';
+            //     } else {
+            //         color = '#215154';
+            //     }
+            //     property['intensity'] = {value:property.intensity,color:color};
+            //     property['cost'] = {value:property.cost,color:color};
             //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
-                c++;
-        }
+            
+            // //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+            // //     property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+            // //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+            //     c++;
+            // }
             return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -672,28 +673,26 @@ exports.getRegionEmissionData=async(req,res) => {
             let getRegionEmissions;
             if(toggel_data == 1) {
                 getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'contributor']],
+                    attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
                     where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']
                     }],
                     group: ['region_id'],
-                    limit : 8,
-                    order:[['contributor','desc']],
+                    order:[['intensity','desc']],
                     raw: true
                 });
             } else {
                 getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(intensity) )'),'contributor']],
+                    attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
                     where:where, include: [
                     {
                         model: Region,
                         attributes: ['name']
                     }],
                     group: ['region_id'],
-                    limit : 8,
-                    order:[['contributor','desc']],
+                    order:[['intensity','desc']],
                     raw: true
                 });
             }
@@ -705,64 +704,29 @@ exports.getRegionEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 let total = [];
+                
                 //NEW CODE
                 for (const property of getRegionEmissions) {
-                    total.push(parseInt(property.contributor));
-                    // if(count < 3){
-                    //     contributor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#d8856b'
-                    //     })
-                    // } else if(count == 3){
-                    //     contributor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#efede9'
-                    //     });
-                    // } else if(count == 4){
-                    //     detractor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#efede9'
-                    //     })
-                    // } else {
-                    //     detractor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#215154'
-                    //     })
-                    // }
-                    // count++; 
+                    let data = property.intensity;
+                    if(toggel_data == 1) {
+                        data = property.emission;
+                    }
+                    
+                    total.push(data);
                 }
+                
                 const average = total.reduce((a, b) => a + b, 0) / total.length;
+                console.log(average);
                 let avgData = [];
                 for (const property of getRegionEmissions) {
+                    let data = property.intensity-average;
+                    if(toggel_data == 1) {
+                        data = property.emission-average;
+                    }
                     avgData.push({
                         name :property["Region.name"],
-                        value: parseInt(property.contributor-average).toFixed(2)
+                        value: data.toFixed(2)
                     });
-                    // if(parseInt(property.contributor) < average){
-                        
-                    //     contributor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#d8856b'
-                    //     })
-                    // } else if(parseInt(property.contributor) > average){
-                    //     detractor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#215154'
-                    //     })
-                    // } else {
-                    //     detractor.push({
-                    //         name:property["Region.name"],
-                    //         value:parseInt(property.contributor),
-                    //         color:'#215154'
-                    //     })
-                    // }
-                    // count++; 
                 }
               //  avgData = avgData.sort((f, s) => s - f);
                  let c =0;
@@ -969,9 +933,9 @@ exports.getRegionIntensityByYear=async(req,res) => {
             console.log('where',where);
             let attributeArray = [];
             if(toggel == 1) {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission_per_ton) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             } else {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(cost) )'),'contributor'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
                 
             }
 
@@ -1036,7 +1000,9 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let detractor = getRegionEmissions.map(a => a.detractor);
                 let baseData = [];
                 for(const property of getRegionEmissions) {
-                    baseData.push(property.contributor);
+                    let data = (property.emission/property.total_ton_miles).toFixed(2);
+                    property.intensity = data;
+                    baseData.push(data);
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
@@ -1099,9 +1065,9 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
             console.log('where',where);
             let attributeArray = [];
             if(toggel == 1) {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(emission_per_ton) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             } else {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(emission_per_ton) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             }
 
             //NEW STATIC DATA CODE

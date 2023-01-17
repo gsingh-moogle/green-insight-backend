@@ -17,6 +17,7 @@ class Emission extends Model {
     name : DataTypes.STRING,
     from : DataTypes.STRING,
     to : DataTypes.STRING,
+    region_name: DataTypes.STRING,
     company_id: DataTypes.INTEGER,
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
@@ -26,7 +27,9 @@ class Emission extends Model {
     },
     emission: DataTypes.FLOAT,
     intensity: DataTypes.FLOAT,
-    emission_per_ton: DataTypes.FLOAT,
+    total_ton_miles: DataTypes.FLOAT,
+    loaded_ton_miles: DataTypes.FLOAT,
+    shipments:DataTypes.STRING,
     platform: DataTypes.FLOAT,
     date: DataTypes.DATE,
     status: DataTypes.BOOLEAN

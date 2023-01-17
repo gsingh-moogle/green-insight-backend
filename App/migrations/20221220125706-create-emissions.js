@@ -21,9 +21,13 @@ module.exports = {
       company_id: {
         type: Sequelize.INTEGER,
       },
+      region_name: {
+        type: Sequelize.STRING,
+        allowNull:true,
+      },
       region_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'regions',
           key:'id'
@@ -33,7 +37,7 @@ module.exports = {
       },
       facilities_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'facilities',
           key:'id'
@@ -43,7 +47,7 @@ module.exports = {
       },
       lane_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'lanes',
           key:'id'
@@ -53,7 +57,7 @@ module.exports = {
       },
       vendor_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'vendors',
           key:'id'
@@ -67,8 +71,14 @@ module.exports = {
       intensity: {
         type: Sequelize.FLOAT
       },
-      emission_per_ton: {
+      total_ton_miles: {
         type: Sequelize.FLOAT
+      },
+      loaded_ton_miles: {
+        type: Sequelize.FLOAT
+      },
+      shipments: {
+        type: Sequelize.STRING
       },
       platform: {
         type: Sequelize.STRING
@@ -80,11 +90,11 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       createdAt: {
-        allowNull: false,
+        allowNull:true,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull:true,
         type: Sequelize.DATE
       }
     });
