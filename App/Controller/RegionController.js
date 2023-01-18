@@ -355,6 +355,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             });
                 console.log('getCompanyData',getCompanyData);
             if(getRegionEmissions){
+                let convertToMillion  = 1000000;
                 let dataObject = [];
                 let minArray = [];
                 let maxArray = [];
@@ -377,7 +378,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                         if(property['Region.name'] == regions[i]) {
                             let data = (property.emission/property.emission_per_ton).toFixed(2);
                             if(toggel_data == 1){
-                                data = property.emission;
+                                data = (property.emission/convertToMillion);
                             }   
                             
                             tempArray.push(parseFloat(data));
