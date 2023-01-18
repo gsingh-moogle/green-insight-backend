@@ -602,6 +602,7 @@ exports.getRegionTableData=async(req,res) => {
         let getRegionTableData = await Emission.findAll({
             attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
             [ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],
+            [ sequelize.literal('( SELECT SUM(emission) )'),'cost'],
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
@@ -619,26 +620,27 @@ exports.getRegionTableData=async(req,res) => {
         //check password is matched or not then exec
         if(getRegionTableData){
             let c = 0;
-            // for (const property of getRegionTableData) {
-            //     let color;
-            //     if(c < 2) {
-            //         color = '#d8856b';
-            //     } else if(c == 2) {
-            //             color = '#efede9';
-            //     } else if(c == 5){
-            //         color = '#efede9';
-            //     } else {
-            //         color = '#215154';
-            //     }
-            //     property['intensity'] = {value:property.intensity,color:color};
-            //     property['cost'] = {value:property.cost,color:color};
-            //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+            for (const property of getRegionTableData) {
+                let color;
+                if(c < 2) {
+                    color = '#d8856b';
+                } else if(c == 2) {
+                        color = '#efede9';
+                } else if(c == 5){
+                    color = '#efede9';
+                } else {
+                    color = '#215154';
+                }
+               // property.cost = {value:property.intensity,color:color};
+                property['intensity'] = {value:property.intensity,color:color};
+                
+              //  property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             
-            // //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-            // //     property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
-            // //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
-            //     c++;
-            // }
+            //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
+                 property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+            //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
+                c++;
+            }
             return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
