@@ -202,6 +202,10 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     )
                 }
             }
+            where[Op.or] = [];
+            where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), 2020));
+            where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), 2021));
+            where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), 2022));
 
             //New Code Start
             // let getRegionEmissions;
@@ -333,7 +337,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
-                    where:where, include: [
+                    where:where, 
+                    include: [
                         {
                             model: Region,
                             attributes: ['name']
@@ -433,6 +438,11 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 dataObject.push({
                     name:'base_level',
                     data:baseLine,
+                });
+
+                dataObject.push({
+                    name:'lables',
+                    data:lables,
                 });
                 return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
