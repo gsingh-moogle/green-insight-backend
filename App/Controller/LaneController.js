@@ -350,7 +350,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
 
 exports.getLaneEmissionData=async(req,res) => {
     try {
-        let {region_id, year, quarter}=req.body;
+        let {region_id, year, quarter, toggel_data}=req.body;
       //  const where = {emission_type:'lane'}
         const where = {}
         if (region_id || year || quarter) {
@@ -371,16 +371,11 @@ exports.getLaneEmissionData=async(req,res) => {
         }
 
             //NEW CODE
-            let getLaneEmissionData = await LaneEmissionStatic.findAll({
-                attributes: ['id',[ sequelize.literal('( SELECT SUM(contributor) )'),'contributor']],
-                where:where, include: [
-                    {
-                        model: Lane,
-                        attributes: ['name']
-                    }],
-                    group: [`lane_id`],
-                    limit : 8,
-                    order:[['contributor','desc']],
+            let getLaneEmissionData = await Emission.findAll({
+                attributes: ['id',['name','lane_name'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+                where:where,
+                    group: [`lane_name`],
+                    order:[['intensity','desc']],
                     raw: true
                 });
               //  console.log('getRegionEmissions',getRegionEmissions);
@@ -391,36 +386,93 @@ exports.getLaneEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
 
-                 //NEW CODE
-                 for (const property of getLaneEmissionData) {
-                    if(count < 3){
-                        contributor.push({
-                            name:property["Lane.name"],
-                            value:parseInt(property.contributor),
+                let total = [];
+                
+                //NEW CODE
+                for (const property of getLaneEmissionData) {
+                    let data = property.intensity;
+                    if(toggel_data == 1) {
+                        data = property.emission;
+                    }
+                    
+                    total.push(data);
+                }
+                
+                const average = total.reduce((a, b) => a + b, 0) / total.length;
+                console.log(average);
+                let avgData = [];
+                for (const property of getLaneEmissionData) {
+                    let data = property.intensity-average;
+                    if(toggel_data == 1) {
+                        data = property.emission-average;
+                    }
+                    avgData.push({
+                        name :property["lane_name"],
+                        value: data.toFixed(2)
+                    });
+                }
+
+                console.log('avgData',avgData);
+                let c =0;
+                for (const property of avgData) {
+                    if(c < 2) {
+                            contributor.push({
+                            name:property["name"],
+                            value:Math.abs(property["value"]),
+                            
                             color:'#d8856b'
                         })
-                    } else if(count == 3){
-                        contributor.push({
-                            name:property["Lane.name"],
-                            value:parseInt(property.contributor),
-                            color:'#efede9'
-                        });
-                  //  } else if(count == 4 && count <= 6){
-                    } else if(count == 4){
-                        detractor.push({
-                            name:property["Lane.name"],
-                            value:parseInt(property.contributor),
+                    } else if(c == 2) {
+                            contributor.push({
+                                name:property["name"],
+                                value:Math.abs(property["value"]),
+                                color:'#efede9'
+                            });
+                    } else if(c == 5){
+                            detractor.push({
+                                name:property["name"],
+                                value:Math.abs(property["value"]),
                             color:'#efede9'
                         })
                     } else {
-                        detractor.push({
-                            name:property["Lane.name"],
-                            value:parseInt(property.contributor),
+                            detractor.push({
+                                name:property["name"],
+                                value:Math.abs(property["value"]),
                             color:'#215154'
                         })
                     }
-                    count++; 
+                    c++;
                 }
+                 //NEW CODE
+                //  for (const property of getLaneEmissionData) {
+                //     if(count < 3){
+                //         contributor.push({
+                //             name:property["Lane.name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#d8856b'
+                //         })
+                //     } else if(count == 3){
+                //         contributor.push({
+                //             name:property["Lane.name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#efede9'
+                //         });
+                //   //  } else if(count == 4 && count <= 6){
+                //     } else if(count == 4){
+                //         detractor.push({
+                //             name:property["Lane.name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#efede9'
+                //         })
+                //     } else {
+                //         detractor.push({
+                //             name:property["Lane.name"],
+                //             value:parseInt(property.contributor),
+                //             color:'#215154'
+                //         })
+                //     }
+                //     count++; 
+                // }
 
                 // for (const property of detractor) {
 

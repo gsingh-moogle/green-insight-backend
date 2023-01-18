@@ -9,16 +9,25 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      emission_type: {
-        type: Sequelize.ENUM,
-        values:['region','facilities','vendor','lane']
+      name: {
+        type: Sequelize.STRING,
+      },
+      from: {
+        type: Sequelize.STRING,
+      },
+      to: {
+        type: Sequelize.STRING,
       },
       company_id: {
         type: Sequelize.INTEGER,
       },
+      region_name: {
+        type: Sequelize.STRING,
+        allowNull:true,
+      },
       region_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'regions',
           key:'id'
@@ -28,7 +37,7 @@ module.exports = {
       },
       facilities_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'facilities',
           key:'id'
@@ -36,19 +45,9 @@ module.exports = {
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      vendor_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'vendors',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
-      },
       lane_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
           model:'lanes',
           key:'id'
@@ -56,48 +55,46 @@ module.exports = {
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      gap_to_target: {
-        type: Sequelize.INTEGER
+      vendor_id: {
+        type: Sequelize.INTEGER,
+        allowNull:true,
+        references:{
+          model:'vendors',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
+      },
+      emission: {
+        type: Sequelize.FLOAT
       },
       intensity: {
         type: Sequelize.FLOAT
       },
-      truck_load: {
-        type: Sequelize.INTEGER
-      },
-      inter_modal: {
-        type: Sequelize.INTEGER
-      },
-      cost: {
+      total_ton_miles: {
         type: Sequelize.FLOAT
       },
-      service: {
+      loaded_ton_miles: {
         type: Sequelize.FLOAT
       },
-      currency: {
+      shipments: {
+        type: Sequelize.STRING
+      },
+      platform: {
         type: Sequelize.STRING
       },
       date: {
         type: Sequelize.DATE
       },
-      emission_toggle: {
-        type: Sequelize.BOOLEAN
-      },
-      detractor: {
-        type: Sequelize.FLOAT
-      },
-      contributor: {
-        type: Sequelize.FLOAT
-      },
       status: {
         type: Sequelize.BOOLEAN
       },
       createdAt: {
-        allowNull: false,
+        allowNull:true,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull:true,
         type: Sequelize.DATE
       }
     });

@@ -14,28 +14,24 @@ class Emission extends Model {
     }
   }
   Emission.init({
-    emission_type: {
-      type: DataTypes.ENUM,
-      values:['region','facilities','vendor','lane']
-    },
+    name : DataTypes.STRING,
+    from : DataTypes.STRING,
+    to : DataTypes.STRING,
+    region_name: DataTypes.STRING,
     company_id: DataTypes.INTEGER,
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
+    lane_id: DataTypes.INTEGER,
     vendor_id: {
       type:DataTypes.INTEGER
     },
-    lane_id: DataTypes.INTEGER,
-    gap_to_target: DataTypes.INTEGER,
+    emission: DataTypes.FLOAT,
     intensity: DataTypes.FLOAT,
-    truck_load: DataTypes.INTEGER,
-    inter_modal: DataTypes.INTEGER,
-    cost: DataTypes.FLOAT,
-    service: DataTypes.FLOAT,
-    currency: DataTypes.STRING,
+    total_ton_miles: DataTypes.FLOAT,
+    loaded_ton_miles: DataTypes.FLOAT,
+    shipments:DataTypes.STRING,
+    platform: DataTypes.FLOAT,
     date: DataTypes.DATE,
-    emission_toggle: DataTypes.BOOLEAN,
-    detractor: DataTypes.FLOAT,
-    contributor: DataTypes.FLOAT,
     status: DataTypes.BOOLEAN
   }, {
     sequelize,
