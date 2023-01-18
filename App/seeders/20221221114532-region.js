@@ -8,7 +8,7 @@ module.exports = {
     let regionName = ['Pacific','Southwest','South','Midwest','Mountains','Northeast'];
       for (let i = 0; i < 6; i++) {
           data.push({
-              user_id: faker.datatype.number({ min: 1, max: 100 }),
+              user_id: i+1,
               name: regionName[i],
               latitude:faker.address.latitude(),
               longitude:faker.address.longitude(),

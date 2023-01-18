@@ -1,7 +1,11 @@
 {
   "development": {
     "username": "root",
+<<<<<<< HEAD
     "password": "Mind@123",
+=======
+    "password": "",
+>>>>>>> 42ff5405c69b6196ad5edacdd797014b52fd64b4
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
