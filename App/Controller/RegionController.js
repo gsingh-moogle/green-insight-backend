@@ -19,9 +19,7 @@ const Response=require("../helper/api-response");
 exports.getRegions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
-        let getRegionEmissions = await Region.findAll({where:{
-            [Op.or]: [{id: 1}, {id: 2}]
-          }});
+        let getRegionEmissions = await Region.findAll();
         let getCompanies = await Company.findOne({where:{'id':1}});
         //check password is matched or not then exec
         if(getRegionEmissions){
