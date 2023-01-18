@@ -662,12 +662,12 @@ exports.getRegionTableData=async(req,res) => {
                     color = '#215154';
                 }
                // property.cost = {value:property.intensity,color:color};
-                property['intensity'] = {value:property.intensity,color:color};
+                property['intensity'] = {value:property.intensity+' g',color:color};
                 
               //  property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             
             //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                 property['cost'] = (property.cost <= 5)?{value:(property.cost/convertToMillion),color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion),color:'#EFEDE9'}:{value:(property.cost/convertToMillion),color:'#215254'};
+                 property['cost'] = (property.cost <= 5)?{value:(property.cost/convertToMillion).toFixed(2)+' M',color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion).toFixed(2)+' M',color:'#EFEDE9'}:{value:(property.cost/convertToMillion).toFixed(2)+' M',color:'#215254'};
             //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
                 c++;
             }
@@ -1097,6 +1097,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
             }
 
             console.log('where',where);
+            let convertToMillion  = 1000000;
             let attributeArray = [];
             if(toggel == 1) {
                 attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
@@ -1134,7 +1135,8 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 let data = [];
                 let baseData = [];
                 for(const property of getRegionEmissions) {
-                    let data = (property.emission/property.emission_per_ton).toFixed(2);
+                  //  let data = (property.emission/property.emission_per_ton).toFixed(2);
+                    let data = (property.emission/convertToMillion).toFixed(2);
                     property.contributor = data;
                     baseData.push(parseFloat(data));
                 }
