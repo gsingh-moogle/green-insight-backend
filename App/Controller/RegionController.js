@@ -356,6 +356,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 console.log('getCompanyData',getCompanyData);
             if(getRegionEmissions){
                 let convertToMillion  = 1000000;
+                let emissionUnit = 'M';
+                let intensityUnit = 'g';
                 let dataObject = [];
                 let minArray = [];
                 let maxArray = [];
@@ -440,6 +442,23 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     name:'base_level',
                     data:baseLine,
                 });
+
+                dataObject.push({
+                    name:'Max',
+                    data:baseLine+(baseLine*(10/100)),
+                });
+
+                if(toggel_data == 1){
+                    dataObject.push({
+                        name:'Unit',
+                        data:emissionUnit,
+                    });
+                }  else {
+                    dataObject.push({
+                        name:'Unit',
+                        data:intensityUnit,
+                    });
+                }
 
                 dataObject.push({
                     name:'lables',
