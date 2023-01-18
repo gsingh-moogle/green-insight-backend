@@ -1037,6 +1037,9 @@ exports.getRegionIntensityByYear=async(req,res) => {
                     let data = (property.emission/property.total_ton_miles).toFixed(2);
                     property.intensity = data;
                     baseData.push(data);
+                    if(current_year == property.year) {
+                        maxYearValue = parseFloat(data);
+                    }
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
@@ -1047,7 +1050,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                     label:[past_year,current_year],
                     industrialAverage: min-industrialAverage,
                     baseLine:max+baseLine,
-                    max: max,
+                    max: maxYearValue,
                     graphMax: (max+baseLine)+(max+baseLine)*(15/100)
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
@@ -1136,11 +1139,15 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
             if(getRegionEmissions){
                 let data = [];
                 let baseData = [];
+                let maxYearValue;
                 for(const property of getRegionEmissions) {
                   //  let data = (property.emission/property.emission_per_ton).toFixed(2);
                     let data = (property.emission/convertToMillion).toFixed(2);
                     property.contributor = data;
                     baseData.push(parseFloat(data));
+                    if(current_year == property.year) {
+                        maxYearValue = parseFloat(data);
+                    }
                 }
                 let min = Math.min(...baseData);
                 let max = Math.max(...baseData);
