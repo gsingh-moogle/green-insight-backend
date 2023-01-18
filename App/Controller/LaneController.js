@@ -13,7 +13,7 @@ const Response=require("../helper/api-response");
 
 exports.getLaneTableDataHighIntensity=async(req,res) => {
     try {
-        let {region_id, year, quarter}=req.body;
+        let {region_id, year, quarter, toggel_data}=req.body;
         const where = {};
         const regionWhere = {};
         if (region_id || year) {
@@ -87,23 +87,69 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
             let data = []
             let lane_id = [1,2,3,4,5,6,7,8];
             let count = 0;
-            for (const property of getLaneTableData) {                
-                property.Lane ={
-                    name :property.lane_name
-                };
-                if(count < 3) {
-                    property.Lane.color = '#d8856b';
-                } else if(count == 4) {
-                    property.Lane.color = '#EFEDE9';
-                } else if (count == 5) {
-                    property.Lane.color = '#EFEDE9';
-                } else {
-                    property.Lane.color = '#215254';
+            let convertToMillion  = 1000000;
+            let total = [];
+            for (const property of getLaneTableData) {
+                let data = property.intensity;
+                if(toggel_data == 1) {
+                    data = parseFloat((property.emission/convertToMillion).toFixed(2));
                 }
-
-
-                count++;
+                total.push(data);
             }
+            
+            const average = total.reduce((a, b) => a + b, 0) / total.length;
+            let showData = [];
+
+            for (const property of getLaneTableData) {
+                let emissionData = property.intensity;
+                if(toggel_data == 1) {
+                    emissionData = parseFloat((property.emission/convertToMillion).toFixed(2));
+                }
+                if(emissionData > average) {
+                    property.Lane ={
+                        name :property.lane_name,
+                        color:'#d8856b'
+                    };
+                    showData.push(property);
+                }
+                
+
+                // property['intensity'] = (property.intensity > average)?{value:property.intensity,color:'#d8856b'}:{value:property.intensity,color:'#215254'};
+                // property['cost'] = (property.emission > average)?{value:property.emission,color:'#d8856b'}:{value:property.emission,color:'#215254'};
+
+                // if(count < 3) {
+                //     property.Lane.color = '#d8856b';
+                //     data.push(property);
+                // } else if(count == 4) {
+                //     property.Lane.color = '#EFEDE9';
+                //     data.push(property);
+                // } else if (count == 5) {
+                //     property.Lane.color = '#EFEDE9';
+                //     data.push(property);
+                // } else {
+                //     property.Lane.color = '#215254';
+                //     data.push(property);
+                // }
+              //  count++;
+            }
+
+            // for (const property of getLaneTableData) {                
+            //     property.Lane ={
+            //         name :property.lane_name
+            //     };
+            //     if(count < 3) {
+            //         property.Lane.color = '#d8856b';
+            //     } else if(count == 4) {
+            //         property.Lane.color = '#EFEDE9';
+            //     } else if (count == 5) {
+            //         property.Lane.color = '#EFEDE9';
+            //     } else {
+            //         property.Lane.color = '#215254';
+            //     }
+
+
+            //     count++;
+            // }
             return Response.customSuccessResponseWithData(res,'Get Lane Table Data',getLaneTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -113,7 +159,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
 
 exports.getLaneTableDataLowIntensity=async(req,res) => {
     try {
-        let {region_id, year, quarter}=req.body;
+        let {region_id, year, quarter, toggel_data}=req.body;
         const where = {};
         const regionWhere = {};
         if (region_id || year) {
@@ -187,13 +233,12 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             let lane_id = [1,2,3,4,5,6,7,8];
             let count = 0;
             let convertToMillion  = 1000000;
-
+            let total = [];
             for (const property of getLaneTableData) {
                 let data = property.intensity;
                 if(toggel_data == 1) {
                     data = parseFloat((property.emission/convertToMillion).toFixed(2));
                 }
-                
                 total.push(data);
             }
             
