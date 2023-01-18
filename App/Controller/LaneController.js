@@ -345,9 +345,11 @@ exports.getLaneEmissionData=async(req,res) => {
                 let count = 0;
                 let contributor = [];
                 let detractor = [];
-
+                let unit = 'g';
                 let total = [];
-                
+                if(toggel_data == 1) {
+                    unit = 'M';
+                }
                 //NEW CODE
                 for (const property of getLaneEmissionData) {
                     let data = property.intensity;
@@ -360,48 +362,72 @@ exports.getLaneEmissionData=async(req,res) => {
                 
                 const average = total.reduce((a, b) => a + b, 0) / total.length;
                 let avgData = [];
+                console.log('getLaneEmissionData',getLaneEmissionData);
                 for (const property of getLaneEmissionData) {
                     let data = property.intensity-average;
+                    let compareValue = property.intensity;
                     if(toggel_data == 1) {
-                        data = property.emission-average;
+                        compareValue = property.emission/convertToMillion;
+                        data = parseFloat(((property.emission/convertToMillion)-average).toFixed(2));
                     }
-                    avgData.push({
-                        name :property["lane_name"],
-                        value: data.toFixed(2)
-                    });
-                }
-
-                console.log('avgData',avgData);
-                let c =0;
-                for (const property of avgData) {
-                    if(c < 2) {
-                            contributor.push({
-                            name:property["name"],
-                            value:Math.abs(property["value"]),
-                            
+                    if( compareValue > average) {
+                        contributor.push({
+                            name:property["lane_name"],
+                            value:Math.abs(data),
                             color:'#d8856b'
                         })
-                    } else if(c == 2) {
-                            contributor.push({
-                                name:property["name"],
-                                value:Math.abs(property["value"]),
-                                color:'#efede9'
-                            });
-                    } else if(c == 5){
-                            detractor.push({
-                                name:property["name"],
-                                value:Math.abs(property["value"]),
-                            color:'#efede9'
-                        })
                     } else {
-                            detractor.push({
-                                name:property["name"],
-                                value:Math.abs(property["value"]),
+                        detractor.push({
+                            name:property["lane_name"],
+                            value:Math.abs(data),
                             color:'#215154'
                         })
                     }
-                    c++;
+                    // avgData.push({
+                    //     name :property["lane_name"],
+                    //     value: data.toFixed(2)
+                    // });
                 }
+
+                contributorLenght = contributor.length;
+                if(contributorLenght > 0){
+                    contributor[contributorLenght-1]['color'] ='#efede9';
+                }
+                detractorLenght = detractor.length;
+                if(detractorLenght > 0){
+                    detractor[0]['color'] ='#efede9';
+                }
+
+                // console.log('avgData',avgData);
+                // let c = 0;
+                // for (const property of avgData) {
+                //     if(c < 2) {
+                //         contributor.push({
+                //             name:property["name"],
+                //             value:Math.abs(property["value"]),
+                //             color:'#d8856b'
+                //         })
+                //     } else if(c == 2) {
+                //         contributor.push({
+                //             name:property["name"],
+                //             value:Math.abs(property["value"]),
+                //             color:'#efede9'
+                //         });
+                //     } else if(c == 5){
+                //         detractor.push({
+                //             name:property["name"],
+                //             value:Math.abs(property["value"]),
+                //             color:'#efede9'
+                //         })
+                //     } else {
+                //         detractor.push({
+                //             name:property["name"],
+                //             value:Math.abs(property["value"]),
+                //             color:'#215154'
+                //         })
+                //     }
+                //     c++;
+                // }
                  //NEW CODE
                 //  for (const property of getLaneEmissionData) {
                 //     if(count < 3){
@@ -487,7 +513,8 @@ exports.getLaneEmissionData=async(req,res) => {
                 // }
                 const data = {
                     contributor:contributor,
-                    detractor:detractor
+                    detractor:detractor,
+                    unit :unit
                 };
                // const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200);
