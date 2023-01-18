@@ -646,10 +646,12 @@ exports.getRegionTableData=async(req,res) => {
                 }],
                 group: ['region_id'],
                 order:[['intensity','desc']],
+                raw:true
             });
         //check password is matched or not then exec
         if(getRegionTableData){
             let c = 0;
+            let convertToMillion  = 1000000;
             for (const property of getRegionTableData) {
                 let color;
                 if(c < 2) {
@@ -667,10 +669,11 @@ exports.getRegionTableData=async(req,res) => {
               //  property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             
             //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                 property['cost'] = (property.cost <= 5)?{value:property.cost,color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:property.cost,color:'#EFEDE9'}:{value:property.cost,color:'#215254'};
+                 property['cost'] = (property.cost <= 5)?{value:(property.cost/convertToMillion),color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion),color:'#EFEDE9'}:{value:(property.cost/convertToMillion),color:'#215254'};
             //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
                 c++;
             }
+            console.log('getRegionTableData',getRegionTableData);
             return Response.customSuccessResponseWithData(res,'Get Region Table Data',getRegionTableData,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -736,12 +739,12 @@ exports.getRegionEmissionData=async(req,res) => {
                 let contributor = [];
                 let detractor = [];
                 let total = [];
-                
+                let convertToMillion  = 1000000;
                 //NEW CODE
                 for (const property of getRegionEmissions) {
                     let data = property.intensity;
                     if(toggel_data == 1) {
-                        data = property.emission;
+                        data = property.emission/convertToMillion;
                     }
                     
                     total.push(data);
@@ -1028,6 +1031,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
             //check password is matched or not then exec
             if(getRegionEmissions){
                 let data = [];
+                let convertToMillion  = 1000000;
                 let contributor = getRegionEmissions[0]['contributor'];
                 let detractor = getRegionEmissions.map(a => a.detractor);
                 let baseData = [];
