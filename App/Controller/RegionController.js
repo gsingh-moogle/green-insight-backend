@@ -774,13 +774,13 @@ exports.getRegionEmissionData=async(req,res) => {
                     if( compareValue > average) {
                         contributor.push({
                             name:property["Region.name"],
-                            value:Math.abs(data),
+                            value:parseFloat(Math.abs(data).toFixed(2)),
                             color:'#d8856b'
                         })
                     } else {
                         detractor.push({
                             name:property["Region.name"],
-                            value:Math.abs(data),
+                            value:parseFloat(Math.abs(data).toFixed(2)),
                             color:'#215154'
                         })
                     }
