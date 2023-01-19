@@ -374,12 +374,18 @@ exports.getLaneEmissionData=async(req,res) => {
             }
         }
 
+            let order_by = 'intensity';
+            if(toggel_data == 1) {
+                //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
+                order_by = 'emission' ;
+            }
+
             //NEW CODE
             let getLaneEmissionData = await Emission.findAll({
                 attributes: ['id',['name','lane_name'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
                 where:where,
                 group: [`lane_name`],
-                order:[['intensity','desc']],
+                order:[[order_by,'desc']],
                 limit: 10,
                 raw: true
             });
