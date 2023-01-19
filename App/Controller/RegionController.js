@@ -354,7 +354,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 console.log('getCompanyData',getCompanyData);
             if(getRegionEmissions){
                 let convertToMillion  = 1000000 * 1000000;
-                let emissionUnit ='tCo2e';
+                let emissionUnit ='M';
                 let intensityUnit = 'g';
                 let dataObject = [];
                 let minArray = [];
