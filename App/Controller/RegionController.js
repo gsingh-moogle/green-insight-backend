@@ -713,7 +713,7 @@ exports.getRegionEmissionData=async(req,res) => {
                         attributes: ['name']
                     }],
                     group: ['region_id'],
-                    order:[['intensity','desc']],
+                    order:[['emission','desc']],
                     raw: true
                 });
             } else {
