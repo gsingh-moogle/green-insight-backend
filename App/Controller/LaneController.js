@@ -386,7 +386,7 @@ exports.getLaneEmissionData=async(req,res) => {
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getLaneEmissionData){
-                let convertToMillion  = 1000000;
+                let convertToMillion  = 0;
                 let count = 0;
                 let contributor = [];
                 let detractor = [];
