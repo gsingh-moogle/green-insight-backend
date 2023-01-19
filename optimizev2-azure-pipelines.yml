@@ -1,5 +1,5 @@
 trigger:
-- dev
+- optimize_v2
 
 pool:
   vmImage: ubuntu-latest
@@ -37,7 +37,7 @@ stages:
   - deployment: VMDeploy
     displayName: Web deploy
     environment:
-      name: deployvm
+      name: deployvmlatest
       resourceType: VirtualMachine
     strategy:
       rolling:
