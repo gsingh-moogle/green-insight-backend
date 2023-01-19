@@ -393,7 +393,7 @@ exports.getLaneEmissionData=async(req,res) => {
                 let unit = 'g';
                 let total = [];
                 if(toggel_data == 1) {
-                    unit = 'M';
+                    unit = 'tCo2e';
                 }
                 //NEW CODE
                 for (const property of getLaneEmissionData) {
