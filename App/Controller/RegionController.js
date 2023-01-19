@@ -1296,10 +1296,10 @@ exports.getRegionEmissionReduction=async(req,res) => {
 
             company_array = [
                 parseFloat((44370952192.83499/convertToMillion).toFixed(2)),
-                parseFloat((8667600993.725098/convertToMillion).toFixed(2)),
+                parseFloat((13292584331.19238/convertToMillion).toFixed(2)),
                 parseFloat((4624983337.467285/convertToMillion).toFixed(2)),
-                parseFloat((2824983337.467285/convertToMillion).toFixed(2)),
-                parseFloat((2024983337.467285/convertToMillion).toFixed(2)),
+                parseFloat((4124983337.467285/convertToMillion).toFixed(2)),
+                parseFloat((3724983337.467285/convertToMillion).toFixed(2)),
             ];
             let target_array =[]
             let base_level = Math.max(...company_array);
