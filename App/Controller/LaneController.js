@@ -441,7 +441,7 @@ exports.getLaneEmissionData=async(req,res) => {
                 detractor = detractor.reverse()
                 detractorLenght = detractor.length;
                 if(detractorLenght > 0){
-                    detractor[detractorLenght-1]['color'] ='#efede9';
+                    detractor[0]['color'] ='#efede9';
                 }
 
                 // console.log('avgData',avgData);
