@@ -382,7 +382,7 @@ exports.getLaneEmissionData=async(req,res) => {
                 order:[['intensity','desc']],
                 limit: 10,
                 raw: true
-                });
+            });
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getLaneEmissionData){
@@ -418,13 +418,13 @@ exports.getLaneEmissionData=async(req,res) => {
                     if( compareValue > average) {
                         contributor.push({
                             name:property["lane_name"],
-                            value:Math.abs(data),
+                            value:parseFloat(Math.abs(data).toFixed(2)),
                             color:'#d8856b'
                         })
                     } else {
                         detractor.push({
                             name:property["lane_name"],
-                            value:Math.abs(data),
+                            value:parseFloat(Math.abs(data).toFixed(2)),
                             color:'#215154'
                         })
                     }
@@ -438,6 +438,7 @@ exports.getLaneEmissionData=async(req,res) => {
                 if(contributorLenght > 0){
                     contributor[contributorLenght-1]['color'] ='#efede9';
                 }
+                detractor = detractor.reverse()
                 detractorLenght = detractor.length;
                 if(detractorLenght > 0){
                     detractor[detractorLenght-1]['color'] ='#efede9';
