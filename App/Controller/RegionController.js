@@ -1313,7 +1313,8 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let data = {
                 company_level : company_array,
                 targer_level : target_array,
-                base_level: [base_level]
+                base_level: [base_level],
+                max : base_level+(base_level*20/100)
             }
             return Response.customSuccessResponseWithData(res,'Emissions Reduction',data,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
