@@ -414,7 +414,7 @@ exports.getLaneEmissionData=async(req,res) => {
                     let data = property.intensity-average;
                     let compareValue = property.intensity;
                     if(toggel_data == 1) {
-                        compareValue = property.emission/convertToMillion;
+                        compareValue = property.emission;
                       //  data = parseFloat(((property.emission/convertToMillion)-average).toFixed(2));
                       data = parseFloat(((property.emission)-average).toFixed(2));
                     }
