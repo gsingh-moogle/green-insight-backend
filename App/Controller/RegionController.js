@@ -1305,7 +1305,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let base_level = Math.max(...company_array);
             
             company_array.forEach(element => {
-                let data = parseFloat((element*10/100).toFixed(2));
+                let data = parseFloat((element*30/100).toFixed(2));
                 data = element-data;
                 target_array.push(parseFloat(data.toFixed(2)));
             });
