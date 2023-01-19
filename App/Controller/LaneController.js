@@ -400,7 +400,8 @@ exports.getLaneEmissionData=async(req,res) => {
                 for (const property of getLaneEmissionData) {
                     let data = property.intensity;
                     if(toggel_data == 1) {
-                        data = parseFloat((property.emission/convertToMillion).toFixed(2));
+                    //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
+                        data = parseFloat((property.emission).toFixed(2));
                     }
                     
                     total.push(data);
