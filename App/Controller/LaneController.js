@@ -386,14 +386,15 @@ exports.getLaneEmissionData=async(req,res) => {
               //  console.log('getRegionEmissions',getRegionEmissions);
             //check password is matched or not then exec
             if(getLaneEmissionData){
-                let convertToMillion  = 0;
+                let convertToMillion  = 1000000;
                 let count = 0;
                 let contributor = [];
                 let detractor = [];
                 let unit = 'g';
                 let total = [];
                 if(toggel_data == 1) {
-                    unit = 'tCo2e';
+                  //  unit = 'tCo2e';
+                    unit = 'g';
                 }
                 //NEW CODE
                 for (const property of getLaneEmissionData) {
@@ -413,7 +414,8 @@ exports.getLaneEmissionData=async(req,res) => {
                     let compareValue = property.intensity;
                     if(toggel_data == 1) {
                         compareValue = property.emission/convertToMillion;
-                        data = parseFloat(((property.emission/convertToMillion)-average).toFixed(2));
+                      //  data = parseFloat(((property.emission/convertToMillion)-average).toFixed(2));
+                      data = parseFloat(((property.emission)-average).toFixed(2));
                     }
                     if( compareValue > average) {
                         contributor.push({
