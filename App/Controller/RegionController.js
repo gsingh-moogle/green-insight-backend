@@ -1287,10 +1287,33 @@ exports.getRegionEmissionReduction=async(req,res) => {
             //       ]
                 
             // }
+            let convertToMillion  = 1000000
+            // let data = {
+            //     company_level : [990,950,901,810,750],
+            //     targer_level : [850,780,720,680,660],
+            //     base_level: [1200]
+            // }
+
+            company_array = [
+                parseFloat((44370952192.83499/convertToMillion).toFixed(2)),
+                parseFloat((8667600993.725098/convertToMillion).toFixed(2)),
+                parseFloat((4624983337.467285/convertToMillion).toFixed(2)),
+                parseFloat((2824983337.467285/convertToMillion).toFixed(2)),
+                parseFloat((2024983337.467285/convertToMillion).toFixed(2)),
+            ];
+            let target_array =[]
+            let base_level = Math.max(...company_array);
+            
+            company_array.forEach(element => {
+                let data = parseFloat((element*10/100).toFixed(2));
+                data = element-data;
+                target_array.push(parseFloat(data.toFixed(2)));
+            });
+
             let data = {
-                company_level : [990,950,901,810,750],
-                targer_level : [850,780,720,680,660],
-                base_level: [1200]
+                company_level : company_array,
+                targer_level : target_array,
+                base_level: [base_level]
             }
             return Response.customSuccessResponseWithData(res,'Emissions Reduction',data,200)
         } else { return Response.errorRespose(res,'No Record Found!');}
