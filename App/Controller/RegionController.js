@@ -667,7 +667,7 @@ exports.getRegionTableData=async(req,res) => {
               //  property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             
             //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                 property['cost'] = (property.cost <= 5)?{value:(property.cost/convertToMillion).toFixed(2)+' M',color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion).toFixed(2)+' M',color:'#EFEDE9'}:{value:(property.cost/convertToMillion).toFixed(2)+' M',color:'#215254'};
+                 property['cost'] = (property.cost <= 5)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#EFEDE9'}:{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#215254'};
             //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
                 c++;
             }
