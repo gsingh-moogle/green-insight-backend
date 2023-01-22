@@ -650,24 +650,39 @@ exports.getRegionTableData=async(req,res) => {
         if(getRegionTableData){
             let c = 0;
             let convertToMillion  = 1000000;
+            let totalIntensity = [];
+            let totalEmission = [];
+            //NEW CODE
+            for (const property of getRegionTableData) {
+                let data = property.intensity;
+                let data2 = property.emission/convertToMillion;
+                totalIntensity.push(data);
+                totalEmission.push(data2);
+            }
+            
+            const averageIntensity = totalIntensity.reduce((a, b) => a + b, 0) / totalIntensity.length;
+            const averageEmission = totalEmission.reduce((a, b) => a + b, 0) / totalEmission.length;
+            let avgData = [];
             for (const property of getRegionTableData) {
                 let color;
+                let intensity = property.intensity;
+                let cost = (property.cost/convertToMillion).toFixed(2);
                 if(c < 2) {
                     color = '#d8856b';
                 } else if(c == 2) {
-                        color = '#efede9';
+                    color = '#efede9';
                 } else if(c == 5){
                     color = '#efede9';
                 } else {
                     color = '#215154';
                 }
                // property.cost = {value:property.intensity,color:color};
-                property['intensity'] = {value:property.intensity+' g',color:color};
-                
+                property['intensity'] = (intensity < averageIntensity)?{value:intensity+' tCo2e',color:'#d8856b'}:{value:intensity+' tCo2e',color:'#215254'};
+              //  property['cost'] = (averageEmission < cost)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#EFEDE9'}:{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#215254'};
               //  property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             
             //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                 property['cost'] = (property.cost <= 5)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#EFEDE9'}:{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#215254'};
+                 property['cost'] = (cost <= averageEmission)?{value:cost+' tCo2e',color:'#d8856b'}:{value:cost+' tCo2e',color:'#215254'};
             //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
                 c++;
             }
