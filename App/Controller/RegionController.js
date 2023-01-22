@@ -677,12 +677,12 @@ exports.getRegionTableData=async(req,res) => {
                     color = '#215154';
                 }
                // property.cost = {value:property.intensity,color:color};
-                property['intensity'] = (intensity < averageIntensity)?{value:intensity+' tCo2e',color:'#d8856b'}:{value:intensity+' tCo2e',color:'#215254'};
+                property['intensity'] = (intensity < averageIntensity)?{value:intensity+' tCo2e',color:'#215254'}:{value:intensity+' tCo2e',color:'#d8856b'};
               //  property['cost'] = (averageEmission < cost)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#d8856b'}:(property.cost > 5 && property.cost <= 7)?{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#EFEDE9'}:{value:(property.cost/convertToMillion).toFixed(2)+' tCo2e',color:'#215254'};
               //  property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
             
             //     property['intensity'] = (property.intensity <= 12)?{value:property.intensity,color:'#d8856b'}:(property.intensity > 12 && property.intensity <= 17)?{value:property.intensity,color:'#EFEDE9'}:{value:property.intensity,color:'#215254'};
-                 property['cost'] = (cost <= averageEmission)?{value:cost+' tCo2e',color:'#d8856b'}:{value:cost+' tCo2e',color:'#215254'};
+                 property['cost'] = (cost <= averageEmission)?{value:cost+' tCo2e',color:'#215254'}:{value:cost+' tCo2e',color:'#d8856b'};
             //     property['service'] = (property.service <= 15)?{value:property.service,color:'#d8856b'}:(property.service > 15 && property.service <= 18)?{value:property.service,color:'#EFEDE9'}:{value:property.service,color:'#215254'};
                 c++;
             }
