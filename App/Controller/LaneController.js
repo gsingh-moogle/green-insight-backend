@@ -382,7 +382,9 @@ exports.getLaneEmissionData=async(req,res) => {
 
             //NEW CODE
             let getLaneEmissionData = await Emission.findAll({
-                attributes: ['id',['name','lane_name'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+                attributes: ['id',['name','lane_name'],
+                [ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],
+                [ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
                 where:where,
                 group: [`lane_name`],
                 order:[[order_by,'desc']],
@@ -428,12 +430,14 @@ exports.getLaneEmissionData=async(req,res) => {
                         contributor.push({
                             name:property["lane_name"],
                             value:parseFloat(Math.abs(data).toFixed(2)),
+                            total_emission: property.emission,
                             color:'#d8856b'
                         })
                     } else {
                         detractor.push({
                             name:property["lane_name"],
                             value:parseFloat(Math.abs(data).toFixed(2)),
+                            total_emission: property.emission,
                             color:'#215154'
                         })
                     }
