@@ -1307,19 +1307,19 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let last_intensity = [];
             let last_target = [];
             for(const property of getRegionEmissionsReduction) {
-                if(count < 6) {
+                //if(count < 6) {
                     company_level.push(property.intensity);
                     let targetData = parseFloat((property.intensity-(property.intensity*20/100)).toFixed(2));
                     targer_level.push(targetData);
                     max_array.push(property.intensity);
                     last_intensity = property.intensity;
                     last_target = targetData;
-                }
+               // }
                 count++;
             }
             if(next_year == 2023) {
                 let countData = 0
-                for (let i = 0; i < 2; i++) {
+                for (let i = 0; i < 4; i++) {
                     last_intensity = parseFloat((last_intensity-(last_intensity*7/100)).toFixed(2));
                     company_level.push(last_intensity);
                     last_target = parseFloat((last_target-(last_target*10/100)).toFixed(2));
