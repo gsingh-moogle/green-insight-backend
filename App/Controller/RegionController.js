@@ -328,9 +328,10 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             //New Code End
 
 
-
+            let getRegionEmissions;
             //OLD code Start
-            let getRegionEmissions = await Emission.findAll({
+            if(region_id) {
+                getRegionEmissions = await Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
                     [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
@@ -344,6 +345,23 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
                     raw: true
                 });
+            } else {
+                getRegionEmissions = await Emission.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
+                    [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
+                    'region_id'],
+                    where:where, 
+                    include: [
+                        {
+                            model: Region,
+                            attributes: ['name']
+                        }],
+                    group: [sequelize.fn('YEAR', sequelize.col('date'))],
+                    raw: true
+                });
+            }
+            
             
             
             let getCompanyData = await CompanyData.findOne({
