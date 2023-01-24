@@ -1329,6 +1329,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
         ],
             where:where,
             group: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date')) ],
+            
         });
        // console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
         //check password is matched or not then exec
