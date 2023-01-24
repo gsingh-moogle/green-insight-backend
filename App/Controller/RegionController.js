@@ -342,7 +342,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             model: Region,
                             attributes: ['name']
                         }],
-                    group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
+                    group: [sequelize.fn('YEAR', sequelize.col('date')),'region_id'],
                     raw: true
                 });
             } else {
