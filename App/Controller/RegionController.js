@@ -393,7 +393,22 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     let tempDataObject = {};
                     let tempArray = [];
                     for (const property of getRegionEmissions) {
-                        if(property['Region.name'] == regions[i]) {
+                        if(region_id) {
+                            if(property['Region.name'] == regions[i]) {
+                                let data = (property.emission/property.emission_per_ton).toFixed(2);
+                                if(toggel_data == 1){
+                                    data = (property.emission/convertToMillion);
+                                }   
+                                
+                                tempArray.push(parseFloat(data));
+                                if(tempDataObject["name"] === undefined){
+                                    tempDataObject.name = property['Region.name'];
+                                }
+                                if(tempDataObject["year"] === undefined){
+                                    tempDataObject.year = property.year;
+                                }
+                            }  
+                        } else {
                             let data = (property.emission/property.emission_per_ton).toFixed(2);
                             if(toggel_data == 1){
                                 data = (property.emission/convertToMillion);
@@ -406,7 +421,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             if(tempDataObject["year"] === undefined){
                                 tempDataObject.year = property.year;
                             }
-                        }  
+                        }
+                        
                     }
                     allDataArray.push(tempArray);
                     tempDataObject.data = tempArray;
