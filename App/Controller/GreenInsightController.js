@@ -62,6 +62,8 @@ exports.login=async(req,res) => {
                             console.log('sendMessage',sendMessage);
                             if(sendMessage) {
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',200)
+                            } else {
+                                return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
                             }
                         } else {
                             return Response.errorRespose(res,"User phone number not found!");
@@ -112,6 +114,8 @@ exports.login=async(req,res) => {
                             //generate token for authentication
                             if(sendMessage) {
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',200);
+                            } else {
+                                return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
                             }
                         } else {
                             return Response.errorRespose(res,"User phone number not found!");
