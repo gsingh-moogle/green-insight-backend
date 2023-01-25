@@ -1,6 +1,6 @@
 {
   "development": {
-    "username": "",
+    "username": "root",
     "password": "",
     "database": "green_sight",
     "host": "127.0.0.1",
@@ -14,7 +14,7 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "",
+    "username": "root",
     "password": "",
     "database": "green_sight",
     "host": "127.0.0.1",
