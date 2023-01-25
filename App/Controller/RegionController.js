@@ -342,7 +342,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             model: Region,
                             attributes: ['name']
                         }],
-                    group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
+                    group: [sequelize.fn('YEAR', sequelize.col('date')),'region_id'],
+                    order:[[sequelize.fn('YEAR', sequelize.col('date')),'asc']],
                     raw: true
                 });
             } else {
@@ -358,6 +359,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             attributes: ['name']
                         }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
+                    order:[[sequelize.fn('YEAR', sequelize.col('date')),'asc']],
                     raw: true
                 });
             }
