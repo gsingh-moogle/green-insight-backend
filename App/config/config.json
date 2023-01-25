@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "",
+    "password": "Mind@123",
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
@@ -15,7 +15,7 @@
   },
   "production": {
     "username": "root",
-    "password": "",
+    "password": "Mind@123",
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
