@@ -61,7 +61,7 @@ exports.login=async(req,res) => {
                             let sendMessage=await Twilio.sendVerificationCode(messageData);
                             console.log('sendMessage',sendMessage);
                             if(sendMessage) {
-                                return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',200)
+                                return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200)
                             } else {
                                 return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
                             }
@@ -113,7 +113,7 @@ exports.login=async(req,res) => {
                             let sendMessage=await Twilio.sendVerificationCode(messageData);
                             //generate token for authentication
                             if(sendMessage) {
-                                return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',200);
+                                return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200);
                             } else {
                                 return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
                             }
