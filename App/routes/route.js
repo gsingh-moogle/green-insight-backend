@@ -11,9 +11,10 @@ const LaneController=require("../Controller/LaneController");
 
 //Auth API's
 router.post("/login",GreenInsightController.login);
+router.post("/verify-otp",GreenInsightController.verifyOtp);
 router.use(validateAdmin);
 // Verify Otp
-router.post("/verify-otp",GreenInsightController.verifyOtp);
+
 
 //Sus Dashboard
 router.get("/get-regions",RegionController.getRegions);
@@ -22,7 +23,10 @@ router.post("/get-region-emission-monthly",RegionController.getRegionEmissionsMo
 router.post("/get-region-intensity",RegionController.getRegionIntensity);
 router.post("/get-region-intensity-yearly",RegionController.getRegionIntensityByYear);
 router.post("/get-region-intensity-quarterly",RegionController.getRegionIntensityByQuarter);
+
+// Emission reduction
 router.post("/get-region-emission-reduction",RegionController.getRegionEmissionReduction);
+router.post("/get-region-reduction",RegionController.getRegionEmissionReductionRegion);
 
 router.get("/get-facility-emission-graph",RegionController.getFacilityEmissions);
 router.get("/get-vendor-emission-graph",RegionController.getVendorEmissions);
