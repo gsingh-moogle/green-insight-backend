@@ -14,8 +14,8 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "moogle",
-    "password": "admin",
+    "username": "root",
+    "password": "Mind@123",
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
