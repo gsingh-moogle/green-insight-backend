@@ -29,6 +29,7 @@
     "nodemon": "^2.0.20",
     "sequelize": "^6.27.0",
     "swagger-ui-express": "^4.6.0",
+    "twilio": "^3.84.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

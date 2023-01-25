@@ -1,8 +1,20 @@
 const User = require("../models").User;
 const Region =require("../models").Region;
 const Profile =require("../models").Profile;
+const UserOtp =require("../models").UserOtp;
+const e = require("express");
 const Response=require("../helper/api-response");
+const Twilio=require("../helper/twilio-helper");
 
+const createOrUpdateUser = (values,condition) => {
+    UserOtp.findOne({ where: condition }).then(function(obj) {
+        // update
+        if(obj)
+            return obj.update(values);
+        // insert
+        return UserOtp.create(values);
+    })
+}
 
 exports.login=async(req,res) => {
     try {
@@ -18,22 +30,43 @@ exports.login=async(req,res) => {
                     attributes: ['id','name']
                 },{
                     model: Profile,
-                    attributes: ['first_name','last_name','image','status']
+                    attributes: ['first_name','last_name','country_code','phone_number','image','status']
                 }]
             });
             //check password is matched or not then exec
-            console.log('response', getUser)
             if(getUser){
                  if(getUser?.role==0){
                 if(getUser) {
                     let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
                     if(checkPasswordExists){
-                        //generate token for authentication
-                        let token=await Response.generateToken(getUser);
-                        if(token) {
-                            getUser.dataValues.token=token;
-                            return Response.customSuccessResponseWithData(res,'User has been Login by Sustainable Account',getUser,200)
-                        }
+                        if(getUser.Profile.phone_number && getUser.Profile.country_code){
+                            let code = Math.floor(100000 + Math.random() * 900000)
+                            let whereCondition = {
+                                user_id : getUser.id,
+                                phone_number : getUser.Profile.phone_number
+                            };
+                            let updateValues = {
+                                user_id : getUser.id,
+                                phone_number : getUser.Profile.phone_number,
+                                otp : code,
+                                status : 0,
+                            }
+                            createOrUpdateUser(updateValues,whereCondition);
+                            //generate token for authentication
+                        
+                            let messageData = {
+                                message: 'Your verification code is :'+code,
+                                phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
+                            }
+                            let sendMessage=await Twilio.sendVerificationCode(messageData);
+                            let token=await Response.generateToken(getUser);
+                            if(token) {
+                                getUser.dataValues.token=token;
+                                return Response.customSuccessResponseWithData(res,'User has been Login by Sustainable Account',getUser,200)
+                            }
+                        } else {
+                            return Response.errorRespose(res,"User phone number not found!");
+                        }   
                     } else {return Response.errorRespose(res,"Password should be matched");}
                 } else {
                     return Response.errorRespose(res,'Email address is not exists');
@@ -49,7 +82,7 @@ exports.login=async(req,res) => {
                         attributes: ['id','name']
                     },{
                         model: Profile,
-                        attributes: ['first_name','last_name','image','status']
+                        attributes: ['first_name','last_name','country_code','phone_number','image','status']
                     }]
             });
             //check password is matched or not then exec
@@ -57,11 +90,34 @@ exports.login=async(req,res) => {
                 if(getUser) {
                     let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
                     if(checkPasswordExists){
-                        //generate token for authentication
-                        let token=await Response.generateToken(getUser);
-                        if(token) {
-                            getUser.dataValues.token=token;
-                            return Response.customSuccessResponseWithData(res,'User has been Login by Regional Account',getUser,200)
+                        if(getUser.Profile.phone_number && getUser.Profile.country_code){
+                            let code = Math.floor(100000 + Math.random() * 900000)
+                            let whereCondition = {
+                                user_id : getUser.id,
+                                phone_number : getUser.Profile.phone_number
+                            };
+                            let updateValues = {
+                                user_id : getUser.id,
+                                phone_number : getUser.Profile.phone_number,
+                                otp : code,
+                                status : 0,
+                            }
+                            createOrUpdateUser(updateValues,whereCondition);
+                            //generate token for authentication
+                        
+                            let messageData = {
+                                message: 'Your verification code is :'+code,
+                                phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
+                            }
+                            let sendMessage=await Twilio.sendVerificationCode(messageData);
+                            //generate token for authentication
+                            let token=await Response.generateToken(getUser);
+                            if(token) {
+                                getUser.dataValues.token=token;
+                                return Response.customSuccessResponseWithData(res,'User has been Login by Regional Account',getUser,200)
+                            }
+                        } else {
+                            return Response.errorRespose(res,"User phone number not found!");
                         }
                     } else {return Response.errorRespose(res,"Password are not matched");}
                 } else {
@@ -76,3 +132,37 @@ exports.login=async(req,res) => {
         console.log('____________________________________________________________error',error);
     }
 }
+
+exports.verifyOtp=async(req,res) => {
+    try {
+            var {otp}=req.body;
+
+            let user = req.currentUser.data;
+            console.log('opt',otp ) ;  
+            if(otp && user) {
+                let condition = {
+                    user_id:user.id,
+                    phone_number: user.Profile.phone_number
+                }
+                console.log('condition',condition);
+                let otpData = await UserOtp.findOne({ where: condition });
+                                 
+                //check password is matched or not then exec
+                if(otpData){
+                    if(otpData.otp == otp){
+                        return Response.customSuccessResponseWithData(res,'Verification code is valid.',user,200)
+                    } else {
+                        return Response.errorRespose(res,'Verification code is not valid!');
+                    }  
+                } else { return Response.errorRespose(res,'Verification code is not valid!');}
+            } else {
+                return Response.errorRespose(res,'No Record Found!');
+            }
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+
+
+

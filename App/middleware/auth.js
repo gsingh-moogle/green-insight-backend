@@ -1,5 +1,7 @@
 const jwt=require("jsonwebtoken");
 const User=require("../models").User;
+const Region =require("../models").Region;
+const Profile =require("../models").Profile;
 const helper=require("../helper/api-response");
 
 const validateAdmin= async (req, res, next) => {
@@ -9,12 +11,12 @@ const validateAdmin= async (req, res, next) => {
         return helper.unAuthorizedResponse(res, 'Unauthorized');
       }
       let decode = jwt.verify(token, process.env.JWTSECRETKEY);
-      let userData = await User.findOne({_id:decode.id });
+      let userData = await User.findOne({id:decode.id });
       if (!userData) {
           return helper.unAuthorizedResponse(res, 'User not found!');
       }
       else{
-          req.currentUser = userData;
+          req.currentUser = decode;
           next();
       }   
     } catch (err) {
