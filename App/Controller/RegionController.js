@@ -342,8 +342,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             model: Region,
                             attributes: ['name']
                         }],
-                    group: [sequelize.fn('YEAR', sequelize.col('date')),'region_id'],
-                    order:[[sequelize.fn('YEAR', sequelize.col('date')),'asc']],
+                    group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
                     raw: true
                 });
             } else {
@@ -359,7 +358,6 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                             attributes: ['name']
                         }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
-                    order:[[sequelize.fn('YEAR', sequelize.col('date')),'asc']],
                     raw: true
                 });
             }
@@ -1331,7 +1329,149 @@ exports.getRegionEmissionReduction=async(req,res) => {
         ],
             where:where,
             group: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date')) ],
+        });
+       // console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
+        //check password is matched or not then exec
+        if(getRegionEmissionsReduction){
+            let company_level = [];
+            let targer_level = [];
+            let max_array = [];
+            let base_level =[];
+            let count = 0
+            let intialCompanyLevel;
+            let last_intensity = [];
+            let last_target = [];
+            for(const property of getRegionEmissionsReduction) {
+                //if(count < 6) {
+                    company_level.push(property.intensity);
+                    if(intialCompanyLevel == undefined){
+                        intialCompanyLevel = property.intensity;
+                    }
+                    let intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*20/100)).toFixed(2));
+                    targer_level.push(intialCompanyLevel);
+                    max_array.push(property.intensity);
+                    last_intensity = property.intensity;
+                    last_target = targetData;
+               // }
+                count++;
+            }
+            if(next_year == 2023) {
+                let countData = 0
+                for (let i = 0; i < 4; i++) {
+                    last_intensity = parseFloat((last_intensity-(last_intensity*7/100)).toFixed(2));
+                    company_level.push(last_intensity);
+                    last_target = parseFloat((last_target-(last_target*10/100)).toFixed(2));
+                    targer_level.push(last_target);
+                }
+            }
+            let max = Math.max(...max_array);
+            let maxData = parseFloat((max+(max*30/100)).toFixed(2));
+            base_level.push(maxData);
+            let data = {
+                company_level : company_level,
+                targer_level : targer_level,
+                base_level: base_level,
+                max : maxData+(maxData*20/100),
+                year : [current_year, next_year]
+            }
+            // let contributor = getRegionEmissions.map(a => a.contributor);
+            // let detractor = getRegionEmissions.map(a => a.detractor);
+            // let min = Math.min(...contributor);
+            // let max = Math.max(...detractor);
+            // let data ={
+            //     title : 'Lane Emmision',
+            //     type : 'Horizontal Bar Chart',
+            //     min:min,
+            //     max:max,
+            //     dataset:[
+            //         {
+            //           label: 'Contributor',
+            //           data: contributor,
+            //           borderColor: '#5888d6',
+            //           backgroundColor: '#f7faf9',
+            //         },
+            //         {
+            //           label: 'Detractor',
+            //           data: detractor,
+            //           borderColor: '#2fa18c',
+            //           backgroundColor: '#f7faf9',
+            //         }
+            //       ]
+                
+            // }
+           // let convertToMillion  = 1000000
+            // let data = {
+            //     company_level : [990,950,901,810,750],
+            //     targer_level : [850,780,720,680,660],
+            //     base_level: [1200]
+            // }
+
+            // company_array = [
+            //     parseFloat((44370952192.83499/convertToMillion).toFixed(2)),
+            //     parseFloat((13292584331.19238/convertToMillion).toFixed(2)),
+            //     parseFloat((4624983337.467285/convertToMillion).toFixed(2)),
+            //     parseFloat((4124983337.467285/convertToMillion).toFixed(2)),
+            //     parseFloat((3724983337.467285/convertToMillion).toFixed(2)),
+            // ];
+            // let target_array =[]
+            // let base_level = Math.max(...company_array);
             
+            // company_array.forEach(element => {
+            //     let data = parseFloat((element*30/100).toFixed(2));
+            //     data = element-data;
+            //     target_array.push(parseFloat(data.toFixed(2)));
+            // });
+
+            // let data = {
+            //     company_level : company_array,
+            //     targer_level : target_array,
+            //     base_level: [base_level],
+            //     max : base_level+(base_level*20/100)
+            // }
+            return Response.customSuccessResponseWithData(res,'Emissions Reduction',data,200)
+        } else { return Response.errorRespose(res,'No Record Found!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+
+exports.getRegionEmissionReductionRegion=async(req,res) => {
+    try {
+        //console.log(type,email,password);return 
+        let {region_id, year}=req.body;
+        let current_year = parseInt(new Date().getFullYear()-1);
+        let next_year = current_year+1;
+           // const where = {emission_type:'region'}
+            const where = {}
+            if (region_id || year) {
+                where[Op.and] = []
+                where[Op.or] = []
+                if (region_id) {
+                    where[Op.and].push({
+                        region_id: region_id
+                    })
+                }
+                if (year) {
+                    current_year = parseInt(year);
+                    next_year = parseInt(year)+1;
+                    where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
+                    
+                    if(next_year != 2023) {
+                        where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), next_year))
+                    }
+                }
+            }
+        // let getRegionEmissionsReduction = await EmissionReduction.findAll({
+        //     attributes: ['type', ['quater1','Q1'], ['quater2','Q2'],['quater3','Q3'],['quater4','Q4'],'now'],
+        //     where:where});
+        let getRegionEmissionsReduction = await Emission.findAll({
+            attributes :[ [sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],
+            [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
+            [sequelize.fn('YEAR', sequelize.col('date')),'year']
+        ],
+            where:where,
+            group: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date')) ],
         });
        // console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
         //check password is matched or not then exec

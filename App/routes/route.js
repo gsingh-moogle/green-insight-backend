@@ -11,9 +11,10 @@ const LaneController=require("../Controller/LaneController");
 
 //Auth API's
 router.post("/login",GreenInsightController.login);
+router.post("/verify-otp",GreenInsightController.verifyOtp);
 router.use(validateAdmin);
 // Verify Otp
-router.post("/verify-otp",GreenInsightController.verifyOtp);
+
 
 //Sus Dashboard
 router.get("/get-regions",RegionController.getRegions);
