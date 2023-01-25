@@ -1329,6 +1329,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
         ],
             where:where,
             group: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date')) ],
+            order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))]
         });
        // console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
         //check password is matched or not then exec
@@ -1347,11 +1348,11 @@ exports.getRegionEmissionReduction=async(req,res) => {
                     if(intialCompanyLevel == undefined){
                         intialCompanyLevel = property.intensity;
                     }
-                    let intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*20/100)).toFixed(2));
+                    intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
                     targer_level.push(intialCompanyLevel);
                     max_array.push(property.intensity);
                     last_intensity = property.intensity;
-                    last_target = targetData;
+                    last_target = intialCompanyLevel;
                // }
                 count++;
             }
@@ -1443,12 +1444,15 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
         let current_year = parseInt(new Date().getFullYear()-1);
         let next_year = current_year+1;
            // const where = {emission_type:'region'}
+            const whereRegion = {}
             const where = {}
             if (region_id || year) {
+                whereRegion[Op.and] = []
                 where[Op.and] = []
                 where[Op.or] = []
+                whereRegion[Op.or] = []
                 if (region_id) {
-                    where[Op.and].push({
+                    whereRegion[Op.and].push({
                         region_id: region_id
                     })
                 }
@@ -1456,9 +1460,10 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
                     current_year = parseInt(year);
                     next_year = parseInt(year)+1;
                     where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
-                    
+                    whereRegion[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), current_year))
                     if(next_year != 2023) {
                         where[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), next_year))
+                        whereRegion[Op.or].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), next_year))
                     }
                 }
             }
@@ -1472,8 +1477,20 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
         ],
             where:where,
             group: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date')) ],
+            order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))]
         });
-       // console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
+
+        let regionEmissionsReduction = await Emission.findAll({
+            attributes :[ [sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],
+            [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
+            [sequelize.fn('YEAR', sequelize.col('date')),'year']
+        ],
+            where:whereRegion,
+            group: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date')) ],
+            order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))]
+        });
+        console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
+        console.log('regionEmissionsReduction',regionEmissionsReduction);
         //check password is matched or not then exec
         if(getRegionEmissionsReduction){
             let company_level = [];
@@ -1482,17 +1499,28 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             let base_level =[];
             let count = 0
             let last_intensity = [];
+            let region_data = [];
             let last_target = [];
+            let last_region_data = 0;
+            let intialCompanyLevel;
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
                     company_level.push(property.intensity);
-                    let targetData = parseFloat((property.intensity-(property.intensity*20/100)).toFixed(2));
-                    targer_level.push(targetData);
+                    if(intialCompanyLevel == undefined){
+                        intialCompanyLevel = property.intensity;
+                    }
+                    intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
+                    targer_level.push(intialCompanyLevel);
                     max_array.push(property.intensity);
                     last_intensity = property.intensity;
-                    last_target = targetData;
+                    last_target = intialCompanyLevel;
                // }
                 count++;
+            }
+            for(const property of regionEmissionsReduction) {
+
+                region_data.push(property.intensity);
+                last_region_data = property.intensity;
             }
             if(next_year == 2023) {
                 let countData = 0
@@ -1501,6 +1529,8 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
                     company_level.push(last_intensity);
                     last_target = parseFloat((last_target-(last_target*10/100)).toFixed(2));
                     targer_level.push(last_target);
+                    last_region_data = parseFloat((last_region_data-(last_region_data*10/100)).toFixed(2));
+                    region_data.push(last_region_data);
                 }
             }
             let max = Math.max(...max_array);
@@ -1509,6 +1539,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             let data = {
                 company_level : company_level,
                 targer_level : targer_level,
+                region_level : region_data,
                 base_level: base_level,
                 max : maxData+(maxData*20/100),
                 year : [current_year, next_year]
