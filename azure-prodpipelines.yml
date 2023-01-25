@@ -37,7 +37,7 @@ stages:
   - deployment: VMDeploy
     displayName: Web deploy
     environment:
-      name: deployvm
+      name: prodvm
       resourceType: VirtualMachine
     strategy:
       rolling:
