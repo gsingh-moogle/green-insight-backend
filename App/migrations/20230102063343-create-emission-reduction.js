@@ -2,43 +2,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('profiles', {
+    await queryInterface.createTable('emission_reductions', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id:{
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'Users',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
-      },
-      first_name: {
+      name: {
         type: Sequelize.STRING
       },
-      last_name: {
-        type: Sequelize.STRING
-      },
-      country_code: {
-        type: Sequelize.STRING
-      },
-      phone_number: {
-        type: Sequelize.STRING
-      },
-      image: {
-        type: Sequelize.STRING
-      },
-      role: {
+      region_id: {
         type: Sequelize.INTEGER
       },
-      status: {
-        type: Sequelize.BOOLEAN
+      type: {
+        type: Sequelize.ENUM,
+        values:['company_level','target_level','now']
+      },
+      year: {
+        type: Sequelize.DATE
+      },
+      quater1: {
+        type: Sequelize.INTEGER
+      },
+      quater2: {
+        type: Sequelize.INTEGER
+      },
+      quater3: {
+        type: Sequelize.INTEGER
+      },
+      quater4: {
+        type: Sequelize.INTEGER
+      },
+      now: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -51,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('profiles');
+    await queryInterface.dropTable('emission_reductions');
   }
 };

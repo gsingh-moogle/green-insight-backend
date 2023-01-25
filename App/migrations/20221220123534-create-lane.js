@@ -19,16 +19,6 @@ module.exports = {
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      vendor_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'vendors',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
-      },
       region_id: {
         type: Sequelize.INTEGER,
         allowNull:false,

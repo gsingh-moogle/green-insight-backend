@@ -9,7 +9,7 @@ module.exports = {
           data.push({
               user_id: faker.datatype.number({ min: 1, max: 100 }),
               name: faker.address.cityName(),
-              region_id: faker.datatype.number({ min: 1, max: 10 }),
+              region_id: faker.datatype.number({ min: 1, max: 2 }),
               latitude:faker.address.latitude(),
               longitude:faker.address.longitude(),
               location:faker.address.county(),

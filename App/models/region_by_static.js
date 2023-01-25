@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Profile extends Model {
+  class RegionByStatic extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,18 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Profile.init({
-    first_name: DataTypes.STRING,
-    last_name: DataTypes.STRING,
-    country_code:DataTypes.STRING,
-    phone_number: DataTypes.STRING,
-    image: DataTypes.STRING,
-    role: DataTypes.INTEGER,
-    status: DataTypes.BOOLEAN
+  RegionByStatic.init({
+    region_id: DataTypes.INTEGER,
+    region_name: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Profile',
-    tableName:'profiles'
+    modelName: 'RegionByStatic',
+    tableName: 'region_by_statics'
   });
-  return Profile;
+  return RegionByStatic;
 };

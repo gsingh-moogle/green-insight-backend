@@ -6,7 +6,7 @@ exports.getProfileDetails=async(req,res) => {
     try {
             //console.log(type,email,password);return 
             let getProfile = await Profile.findOne({
-                where:{id:1}
+                where:{id:1},
                 });
                 
             //check password is matched or not then exec

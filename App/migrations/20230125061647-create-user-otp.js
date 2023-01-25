@@ -2,40 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('profiles', {
+    await queryInterface.createTable('user_otps', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id:{
+      user_id: 
+      {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
-          model:'Users',
+          model:'users',
           key:'id'
         },
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      first_name: {
-        type: Sequelize.STRING
-      },
-      last_name: {
-        type: Sequelize.STRING
-      },
-      country_code: {
-        type: Sequelize.STRING
-      },
       phone_number: {
         type: Sequelize.STRING
       },
-      image: {
+      otp: {
         type: Sequelize.STRING
-      },
-      role: {
-        type: Sequelize.INTEGER
       },
       status: {
         type: Sequelize.BOOLEAN
@@ -51,6 +40,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('profiles');
+    await queryInterface.dropTable('user_otps');
   }
 };

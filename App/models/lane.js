@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Lane.init({
     user_id: DataTypes.INTEGER,
-    vendor_id: DataTypes.INTEGER,
     region_id: DataTypes.INTEGER,
     facilities_id: DataTypes.INTEGER,
     name: DataTypes.STRING,
@@ -33,6 +32,13 @@ module.exports = (sequelize, DataTypes) => {
     Lane.hasOne(models.User, {
       foreignKey: 'id'
     });
+    Lane.hasMany (models.Emission, {
+      foreignKey: 'lane_id'
+    });
+    Lane.belongsTo (models.VendorEmissionStatic, {
+      foreignKey: 'lane_id'
+    });
   };
+
   return Lane;
 };

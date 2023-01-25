@@ -2,32 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('emissions', {
+    await queryInterface.createTable('vendors', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING,
-      },
-      from: {
-        type: Sequelize.STRING,
-      },
-      to: {
-        type: Sequelize.STRING,
-      },
-      company_id: {
+      user_id: {
         type: Sequelize.INTEGER,
-      },
-      region_name: {
-        type: Sequelize.STRING,
-        allowNull:true,
+        allowNull:false,
+        references:{
+          model:'Users',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
       },
       region_id: {
         type: Sequelize.INTEGER,
-        allowNull:true,
+        allowNull:false,
         references:{
           model:'regions',
           key:'id'
@@ -37,7 +31,7 @@ module.exports = {
       },
       facilities_id: {
         type: Sequelize.INTEGER,
-        allowNull:true,
+        allowNull:false,
         references:{
           model:'facilities',
           key:'id'
@@ -47,7 +41,7 @@ module.exports = {
       },
       lane_id: {
         type: Sequelize.INTEGER,
-        allowNull:true,
+        allowNull:false,
         references:{
           model:'lanes',
           key:'id'
@@ -55,51 +49,32 @@ module.exports = {
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      vendor_id: {
-        type: Sequelize.INTEGER,
-        allowNull:true,
-        references:{
-          model:'vendors',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
-      },
-      emission: {
-        type: Sequelize.FLOAT
-      },
-      intensity: {
-        type: Sequelize.FLOAT
-      },
-      total_ton_miles: {
-        type: Sequelize.FLOAT
-      },
-      loaded_ton_miles: {
-        type: Sequelize.FLOAT
-      },
-      shipments: {
+      name: {
         type: Sequelize.STRING
       },
-      platform: {
-        type: Sequelize.STRING
+      latitude: {
+        type: Sequelize.FLOAT
       },
-      date: {
-        type: Sequelize.DATE
+      longitude: {
+        type: Sequelize.FLOAT
+      },
+      location: {
+        type: Sequelize.STRING
       },
       status: {
         type: Sequelize.BOOLEAN
       },
       createdAt: {
-        allowNull:true,
+        allowNull: false,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull:true,
+        allowNull: false,
         type: Sequelize.DATE
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('emissions');
+    await queryInterface.dropTable('vendors');
   }
 };

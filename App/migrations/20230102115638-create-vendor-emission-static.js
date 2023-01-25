@@ -2,22 +2,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('vendors', {
+    await queryInterface.createTable('vendor_emission_statics', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
-      },
-      user_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'Users',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
       },
       region_id: {
         type: Sequelize.INTEGER,
@@ -29,30 +19,21 @@ module.exports = {
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      facilities_id: {
+      vendor_id: {
         type: Sequelize.INTEGER,
         allowNull:false,
         references:{
-          model:'facilities',
+          model:'vendors',
           key:'id'
         },
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      name: {
-        type: Sequelize.STRING
+      date: {
+        type: Sequelize.DATE
       },
-      latitude: {
-        type: Sequelize.FLOAT
-      },
-      longitude: {
-        type: Sequelize.FLOAT
-      },
-      location: {
-        type: Sequelize.STRING
-      },
-      status: {
-        type: Sequelize.BOOLEAN
+      contributor: {
+        type: Sequelize.DECIMAL(10,1)
       },
       createdAt: {
         allowNull: false,
@@ -65,6 +46,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('vendors');
+    await queryInterface.dropTable('vendor_emission_statics');
   }
 };

@@ -2,43 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('profiles', {
+    await queryInterface.createTable('lane_emission_statics', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id:{
+      region_id: {
         type: Sequelize.INTEGER,
         allowNull:false,
         references:{
-          model:'Users',
+          model:'regions',
           key:'id'
         },
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      first_name: {
-        type: Sequelize.STRING
+      lane_id: {
+        type: Sequelize.INTEGER,
       },
-      last_name: {
-        type: Sequelize.STRING
+      date: {
+        type: Sequelize.DATE
       },
-      country_code: {
-        type: Sequelize.STRING
-      },
-      phone_number: {
-        type: Sequelize.STRING
-      },
-      image: {
-        type: Sequelize.STRING
-      },
-      role: {
-        type: Sequelize.INTEGER
-      },
-      status: {
-        type: Sequelize.BOOLEAN
+      contributor: {
+        type: Sequelize.DECIMAL(10,1)
       },
       createdAt: {
         allowNull: false,
@@ -51,6 +39,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('profiles');
+    await queryInterface.dropTable('lane_emission_statics');
   }
 };
