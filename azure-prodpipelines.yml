@@ -37,7 +37,7 @@ stages:
   - deployment: VMDeploy
     displayName: Web deploy
     environment:
-      name: deployvm
+      name: prodvm
       resourceType: VirtualMachine
     strategy:
       rolling:
@@ -59,8 +59,9 @@ stages:
                 sudo rm -rf .git/
                 sudo rm -rf .env
                 sudo rm -rf .gitignore
-                sudo unzip /home/azureuser/azagent/_work/1/drop/green-sight-backend.zip -d /home/azureuser/green-sight-backend
+                sudo unzip /home/azureuser/azagent/_work/2/drop/green-sight-backend.zip -d /home/azureuser/green-sight-backend
                 cd /home/azureuser/green-sight-backend/App
                 sudo rm -rf node_modules
                 sudo npm install
+                sudo npm install pm2 -g
                 pm2 restart 0
