@@ -1521,6 +1521,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
 
                 region_data.push(property.intensity);
                 last_region_data = property.intensity;
+                max_array.push(property.intensity);
             }
             if(next_year == 2023) {
                 let countData = 0
