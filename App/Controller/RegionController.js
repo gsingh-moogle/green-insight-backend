@@ -443,8 +443,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 }
 
                 for (let i = 0; i < maxCountArray.length; i++) {
-                   // targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(20/100)));
-                   targetLevel.push(0);
+                    targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(20/100)));
                  }
                 // for (var key in getCompanyData) {
                 //     let tmpData = [];
@@ -465,8 +464,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     
                 dataObject.push({
                     name:'company_level',
-                   // data:maxCountArray,
-                   data : targetLevel
+                    data:maxCountArray,
                 });
                 dataObject.push({
                     name:'target_level',
