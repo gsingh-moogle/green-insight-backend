@@ -1323,7 +1323,8 @@ exports.getRegionEmissionReduction=async(req,res) => {
         //     attributes: ['type', ['quater1','Q1'], ['quater2','Q2'],['quater3','Q3'],['quater4','Q4'],'now'],
         //     where:where});
         let getRegionEmissionsReduction = await Emission.findAll({
-            attributes :[ [sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],
+            attributes :[
+            [ sequelize.literal('( SELECT SUM(emission) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1473,7 +1474,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
         //     where:where});
         let getRegionEmissionsReduction = await Emission.findAll({
             attributes :[ 
-                [ sequelize.literal('( SELECT SUM(emission) )'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(emission) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1484,7 +1485,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
 
         let regionEmissionsReduction = await Emission.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(emission) )'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(emission) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
