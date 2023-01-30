@@ -431,6 +431,7 @@ exports.getLaneEmissionData=async(req,res) => {
                             name:property["lane_name"],
                             value:parseFloat(Math.abs(data).toFixed(2)),
                             total_emission: property.emission,
+                            total_intensity : property.intensity,
                             color:'#d8856b'
                         })
                     } else {
@@ -438,6 +439,7 @@ exports.getLaneEmissionData=async(req,res) => {
                             name:property["lane_name"],
                             value:parseFloat(Math.abs(data).toFixed(2)),
                             total_emission: property.emission,
+                            total_intensity : property.intensity,
                             color:'#215154'
                         })
                     }
