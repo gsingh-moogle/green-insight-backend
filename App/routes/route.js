@@ -34,6 +34,7 @@ router.get("/get-lane-emission-graph",RegionController.getLaneEmissions);
 router.get("/get-user-profile",UserController.getProfileDetails);
 router.post("/get-company-data",CompanyController.getCompanyData);
 
+
 //By Region API's
 router.post("/get-region-table-data",RegionController.getRegionTableData);
 router.post("/get-region-emission-data",RegionController.getRegionEmissionData);
