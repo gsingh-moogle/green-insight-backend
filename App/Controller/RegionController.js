@@ -1512,20 +1512,26 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
                     company_level.push(property.intensity);
-                    if(intialCompanyLevel == undefined){
-                        intialCompanyLevel = property.intensity;
-                    }
-                    intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
-                    targer_level.push(intialCompanyLevel);
-                    max_array.push(property.intensity);
-                    last_intensity = property.intensity;
-                    last_target = intialCompanyLevel;
+                    // if(intialCompanyLevel == undefined){
+                    //     intialCompanyLevel = property.intensity;
+                    // }
+                    // intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
+                    // targer_level.push(intialCompanyLevel);
+                 //   max_array.push(property.intensity);
+                 //   last_intensity = property.intensity;
+                 //   last_target = intialCompanyLevel;
                // }
                 count++;
             }
             for(const property of regionEmissionsReduction) {
 
                 region_data.push(property.intensity);
+                if(intialCompanyLevel == undefined){
+                    intialCompanyLevel = property.intensity;
+                }
+                intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
+                last_target = intialCompanyLevel;
+                targer_level.push(intialCompanyLevel);
                 last_region_data = property.intensity;
                 max_array.push(property.intensity);
             }
