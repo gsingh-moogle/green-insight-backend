@@ -429,7 +429,7 @@ exports.getLaneEmissionData=async(req,res) => {
                         contributor.push({
                             name:property["lane_name"],
                             value:Math.abs(data),
-                            total_emission: property.emission,
+                            total_emission: Helper.roundToDecimal(property.emission/convertToMillion),
                             total_intensity : Helper.roundToDecimal(property.intensity),
                             color:'#d8856b'
                         })
@@ -437,7 +437,7 @@ exports.getLaneEmissionData=async(req,res) => {
                         detractor.push({
                             name:property["lane_name"],
                             value:Math.abs(data),
-                            total_emission: property.emission,
+                            total_emission: Helper.roundToDecimal(property.emission/convertToMillion),
                             total_intensity : Helper.roundToDecimal(property.intensity),
                             color:'#215154'
                         })
