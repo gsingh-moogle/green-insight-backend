@@ -14,6 +14,7 @@ const EmissionIntensity =require("../models").EmissionIntensity;
 const EmissionRegionStatic =require("../models").EmissionRegionStatic;
 const RegionEmissionStatic =require("../models").RegionEmissionStatic;
 const Response=require("../helper/api-response");
+const Helper=require("../helper/common-helper");
 
 
 exports.getRegions=async(req,res) => {
@@ -397,12 +398,13 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     for (const property of getRegionEmissions) {
                         if(region_id) {
                             if(property['Region.name'] == regions[i]) {
-                                let data = (property.emission/property.emission_per_ton).toFixed(2);
+                               // let data = (property.emission/property.emission_per_ton).toFixed(2);
+                                let data = Helper.roundToDecimal(property.emission/property.emission_per_ton);
                                 if(toggel_data == 1){
-                                    data = (property.emission/convertToMillion);
+                                    data = Helper.roundToDecimal(property.emission/convertToMillion);
                                 }   
                                 
-                                tempArray.push(parseFloat(data));
+                                tempArray.push(data);
                                 if(tempDataObject["name"] === undefined){
                                     tempDataObject.name = property['Region.name'];
                                 }
@@ -411,12 +413,12 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                                 }
                             }  
                         } else {
-                            let data = (property.emission/property.emission_per_ton).toFixed(2);
+                            let data = Helper.roundToDecimal(property.emission/property.emission_per_ton);
                             if(toggel_data == 1){
-                                data = (property.emission/convertToMillion);
+                                data = Helper.roundToDecimal(property.emission/convertToMillion);
                             }   
                             
-                            tempArray.push(parseFloat(data));
+                            tempArray.push(data);
                             if(tempDataObject["name"] === undefined){
                                 tempDataObject.name = property['Region.name'];
                             }
@@ -445,7 +447,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 }
 
                 for (let i = 0; i < maxCountArray.length; i++) {
-                    targetLevel.push(maxCountArray[i]-(maxCountArray[i]*(20/100)));
+                    targetLevel.push(Helper.roundToDecimal(maxCountArray[i]-(maxCountArray[i]*(20/100))));
                  }
                 // for (var key in getCompanyData) {
                 //     let tmpData = [];
@@ -462,7 +464,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 // };
 
                 let base = Math.max(...maxCountArray);
-                let baseLine = base+(base*(15/100));
+                let baseLine = Helper.roundToDecimal(base+(base*(15/100)));
                     
                 dataObject.push({
                     name:'company_level',
@@ -479,7 +481,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
 
                 dataObject.push({
                     name:'Max',
-                    data:baseLine+(baseLine*(10/100)),
+                    data:Helper.roundToDecimal(baseLine+(baseLine*(10/100))),
                 });
 
                 if(toggel_data == 1){
@@ -701,8 +703,8 @@ exports.getRegionTableData=async(req,res) => {
             let avgData = [];
             for (const property of getRegionTableData) {
                 let color;
-                let intensity = property.intensity;
-                let cost = (property.cost/convertToMillion).toFixed(2);
+                let intensity = Helper.roundToDecimal(property.intensity);
+                let cost = Helper.roundToDecimal(property.cost/convertToMillion);
                 if(c < 2) {
                     color = '#d8856b';
                 } else if(c == 2) {
@@ -804,7 +806,6 @@ exports.getRegionEmissionData=async(req,res) => {
                 }
                 
                 const average = total.reduce((a, b) => a + b, 0) / total.length;
-                console.log(average);
                 let avgData = [];
                 for (const property of getRegionEmissions) {
                     // let data = property.intensity-average;
@@ -816,22 +817,22 @@ exports.getRegionEmissionData=async(req,res) => {
                     //     value: data.toFixed(2)
                     // });
 
-                    let data = property.intensity-average;
+                    let data = Helper.roundToDecimal(property.intensity-average);
                     let compareValue = property.intensity;
                     if(toggel_data == 1) {
                         compareValue = property.emission/convertToMillion;
-                        data = parseFloat(((property.emission/convertToMillion)-average).toFixed(2));
+                        data = Helper.roundToDecimal((property.emission/convertToMillion)-average);
                     }
                     if( compareValue > average) {
                         contributor.push({
                             name:property["Region.name"],
-                            value:parseFloat(Math.abs(data).toFixed(2)),
+                            value:Math.abs(data),
                             color:'#d8856b'
                         })
                     } else {
                         detractor.push({
                             name:property["Region.name"],
-                            value:parseFloat(Math.abs(data).toFixed(2)),
+                            value:Math.abs(data),
                             color:'#215154'
                         })
                     }
@@ -1119,11 +1120,11 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let detractor = getRegionEmissions.map(a => a.detractor);
                 let baseData = [];
                 for(const property of getRegionEmissions) {
-                    let data = (property.emission/property.total_ton_miles).toFixed(2);
+                    let data = Helper.roundToDecimal(property.emission/property.total_ton_miles);
                     property.intensity = data;
                     baseData.push(data);
                     if(current_year == property.year) {
-                        maxYearValue = parseFloat(data);
+                        maxYearValue = data;
                     }
                 }
                 let min = Math.min(...baseData);
@@ -1133,10 +1134,10 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 data.push({
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
-                    industrialAverage: min-industrialAverage,
-                    baseLine:max+baseLine,
-                    max: maxYearValue,
-                    graphMax: (max+baseLine)+(max+baseLine)*(15/100)
+                    industrialAverage: Helper.roundToDecimal(min-industrialAverage),
+                    baseLine:Helper.roundToDecimal(max+baseLine),
+                    max: Helper.roundToDecimal(maxYearValue),
+                    graphMax: Helper.roundToDecimal((max+baseLine)+(max+baseLine)*(15/100))
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
@@ -1186,7 +1187,6 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 }
             }
 
-            console.log('where',where);
             let convertToMillion  = 1000000;
             let attributeArray = [];
             if(toggel == 1) {
@@ -1227,11 +1227,11 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 let maxYearValue;
                 for(const property of getRegionEmissions) {
                   //  let data = (property.emission/property.emission_per_ton).toFixed(2);
-                    let data = (property.emission/convertToMillion).toFixed(2);
+                    let data = Helper.roundToDecimal(property.emission/convertToMillion);
                     property.contributor = data;
-                    baseData.push(parseFloat(data));
+                    baseData.push(data);
                     if(current_year == property.year) {
-                        maxYearValue = parseFloat(data);
+                        maxYearValue = data;
                     }
                 }
                 let min = Math.min(...baseData);
@@ -1243,10 +1243,10 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                     dataset:getRegionEmissions,
                     label:[quarter-1,parseInt(quarter)],
                     year: [current_year],
-                    industrialAverage: min-industrialAverage,
-                    max:max+maxY,
-                    min:min,
-                    baseLine:max+baseLine,
+                    industrialAverage: Helper.roundToDecimal(min-industrialAverage),
+                    max:Helper.roundToDecimal(max+maxY),
+                    min:Helper.roundToDecimal(min),
+                    baseLine:Helper.roundToDecimal(max+baseLine),
                     percent:4
                 })
                 return Response.customSuccessResponseWithData(res,'Region Emissions Quarterly',data,200)
@@ -1351,7 +1351,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
                     if(intialCompanyLevel == undefined){
                         intialCompanyLevel = property.intensity;
                     }
-                    intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
+                    intialCompanyLevel = Helper.roundToDecimal((intialCompanyLevel-(intialCompanyLevel*10/100)));
                     targer_level.push(intialCompanyLevel);
                     max_array.push(property.intensity);
                     last_intensity = property.intensity;
@@ -1362,20 +1362,20 @@ exports.getRegionEmissionReduction=async(req,res) => {
             if(next_year == 2023) {
                 let countData = 0
                 for (let i = 0; i < 4; i++) {
-                    last_intensity = parseFloat((last_intensity-(last_intensity*7/100)).toFixed(2));
+                    last_intensity = Helper.roundToDecimal((last_intensity-(last_intensity*7/100)));
                     company_level.push(last_intensity);
-                    last_target = parseFloat((last_target-(last_target*10/100)).toFixed(2));
+                    last_target = Helper.roundToDecimal((last_target-(last_target*10/100)));
                     targer_level.push(last_target);
                 }
             }
             let max = Math.max(...max_array);
-            let maxData = parseFloat((max+(max*30/100)).toFixed(2));
+            let maxData = Helper.roundToDecimal(max+(max*30/100));
             base_level.push(maxData);
             let data = {
                 company_level : company_level,
                 targer_level : targer_level,
                 base_level: base_level,
-                max : maxData+(maxData*20/100),
+                max : Helper.roundToDecimal(maxData+(maxData*20/100)),
                 year : [current_year, next_year]
             }
             // let contributor = getRegionEmissions.map(a => a.contributor);
@@ -1529,7 +1529,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
                 if(intialCompanyLevel == undefined){
                     intialCompanyLevel = property.intensity;
                 }
-                intialCompanyLevel = parseFloat((intialCompanyLevel-(intialCompanyLevel*10/100)).toFixed(2));
+                intialCompanyLevel = Helper.roundToDecimal((intialCompanyLevel-(intialCompanyLevel*10/100)));
                 last_target = intialCompanyLevel;
                 targer_level.push(intialCompanyLevel);
                 last_region_data = property.intensity;
@@ -1538,23 +1538,23 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             if(next_year == 2023) {
                 let countData = 0
                 for (let i = 0; i < 4; i++) {
-                    last_intensity = parseFloat((last_intensity-(last_intensity*7/100)).toFixed(2));
+                    last_intensity = Helper.roundToDecimal((last_intensity-(last_intensity*7/100)));
                     company_level.push(last_intensity);
-                    last_target = parseFloat((last_target-(last_target*10/100)).toFixed(2));
+                    last_target = Helper.roundToDecimal((last_target-(last_target*10/100)));
                     targer_level.push(last_target);
-                    last_region_data = parseFloat((last_region_data-(last_region_data*10/100)).toFixed(2));
+                    last_region_data = Helper.roundToDecimal((last_region_data-(last_region_data*10/100)));
                     region_data.push(last_region_data);
                 }
             }
             let max = Math.max(...max_array);
-            let maxData = parseFloat((max+(max*30/100)).toFixed(2));
+            let maxData = Helper.roundToDecimal(max+(max*30/100));
             base_level.push(maxData);
             let data = {
                 company_level : company_level,
                 targer_level : targer_level,
                 region_level : region_data,
                 base_level: base_level,
-                max : maxData+(maxData*20/100),
+                max : Helper.roundToDecimal(maxData+(maxData*20/100)),
                 year : [current_year, next_year]
             }
             // let contributor = getRegionEmissions.map(a => a.contributor);

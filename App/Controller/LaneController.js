@@ -7,7 +7,7 @@ const Lane =require("../models").Lane;
 const Vendor =require("../models").Vendor;
 const LaneEmissionStatic =require("../models").LaneEmissionStatic;
 const VendorEmissionStatic =require("../models").VendorEmissionStatic;
-
+const Helper=require("../helper/common-helper");
 const Response=require("../helper/api-response");
 
 
@@ -417,29 +417,28 @@ exports.getLaneEmissionData=async(req,res) => {
                 
                 const average = total.reduce((a, b) => a + b, 0) / total.length;
                 let avgData = [];
-                console.log('getLaneEmissionData',getLaneEmissionData);
                 for (const property of getLaneEmissionData) {
-                    let data = property.intensity-average;
+                    let data = Helper.roundToDecimal(property.intensity-average);
                     let compareValue = property.intensity;
                     if(toggel_data == 1) {
                         compareValue = property.emission;
                       //  data = parseFloat(((property.emission/convertToMillion)-average).toFixed(2));
-                      data = parseFloat(((property.emission)-average).toFixed(2));
+                      data = Helper.roundToDecimal((property.emission)-average);
                     }
                     if( compareValue > average) {
                         contributor.push({
                             name:property["lane_name"],
-                            value:parseFloat(Math.abs(data).toFixed(2)),
+                            value:Math.abs(data),
                             total_emission: property.emission,
-                            total_intensity : property.intensity,
+                            total_intensity : Helper.roundToDecimal(property.intensity),
                             color:'#d8856b'
                         })
                     } else {
                         detractor.push({
                             name:property["lane_name"],
-                            value:parseFloat(Math.abs(data).toFixed(2)),
+                            value:Math.abs(data),
                             total_emission: property.emission,
-                            total_intensity : property.intensity,
+                            total_intensity : Helper.roundToDecimal(property.intensity),
                             color:'#215154'
                         })
                     }
