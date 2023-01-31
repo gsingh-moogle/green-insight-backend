@@ -61,7 +61,6 @@ exports.login=async(req,res) => {
                                 phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
                             }
                          //   let sendMessage=await Twilio.sendVerificationCode(messageData);
-                            console.log('sendMessage',sendMessage);
                            // if(sendMessage) {
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200)
                             // } else {
