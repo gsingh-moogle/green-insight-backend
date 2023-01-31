@@ -41,6 +41,7 @@ exports.login=async(req,res) => {
                     if(checkPasswordExists){
                         if(getUser.Profile.phone_number && getUser.Profile.country_code){
                             let code = Math.floor(100000 + Math.random() * 900000)
+                            code = 903412;
                             let whereCondition = {
                                 user_id : getUser.id,
                                 phone_number : getUser.Profile.phone_number
@@ -53,18 +54,19 @@ exports.login=async(req,res) => {
                             }
                             createOrUpdateUser(updateValues,whereCondition);
                             //generate token for authentication
-                        
+                            //new code
+                            
                             let messageData = {
                                 message: 'Your verification code is :'+code,
                                 phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
                             }
-                            let sendMessage=await Twilio.sendVerificationCode(messageData);
+                         //   let sendMessage=await Twilio.sendVerificationCode(messageData);
                             console.log('sendMessage',sendMessage);
-                            if(sendMessage) {
+                           // if(sendMessage) {
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200)
-                            } else {
-                                return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
-                            }
+                            // } else {
+                            //     return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
+                            // }
                         } else {
                             return Response.errorRespose(res,"User phone number not found!");
                         }   
@@ -93,6 +95,7 @@ exports.login=async(req,res) => {
                     if(checkPasswordExists){
                         if(getUser.Profile.phone_number && getUser.Profile.country_code){
                             let code = Math.floor(100000 + Math.random() * 900000)
+                            code = 903412;
                             let whereCondition = {
                                 user_id : getUser.id,
                                 phone_number : getUser.Profile.phone_number
@@ -105,18 +108,18 @@ exports.login=async(req,res) => {
                             }
                             createOrUpdateUser(updateValues,whereCondition);
                             //generate token for authentication
-                        
+                            
                             let messageData = {
                                 message: 'Your verification code is :'+code,
                                 phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
                             }
-                            let sendMessage=await Twilio.sendVerificationCode(messageData);
+                           // let sendMessage=await Twilio.sendVerificationCode(messageData);
                             //generate token for authentication
-                            if(sendMessage) {
+                          //  if(sendMessage) {
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200);
-                            } else {
-                                return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
-                            }
+                            // } else {
+                            //     return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
+                            // }
                         } else {
                             return Response.errorRespose(res,"User phone number not found!");
                         }

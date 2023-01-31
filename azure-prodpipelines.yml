@@ -1,5 +1,5 @@
 trigger:
-- dev
+- production
 
 pool:
   vmImage: ubuntu-latest
@@ -25,9 +25,9 @@ stages:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
         includeRootFolder: false
         archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/green-insight-backend.zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/green-sight-backend.zip
         replaceExistingArchive: true
-    - upload: $(Build.ArtifactStagingDirectory)/green-insight-backend.zip
+    - upload: $(Build.ArtifactStagingDirectory)/green-sight-backend.zip
       artifact: drop
     
 
@@ -37,7 +37,7 @@ stages:
   - deployment: VMDeploy
     displayName: Web deploy
     environment:
-      name: deployvm
+      name: prodvm
       resourceType: VirtualMachine
     strategy:
       rolling:
@@ -54,12 +54,14 @@ stages:
               script: |
                 # Modify deployment script based on the app type
                 echo "Starting deployment script run"
-                cd /home/azureuser/green-insight-backend
+                cd /home/azureuser/green-sight-backend
                 sudo rm -rf *
                 sudo rm -rf .git/
+                sudo rm -rf .env
                 sudo rm -rf .gitignore
-                sudo unzip /home/azureuser/azagent/_work/3/drop/green-insight-backend.zip -d /home/azureuser/green-insight-backend
-                cd /home/azureuser/green-insight-backend/App
+                sudo unzip /home/azureuser/azagent/_work/2/drop/green-sight-backend.zip -d /home/azureuser/green-sight-backend
+                cd /home/azureuser/green-sight-backend/App
                 sudo rm -rf node_modules
                 sudo npm install
+                sudo npm install pm2 -g
                 pm2 restart 0
