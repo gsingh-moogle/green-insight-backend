@@ -1134,7 +1134,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 data.push({
                     dataset:getRegionEmissions,
                     label:[past_year,current_year],
-                    industrialAverage: Helper.roundToDecimal(min-industrialAverage),
+                    industrialAverage: Helper.roundToDecimal(133.76),
                     baseLine:Helper.roundToDecimal(max+baseLine),
                     max: Helper.roundToDecimal(maxYearValue),
                     graphMax: Helper.roundToDecimal((max+baseLine)+(max+baseLine)*(15/100))
@@ -1243,7 +1243,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                     dataset:getRegionEmissions,
                     label:[quarter-1,parseInt(quarter)],
                     year: [current_year],
-                    industrialAverage: Helper.roundToDecimal(min-industrialAverage),
+                    industrialAverage: Helper.roundToDecimal(133.76),
                     max:Helper.roundToDecimal(max+maxY),
                     min:Helper.roundToDecimal(min),
                     baseLine:Helper.roundToDecimal(max+baseLine),
