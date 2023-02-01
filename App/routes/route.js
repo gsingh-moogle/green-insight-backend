@@ -59,5 +59,6 @@ router.post("/save-project",ProjectController.saveProject);
 
 // Decarb API's
 router.post("/get-recommended-levers",DecarbController.getRecommendedLevers);
+router.post("/get-customize-levers",DecarbController.getCustomizeLevers);
 
 module.exports=router;
