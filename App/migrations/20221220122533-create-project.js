@@ -9,6 +9,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      region_id: {
+        type: Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'regions',
+          key:'id'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'NO ACTION'
+      },
       manager_id: {
         type: Sequelize.INTEGER,
         allowNull:false,
