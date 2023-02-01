@@ -34,7 +34,9 @@ exports.getCustomizeLevers=async(req,res) => {
     try {
         let laneArray = ['BAKERSFIELD,CA_MODESTO, CA','SALT LAKE CITY,UT_PERRIS, CA'];
         let data = {};
-        let customizeData = await Decarb.findAll({});
+        let customizeData = await Decarb.findAll({
+            order : [['lane_name','desc']]
+        });
         // for (const property in laneArray) {
         //     let original = await Decarb.findAll({
         //         where:{recommended_type:'original',lane_name:property}
