@@ -544,8 +544,7 @@ exports.getFacilityEmissions=async(req,res) => {
                       borderColor: '#d8856b',
                       backgroundColor: '#f7faf9',
                     }
-                  ]
-                
+                ]
             }
             return Response.customSuccessResponseWithData(res,'Facility Emissions',data,200)
         } else { return Response.errorRespose(res,'No Record Found!');}

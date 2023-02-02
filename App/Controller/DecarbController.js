@@ -6,6 +6,7 @@ const Response=require("../helper/api-response");
 const Emission =require("../models").Emission;
 const Decarb =require("../models").DecarbRecommendation;
 const Helper=require("../helper/common-helper");
+const moment = require('moment');
 
 exports.getRecommendedLevers=async(req,res) => {
     try {
@@ -34,6 +35,9 @@ exports.getCustomizeLevers=async(req,res) => {
     try {
         let laneArray = ['BAKERSFIELD,CA_MODESTO, CA','SALT LAKE CITY,UT_PERRIS, CA'];
         let data = {};
+        let date = moment();
+        let currentData = date.format("YYYY-MM-DD");
+        let pastData = date.subtract(1, "year").format("YYYY-MM-DD");
         let customizeData = await Decarb.findAll({
             order : [['lane_name','desc']]
         });
@@ -74,7 +78,9 @@ exports.getCustomizeLevers=async(req,res) => {
                     let laneEmissionData = await Emission.findOne({
                         attributes: ['id', [ sequelize.literal('( SELECT SUM(emission) DIV SUM(total_ton_miles) )'),'intensity'],
                         [ sequelize.literal('( SELECT SUM(shipments) )'),'shipments']],
-                        where: {'source':property.origin,'destination':property.destination},
+                        where: {'source':property.origin,'destination':property.destination,date: {
+                            [Op.between]: [pastData, currentData],
+                        }},
                         raw:true
                     }); 
                     if(property.type == 'alternative_fuel') {
