@@ -62,18 +62,27 @@ exports.getCustomizeLevers=async(req,res) => {
                             laneData[property.lane_name][property.type]['original_emission'] += property.emissions;
                         } else {
                             laneData[property.lane_name][property.type]['customize_emission'] += property.emissions;
+                            laneData[property.lane_name][property.type]['route'].push({
+                                origin :property.origin,
+                                destination : property.destination
+                            });
                         }
                     } else {
                         if(property.recommended_type == 'original') {
                             laneData[property.lane_name][property.type]['original_emission'] += property.emissions;
                         } else {
                             laneData[property.lane_name][property.type]['customize_emission'] += property.emissions;
+                            laneData[property.lane_name][property.type]['route'].push({
+                                origin :property.origin,
+                                destination : property.destination
+                            });
                         }
                     }
                 } else {
                     let original_emission = 0;
                     let customize_emission = 0;
                     laneData[property.lane_name] ={};
+                    let route = []
                  //   laneData[property.lane_name][property.type] ={};
                     let laneEmissionData = await Emission.findOne({
                         attributes: ['id', [ sequelize.literal('( SELECT SUM(emission) DIV SUM(total_ton_miles) )'),'intensity'],
@@ -87,6 +96,10 @@ exports.getCustomizeLevers=async(req,res) => {
                         if(property.recommended_type == 'original') {
                             original_emission = property.emissions;
                         } else {
+                            route.push({
+                                origin :property.origin,
+                                destination : property.destination
+                            })
                             customize_emission = property.emissions;
                         } 
                         
@@ -96,6 +109,7 @@ exports.getCustomizeLevers=async(req,res) => {
                             destination : property.destination,
                             original_emission : original_emission,
                             customize_emission : customize_emission,
+                            route : route,
                             shipments : laneEmissionData.shipments,
                             intensity : laneEmissionData.intensity,
                             type : property.type
@@ -105,6 +119,10 @@ exports.getCustomizeLevers=async(req,res) => {
                             original_emission = property.emissions;
                         } else {
                             customize_emission = property.emissions;
+                            route.push({
+                                origin :property.origin,
+                                destination : property.destination
+                            })
                         } 
                         laneData[property.lane_name][property.type] = {
                             name : property.lane_name,
@@ -112,6 +130,7 @@ exports.getCustomizeLevers=async(req,res) => {
                             destination : property.destination,
                             original_emission : original_emission,
                             customize_emission : customize_emission,
+                            route : route,
                             shipments : laneEmissionData.shipments,
                             intensity : laneEmissionData.intensity,
                             type : property.type
