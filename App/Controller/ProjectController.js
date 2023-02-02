@@ -53,6 +53,7 @@ exports.saveProject=async(req,res) => {
             project_name: project_name,
             desc: description,
             start_date: startDate,
+            status:1,
             end_date:endDate });
 
             if(ProjectData){
