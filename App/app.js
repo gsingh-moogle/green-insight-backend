@@ -4,7 +4,6 @@
  */
 var path = require('path');
 require('dotenv').config({ path: require('find-config')('.env') });
-var path = require('path');
 var express = require('express');
 var session = require('express-session');
 var createError = require('http-errors');
@@ -17,7 +16,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var greenRoute=require("./routes/route");
 const AzureRepository=require("./azurerepository");
-
+const { check, validationResult } = require('express-validator');
 
 
 // initialize express

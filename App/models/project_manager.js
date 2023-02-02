@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ProjectManager.init({
     first_name: DataTypes.STRING,
+    name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     email: DataTypes.STRING,
     designation: DataTypes.STRING,
