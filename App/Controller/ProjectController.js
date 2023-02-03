@@ -10,6 +10,16 @@ const moment = require('moment');
 exports.getProjectCount=async(req,res) => {
     try {
         var {region_id}=req.body;
+        const where = {}
+        if (region_id) {
+            where[Op.and] = []
+            where[Op.or] = []
+            if (region_id) {
+                where[Op.and].push({
+                    region_id: region_id
+                })
+            }
+        }
             //console.log(type,email,password);return 
         let getProject=await Project.findOne({
                 attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active']],
