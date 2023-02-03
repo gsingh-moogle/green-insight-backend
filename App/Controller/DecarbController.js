@@ -66,7 +66,8 @@ exports.getCustomizeLevers=async(req,res) => {
                                 origin :property.origin,
                                 destination : property.destination,
                                 type : property.LOB,
-                                emissions : property.emissions,
+                                emissions : (Helper.roundToDecimal(property.emissions/1000000)).toFixed(1),
+                                fuel_type : property.fuel_type
                             });
                         }
                     } else {
@@ -78,7 +79,8 @@ exports.getCustomizeLevers=async(req,res) => {
                                 origin :property.origin,
                                 destination : property.destination,
                                 type : property.LOB,
-                                emissions : property.emissions,
+                                emissions : (Helper.roundToDecimal(property.emissions/1000000)).toFixed(1),
+                                fuel_type : property.fuel_type
                             });
                         }
                     }

@@ -13,7 +13,6 @@ exports.getProjectCount=async(req,res) => {
         const where = {}
         if (region_id) {
             where[Op.and] = []
-            where[Op.or] = []
             if (region_id) {
                 where[Op.and].push({
                     region_id: region_id

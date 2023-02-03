@@ -16,7 +16,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var greenRoute=require("./routes/route");
 const AzureRepository=require("./azurerepository");
-const { check, validationResult } = require('express-validator');
+
 
 
 // initialize express
