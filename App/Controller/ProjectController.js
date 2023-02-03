@@ -9,22 +9,23 @@ const Validations=require("../helper/api-validator");
 const moment = require('moment');
 exports.getProjectCount=async(req,res) => {
     try {
-        var {region_id}=req.body;
+        var {region_id, year}=req.body;
         const where = {}
         if (region_id) {
             where[Op.and] = []
             if (region_id) {
-                where[Op.and].push({
-                    region_id: region_id
-                })
+                where[Op.and].push({region_id: region_id});
             }
+            if (year) {
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year));
+            } 
         }
-            //console.log(type,email,password);return 
-        let getProject=await Project.findOne({
-                attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active']],
-                where:where
-            });
-            
+        console.log('region_id',region_id);
+        let getProject= await Project.findOne({
+            attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active'],[ sequelize.literal('( SELECT SUM(id) )'),'Total']],
+            where:where
+        });
+
         //check password is matched or not then exec
         if(getProject){
             return Response.customSuccessResponseWithData(res,'Active/Inactive count',getProject,200)
