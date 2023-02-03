@@ -43,6 +43,17 @@ exports.projectRegisterValidator = () => {
   ]
 }
 
+exports.projectRatingValidator = () => {
+  return [
+    check('project_id')
+      .notEmpty()
+      .withMessage('Project id is required'),
+    check('rating')
+      .notEmpty()
+      .withMessage('Rating is required'),
+  ]
+}
+
 exports.loginValidator = () => {
   return [
     check('username').notEmpty().withMessage('username or email is required'),

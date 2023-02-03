@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Project.init({
+    project_unique_id : DataTypes.STRING,
     region_id: DataTypes.INTEGER,
     manager_id: DataTypes.INTEGER,
     project_name: DataTypes.STRING,
