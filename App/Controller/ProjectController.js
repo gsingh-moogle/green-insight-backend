@@ -13,7 +13,7 @@ exports.getProjectCount=async(req,res) => {
     try {
         var {region_id, year}=req.body;
         const where = {}
-        if (region_id) {
+        if (region_id || year) {
             where[Op.and] = []
             if (region_id) {
                 where[Op.and].push({region_id: region_id});
