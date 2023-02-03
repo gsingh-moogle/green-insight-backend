@@ -23,7 +23,7 @@ exports.getProjectCount=async(req,res) => {
             //console.log(type,email,password);return 
         let getProject=await Project.findOne({
                 attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active']],
-                where:{region_id:region_id}
+                where:where
             });
             
         //check password is matched or not then exec
