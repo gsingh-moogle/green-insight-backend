@@ -64,7 +64,9 @@ exports.getCustomizeLevers=async(req,res) => {
                             laneData[property.lane_name][property.type]['customize_emission'] += property.emissions;
                             laneData[property.lane_name][property.type]['route'].push({
                                 origin :property.origin,
-                                destination : property.destination
+                                destination : property.destination,
+                                type : property.LOB,
+                                emissions : property.emissions,
                             });
                         }
                     } else {
@@ -74,7 +76,9 @@ exports.getCustomizeLevers=async(req,res) => {
                             laneData[property.lane_name][property.type]['customize_emission'] += property.emissions;
                             laneData[property.lane_name][property.type]['route'].push({
                                 origin :property.origin,
-                                destination : property.destination
+                                destination : property.destination,
+                                type : property.LOB,
+                                emissions : property.emissions,
                             });
                         }
                     }
