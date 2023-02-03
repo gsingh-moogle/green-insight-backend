@@ -25,7 +25,7 @@ exports.getProjectCount=async(req,res) => {
         }
         console.log('region_id',region_id);
         let getProject= await Project.findOne({
-            attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active'],[ sequelize.literal('( SELECT SUM(id) )'),'Total']],
+            attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active'],[ sequelize.literal('( SELECT count(id) )'),'Total']],
             where:where
         });
 
