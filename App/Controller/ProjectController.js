@@ -17,7 +17,8 @@ exports.getProjectCount=async(req,res) => {
                 where[Op.and].push({region_id: region_id});
             }
             if (year) {
-                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year));
+                year = parseInt(year);
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), year));
             } 
         }
         console.log('region_id',region_id);
