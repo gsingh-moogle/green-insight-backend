@@ -153,7 +153,7 @@ exports.getProjectList=async(req,res) => {
         const projectData = await Project.findAll({
             attributes: ['id',"project_unique_id","region_id","decarb_id","project_name","start_date",
             "end_date","desc","customize_emission","emission_percent","actual_emission","type",
-            [sequelize.fn('quarter', sequelize.col('createdAt')), 'quarter'],[sequelize.fn('year', sequelize.col('createdAt')), 'year']],
+            [sequelize.fn('quarter', sequelize.col('end_date')), 'quarter'],[sequelize.fn('year', sequelize.col('end_date')), 'year']],
             where:where,
             raw:true
         });
