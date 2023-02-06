@@ -49,7 +49,7 @@ exports.saveProject=async(req,res) => {
             error: errors
             })
         }
-        var {region_id, project_name, description, start_date, end_date, manager_name, manager_email}=req.body;
+        var {region_id, project_name, description, start_date, end_date, manager_name, manager_email, type}=req.body;
 
         let randomString = randomstring.generate(10);
         //console.log(type,email,password);return 
@@ -71,6 +71,7 @@ exports.saveProject=async(req,res) => {
                 desc: description,
                 start_date: startDate,
                 status:1,
+                type : type,
                 end_date:endDate });
 
             if(ProjectData){

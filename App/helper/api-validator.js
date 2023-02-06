@@ -18,9 +18,7 @@ exports.projectRegisterValidator = () => {
       .withMessage('Region is required'),
     check('project_name')
       .notEmpty()
-      .withMessage('Project name is required')
-      .isLength({ max: 15 })
-      .withMessage('Project name be 15  characters'),
+      .withMessage('Project name is required'),
     check('description')
       .notEmpty()
       .withMessage('Description is required'),
@@ -32,14 +30,15 @@ exports.projectRegisterValidator = () => {
       .withMessage('End date is required'),
     check('manager_name')
       .notEmpty()
-      .withMessage('Manager name is required')
-      .isLength({ max: 10 })
-      .withMessage('Manager name be 10  characters'),
+      .withMessage('Manager name is required'),
     check('manager_email')
       .notEmpty()
       .withMessage('Manager email is required')
       .isEmail()
       .withMessage('Manager email is not valid'),
+    check('type')
+      .notEmpty()
+      .withMessage('Project type is required'),
   ]
 }
 
