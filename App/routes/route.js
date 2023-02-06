@@ -9,7 +9,8 @@ const FacilitiesController=require("../Controller/FacilitiesController");
 const VendorController=require("../Controller/VendorController");
 const LaneController=require("../Controller/LaneController");
 const ProjectController=require("../Controller/ProjectController");
-
+const DecarbController=require("../Controller/DecarbController");
+const Validations=require("../helper/api-validator");
 //Auth API's
 router.post("/login",GreenInsightController.login);
 router.post("/verify-otp",GreenInsightController.verifyOtp);
@@ -55,7 +56,15 @@ router.post("/get-lane-emission-data",LaneController.getLaneEmissionData);
 
 //Project API's
 router.post("/get-project-count",ProjectController.getProjectCount);
-router.post("/save-project",ProjectController.saveProject);
+router.post("/save-project",Validations.projectRegisterValidator(),ProjectController.saveProject);
+router.post("/save-project-rating",Validations.projectRatingValidator(),ProjectController.saveProjectRating);
+router.post("/get-project-list",ProjectController.getProjectList);
+router.get("/get-project-search-list",ProjectController.getProjectSearchList);
+router.delete("/delete-project",ProjectController.deleteProject);
+
+// Decarb API's
+router.post("/get-recommended-levers",DecarbController.getRecommendedLevers);
+router.post("/get-customize-levers",DecarbController.getCustomizeLevers);
 
 
 

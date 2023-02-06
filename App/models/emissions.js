@@ -15,8 +15,8 @@ class Emission extends Model {
   }
   Emission.init({
     name : DataTypes.STRING,
-    from : DataTypes.STRING,
-    to : DataTypes.STRING,
+    source : DataTypes.STRING,
+    destination : DataTypes.STRING,
     region_name: DataTypes.STRING,
     company_id: DataTypes.INTEGER,
     region_id: DataTypes.INTEGER,
