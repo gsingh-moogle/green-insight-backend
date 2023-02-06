@@ -93,7 +93,7 @@ exports.getCustomizeLevers=async(req,res) => {
                     let laneEmissionData = await Emission.findOne({
                         attributes: ['id', [ sequelize.literal('( SELECT SUM(emission) DIV SUM(total_ton_miles) )'),'intensity'],
                         [ sequelize.literal('( SELECT SUM(shipments) )'),'shipments']],
-                        where: {'source':property.origin,'destination':property.destination,date: {
+                        where: {'name':property.lane_name,date: {
                             [Op.between]: [pastData, currentData],
                         }},
                         raw:true
@@ -118,7 +118,8 @@ exports.getCustomizeLevers=async(req,res) => {
                             route : route,
                             shipments : laneEmissionData.shipments,
                             intensity : laneEmissionData.intensity,
-                            type : property.type
+                            type : property.type,
+                            decarb_id : property.decarb_id
                         }
                     } else {
                         if(property.recommended_type == 'original') {
@@ -139,7 +140,8 @@ exports.getCustomizeLevers=async(req,res) => {
                             route : route,
                             shipments : laneEmissionData.shipments,
                             intensity : laneEmissionData.intensity,
-                            type : property.type
+                            type : property.type,
+                            decarb_id : property.decarb_id
                         }
                     }
                     

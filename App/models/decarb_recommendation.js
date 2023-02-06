@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   DecarbRecommendation.init({
+    region_id:DataTypes.INTEGER,
+    decarb_id:DataTypes.STRING,
     lane_name: DataTypes.INTEGER,
     origin: DataTypes.STRING,
     destination: DataTypes.STRING,
