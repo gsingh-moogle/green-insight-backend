@@ -151,6 +151,9 @@ exports.getProjectList=async(req,res) => {
             }
         }
         const projectData = await Project.findAll({
+            attributes: ['id',"project_unique_id","region_id","decarb_id","project_name","start_date",
+            "end_date","desc","customize_emission","emission_percent","actual_emission","type",
+            [sequelize.fn('quarter', sequelize.col('createdAt')), 'quarter'],[sequelize.fn('year', sequelize.col('createdAt')), 'year']],
             where:where,
             raw:true
         });
@@ -182,6 +185,23 @@ exports.getProjectList=async(req,res) => {
 
 exports.getProjectSearchList=async(req,res) => {
     try {
+        const projectData = await Project.findAll({
+            attributes:['project_name','project_unique_id']
+        });
+
+        if(projectData){
+            return Response.customSuccessResponseWithData(res,'Project Search listing fetched Successfully',projectData,200)
+        } else { return Response.errorRespose(res,'Error while fetching project Search listing!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+
+exports.deleteProject=async(req,res) => {
+    try {
+        var {project_id}=req.body;
+        console.log('project_id',project_id);
         const projectData = await Project.findAll({
             attributes:['project_name','project_unique_id']
         });

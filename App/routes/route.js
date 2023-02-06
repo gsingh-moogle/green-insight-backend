@@ -59,6 +59,7 @@ router.post("/save-project",Validations.projectRegisterValidator(),ProjectContro
 router.post("/save-project-rating",Validations.projectRatingValidator(),ProjectController.saveProjectRating);
 router.post("/get-project-list",ProjectController.getProjectList);
 router.get("/get-project-search-list",ProjectController.getProjectSearchList);
+router.delete("/delete-project",ProjectController.deleteProject);
 
 // Decarb API's
 router.post("/get-recommended-levers",DecarbController.getRecommendedLevers);
