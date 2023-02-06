@@ -50,7 +50,7 @@ exports.saveProject=async(req,res) => {
             error: errors
             })
         }
-        var {region_id, project_name, description, start_date, end_date, manager_name, manager_email, type, decarb_id}=req.body;
+        var {region_id, project_name, description, start_date, end_date, manager_name, manager_email, type, decarb_id, customize_emission, emission_percent, actual_emission}=req.body;
 
         let randomString = randomstring.generate(10);
         //console.log(type,email,password);return 
@@ -72,6 +72,9 @@ exports.saveProject=async(req,res) => {
                 project_name: project_name,
                 desc: description,
                 start_date: startDate,
+                customize_emission:customize_emission,
+                emission_percent:emission_percent,
+                actual_emission:actual_emission,
                 status:1,
                 type : type,
                 end_date:endDate });
@@ -141,6 +144,20 @@ exports.getProjectList=async(req,res) => {
             }
             return Response.customSuccessResponseWithData(res,'Project listing fetched Successfully',data,200)
         } else { return Response.errorRespose(res,'Error while fetching project listing!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
+
+exports.getProjectSearchList=async(req,res) => {
+    try {
+        const projectData = await Project.findAll({
+            attributes:['project_name','project_unique_id']
+        });
+
+        if(projectData){
+            return Response.customSuccessResponseWithData(res,'Project Search listing fetched Successfully',projectData,200)
+        } else { return Response.errorRespose(res,'Error while fetching project Search listing!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
