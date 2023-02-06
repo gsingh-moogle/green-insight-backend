@@ -119,8 +119,39 @@ exports.saveProjectRating=async(req,res) => {
 
 exports.getProjectList=async(req,res) => {
     try {
-        var {project_id, description, rating}=req.body;
+        var {project_id, description, rating, project_name, project_unique_id, year, lever, search}=req.body;
+
+        const where = {}
+        if (project_name || project_unique_id || year || lever || search) {
+            where[Op.and] = []
+            if (project_name) {
+                where[Op.and].push({
+                    project_name: project_name
+                })
+            }
+            if (search) {
+                where[Op.and].push({
+                    project_name: {
+                        [Op.like]: `%${search}%`
+                      }
+                })
+            }
+            if (project_unique_id) {
+                where[Op.and].push({
+                    project_unique_id: project_unique_id
+                })
+            }
+            if (lever) {
+                where[Op.and].push({
+                    type: lever
+                })
+            }
+            if (year) {
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), year))
+            }
+        }
         const projectData = await Project.findAll({
+            where:where,
             raw:true
         });
 
