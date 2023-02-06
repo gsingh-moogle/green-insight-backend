@@ -201,14 +201,13 @@ exports.getProjectSearchList=async(req,res) => {
 exports.deleteProject=async(req,res) => {
     try {
         var {project_id}=req.body;
-        console.log('project_id',project_id);
-        const projectData = await Project.findAll({
-            attributes:['project_name','project_unique_id']
+        const projectData = await Project.destroy({
+            where:{id:project_id}
         });
 
         if(projectData){
-            return Response.customSuccessResponseWithData(res,'Project Search listing fetched Successfully',projectData,200)
-        } else { return Response.errorRespose(res,'Error while fetching project Search listing!');}
+            return Response.customSuccessResponseWithData(res,'Project deleted successfully.',projectData,200)
+        } else { return Response.errorRespose(res,'Error deleting project!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
