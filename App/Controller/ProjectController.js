@@ -9,6 +9,7 @@ const { check, validationResult } = require('express-validator');
 const Validations=require("../helper/api-validator");
 const moment = require('moment');
 const randomstring = require("randomstring");
+const Decarb =require("../models").DecarbRecommendation;
 
 exports.getProjectCount=async(req,res) => {
     try {
@@ -117,12 +118,17 @@ exports.getProjectList=async(req,res) => {
     try {
         var {project_id, description, rating}=req.body;
         const projectData = await Project.findAll({
+            raw:true
         });
 
         if(projectData){
             let modal_shift = [];
             let alternative_fuel = [];
             for(const property of projectData) {
+                let DecarbRecommendations = await Decarb.findOne({
+                    where:{recommended_type:'original',type:property.type,decarb_id:property.decarb_id}
+                });
+                property.DecarbRecommendations = DecarbRecommendations;
                 if(property.type == 'modal_shift') {
                     modal_shift.push(property);
                 } else {

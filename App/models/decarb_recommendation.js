@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      DecarbRecommendation.belongsTo(models.Project, {
+        foreignKey: 'decarb_id',
+      });
     }
   }
   DecarbRecommendation.init({
@@ -41,5 +44,10 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'DecarbRecommendation',
     tableName: 'decarb_recommendations'
   });
+  // DecarbRecommendation.associate = function(models) {
+  //   DecarbRecommendation.belongsTo(models.Project, {
+  //     foreignKey: 'decarb_id',
+  //   });
+  // };
   return DecarbRecommendation;
 };

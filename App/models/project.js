@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
   Project.init({
     project_unique_id : DataTypes.STRING,
     region_id: DataTypes.INTEGER,
-    decarb_id:DataTypes.STRING,
+    decarb_id: {
+          type:DataTypes.STRING,
+          references: 'decarb_recommendations', // <<< Note, its table's name, not object name
+          referencesKey: 'decarb_id' // <<< Note, its a column name
+    },
     manager_id: DataTypes.INTEGER,
     project_name: DataTypes.STRING,
     start_date: DataTypes.DATE,
@@ -32,5 +36,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Project',
     tableName:'projects'
   });
+
+  Project.associate = function(models) {
+    Project.hasMany(models.DecarbRecommendation, {
+      foreignKey: 'decarb_id',
+    });
+  };
   return Project;
 };
