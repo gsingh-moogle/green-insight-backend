@@ -57,6 +57,7 @@ router.post("/get-lane-emission-data",LaneController.getLaneEmissionData);
 router.post("/get-project-count",ProjectController.getProjectCount);
 router.post("/save-project",Validations.projectRegisterValidator(),ProjectController.saveProject);
 router.post("/save-project-rating",Validations.projectRatingValidator(),ProjectController.saveProjectRating);
+router.post("/get-project-list",ProjectController.getProjectList);
 
 // Decarb API's
 router.post("/get-recommended-levers",DecarbController.getRecommendedLevers);

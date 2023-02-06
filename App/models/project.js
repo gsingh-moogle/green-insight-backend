@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     start_date: DataTypes.DATE,
     end_date: DataTypes.DATE,
     desc: DataTypes.TEXT,
-    status: DataTypes.BOOLEAN
+    status: DataTypes.BOOLEAN,
+    type: {
+      type:DataTypes.ENUM,
+      values: ['alternative_fuel', 'modal_shift']
+    },
   }, {
     sequelize,
     modelName: 'Project',

@@ -9,6 +9,7 @@ const { check, validationResult } = require('express-validator');
 const Validations=require("../helper/api-validator");
 const moment = require('moment');
 const randomstring = require("randomstring");
+
 exports.getProjectCount=async(req,res) => {
     try {
         var {region_id, year}=req.body;
@@ -110,3 +111,29 @@ exports.saveProjectRating=async(req,res) => {
     }
 }
 
+exports.getProjectList=async(req,res) => {
+    try {
+        var {project_id, description, rating}=req.body;
+        const projectData = await Project.findAll({
+        });
+
+        if(projectData){
+            let modal_shift = [];
+            let alternative_fuel = [];
+            for(const property of projectData) {
+                if(property.type == 'modal_shift') {
+                    modal_shift.push(property);
+                } else {
+                    alternative_fuel.push(property);
+                }
+            }
+            let data = {
+                modal_shift : modal_shift,
+                alternative_fuel : alternative_fuel
+            }
+            return Response.customSuccessResponseWithData(res,'Project listing fetched Successfully',data,200)
+        } else { return Response.errorRespose(res,'Error while fetching project listing!');}
+    } catch (error) {
+        console.log('____________________________________________________________error',error);
+    }
+}
