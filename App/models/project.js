@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Project.init({
     project_unique_id : DataTypes.STRING,
     region_id: DataTypes.INTEGER,
+    decarb_id:DataTypes.STRING,
     manager_id: DataTypes.INTEGER,
     project_name: DataTypes.STRING,
     start_date: DataTypes.DATE,

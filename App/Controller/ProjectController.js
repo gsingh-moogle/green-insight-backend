@@ -49,7 +49,7 @@ exports.saveProject=async(req,res) => {
             error: errors
             })
         }
-        var {region_id, project_name, description, start_date, end_date, manager_name, manager_email, type}=req.body;
+        var {region_id, project_name, description, start_date, end_date, manager_name, manager_email, type, decarb_id}=req.body;
 
         let randomString = randomstring.generate(10);
         //console.log(type,email,password);return 
@@ -66,6 +66,7 @@ exports.saveProject=async(req,res) => {
             const ProjectData = await Project.create({
                 project_unique_id : randomString,
                 region_id:region_id,
+                decarb_id: decarb_id,
                 manager_id :  ManagerData.id,
                 project_name: project_name,
                 desc: description,
