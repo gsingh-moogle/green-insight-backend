@@ -333,8 +333,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             //OLD code Start
             if(region_id) {
                 getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
-                    [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"tplk9dgf")) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"tplk9dgf")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
                     where:where, 
@@ -349,8 +349,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 });
             } else {
                 getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
-                    [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"tplk9dgf")) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SUM(AES_DECRYPT(emission,"tplk9dgf")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
                     where:where, 
