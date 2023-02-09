@@ -10,9 +10,25 @@ const moment = require('moment');
 
 exports.getRecommendedLevers=async(req,res) => {
     try {
+        let {region_id}=req.body;
+        const where = {source:'SALT LAKE CITY,UT',destination:'PERRIS, CA'}
+        if(region_id === undefined || region_id == "") {
+            region_id = 8;
+        }
+        if(region_id != 8) {
+            return Response.errorRespose(res,'No Record Found!');
+        }
+        if (region_id) {
+            where[Op.and] = []
+            if (region_id) {
+                where[Op.and].push({
+                    region_id: region_id
+                })
+            }
+        }
         const Emissions = await Emission.findOne({
             attributes: [[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton']],
-            where:{region_id:8,source:'SALT LAKE CITY,UT',destination:'PERRIS, CA'},
+            where:where,
             raw:true
         });
             

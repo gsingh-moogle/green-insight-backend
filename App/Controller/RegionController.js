@@ -2,6 +2,7 @@ const sequelize = require('sequelize');
 const Op = sequelize.Op;
 const User = require("../models").User;
 const Emission =require("../models").Emission;
+const EmissionEncrypted =require("../models").EmissionEncrypted;
 const Region =require("../models").Region;
 const RegionByStatic =require("../models").RegionByStatic;
 const Facility =require("../models").Facility;
@@ -15,6 +16,7 @@ const EmissionRegionStatic =require("../models").EmissionRegionStatic;
 const RegionEmissionStatic =require("../models").RegionEmissionStatic;
 const Response=require("../helper/api-response");
 const Helper=require("../helper/common-helper");
+const CryptoJS = require("crypto-js");
 
 
 exports.getRegions=async(req,res) => {
@@ -332,9 +334,9 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             let getRegionEmissions;
             //OLD code Start
             if(region_id) {
-                getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
-                    [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
+                getRegionEmissions = await EmissionEncrypted.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"tplk9dgf")) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"tplk9dgf")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
                     where:where, 
@@ -348,9 +350,9 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     raw: true
                 });
             } else {
-                getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],
-                    [ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
+                getRegionEmissions = await EmissionEncrypted.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"tplk9dgf")) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SUM(AES_DECRYPT(emission,"tplk9dgf")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
                     where:where, 
@@ -500,7 +502,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     name:'lables',
                     data:lables,
                 });
-                return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
+                var data = CryptoJS.AES.encrypt(JSON.stringify(dataObject), 'Il6xjiYoJHJOaTs3').toString();
+                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);

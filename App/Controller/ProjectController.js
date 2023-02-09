@@ -3,6 +3,7 @@ const Op = sequelize.Op;
 const Project =require("../models").Project;
 const ProjectManager =require("../models").ProjectManager;
 const ProjectFeedback =require("../models").ProjectFeedback;
+const Region =require("../models").Region;
 const User =require("../models").Users;
 const Response=require("../helper/api-response");
 const { check, validationResult } = require('express-validator');
@@ -119,11 +120,17 @@ exports.saveProjectRating=async(req,res) => {
 
 exports.getProjectList=async(req,res) => {
     try {
-        var {project_id, description, rating, project_name, project_unique_id, year, lever, search}=req.body;
+        var {project_id, description, rating, project_name, project_unique_id, year, lever, search, region_id}=req.body;
 
         const where = {}
-        if (project_name || project_unique_id || year || lever || search) {
+        if (project_name || project_unique_id || year || lever || search || region_id) {
             where[Op.and] = []
+
+            if (region_id) {
+                where[Op.and].push({
+                    region_id: region_id
+                })
+            }
             if (project_name) {
                 where[Op.and].push({
                     project_name: project_name
@@ -188,8 +195,15 @@ exports.getProjectSearchList=async(req,res) => {
         const projectData = await Project.findAll({
             attributes:['project_name','project_unique_id']
         });
+        // const RegionData = await Region.findAll({
+        //     attributes:['name']
+        // });
 
         if(projectData){
+            // let data = {
+            //     project :projectData,
+            //     region : RegionData
+            // }
             return Response.customSuccessResponseWithData(res,'Project Search listing fetched Successfully',projectData,200)
         } else { return Response.errorRespose(res,'Error while fetching project Search listing!');}
     } catch (error) {
@@ -204,7 +218,7 @@ exports.deleteProject=async(req,res) => {
         const projectData = await Project.destroy({
             where:{id:project_id}
         });
-
+        
         if(projectData){
             return Response.customSuccessResponseWithData(res,'Project deleted successfully.',projectData,200)
         } else { return Response.errorRespose(res,'Error deleting project!');}
