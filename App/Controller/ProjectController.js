@@ -195,16 +195,16 @@ exports.getProjectSearchList=async(req,res) => {
         const projectData = await Project.findAll({
             attributes:['project_name','project_unique_id']
         });
-        const RegionData = await Region.findAll({
-            attributes:['name']
-        });
+        // const RegionData = await Region.findAll({
+        //     attributes:['name']
+        // });
 
         if(projectData){
-            let data = {
-                project :projectData,
-                region : RegionData
-            }
-            return Response.customSuccessResponseWithData(res,'Project Search listing fetched Successfully',data,200)
+            // let data = {
+            //     project :projectData,
+            //     region : RegionData
+            // }
+            return Response.customSuccessResponseWithData(res,'Project Search listing fetched Successfully',projectData,200)
         } else { return Response.errorRespose(res,'Error while fetching project Search listing!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);

@@ -12,6 +12,9 @@ exports.getRecommendedLevers=async(req,res) => {
     try {
         let {region_id}=req.body;
         const where = {source:'SALT LAKE CITY,UT',destination:'PERRIS, CA'}
+        if(region_id === undefined || region_id == "") {
+            region_id = 8;
+        }
         if(region_id != 8) {
             return Response.errorRespose(res,'No Record Found!');
         }
