@@ -14,6 +14,7 @@ const EmissionReduction =require("../models").EmissionReduction;
 const EmissionIntensity =require("../models").EmissionIntensity;
 const EmissionRegionStatic =require("../models").EmissionRegionStatic;
 const RegionEmissionStatic =require("../models").RegionEmissionStatic;
+const RegionTargetLevel =require("../models").RegionTargetLevel;
 const Response=require("../helper/api-response");
 const Helper=require("../helper/common-helper");
 const CryptoJS = require("crypto-js");
