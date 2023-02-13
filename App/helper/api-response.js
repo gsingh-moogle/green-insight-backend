@@ -1,11 +1,17 @@
 'use strict';
 require("dotenv").config();
-const crypto=require("crypto")
+const crypto=require("crypto");
+const CryptoJS = require("crypto-js");
 const bcrypt = require('bcrypt');
 const iv = crypto.randomBytes(parseInt(process.env.IV));
 const sKey = crypto.randomBytes(parseInt(process.env.SKEY));
+const CryptoKey = process.env.CRYPTO_JS;
 let encryptedData="";
 const jwt=require("jsonwebtoken");
+
+const encryptData = (data) => {
+    return CryptoJS.AES.encrypt(JSON.stringify(data), CryptoKey).toString();
+}
 
 exports.generateAuthTag =(data) => {
     //generat auth tag for uniqueness...
@@ -15,16 +21,15 @@ exports.generateAuthTag =(data) => {
     const authTag = cipher.getAuthTag().toString("hex");
     return authTag;
 }
-exports.encryptData = (data) => {
-    //converting to encrypted form
-    const authTag=this.generateAuthTag(data);
-
-    const decipher = crypto.createDecipheriv(process.env.ALGORITHUM, sKey, iv);
-    decipher.setAuthTag(Buffer.from(authTag, 'hex'));
-    let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
-    decryptedData += decipher.final('utf-8');
-    return {encryptedData,decryptedData,authTag};
-}
+// exports.encryptData = (data) => {
+//     //converting to encrypted form
+//     const authTag=this.generateAuthTag(data);
+//     const decipher = crypto.createDecipheriv(process.env.ALGORITHUM, sKey, iv);
+//     decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+//     let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
+//     decryptedData += decipher.final('utf-8');
+//     return {encryptedData,decryptedData,authTag};
+// }
 
 
 exports.unAuthorizedResponse = (res, msg) => {
@@ -60,7 +65,7 @@ exports.customSuccessResponseWithData = (res, msg, data,statuscode) => {
     var data = {
         status: statuscode,
         message: msg,
-        data: data
+        data: encryptData(data)
     };
     return res.status(statuscode).json(data);
 }
