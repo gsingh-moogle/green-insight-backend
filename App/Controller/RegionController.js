@@ -18,7 +18,8 @@ const RegionTargetLevel =require("../models").RegionTargetLevel;
 const Response=require("../helper/api-response");
 const Helper=require("../helper/common-helper");
 const CryptoJS = require("crypto-js");
-
+const SQLToken = process.env.MY_SQL_TOKEN;
+ 
 
 exports.getRegions=async(req,res) => {
     try {
@@ -335,9 +336,9 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             let getRegionEmissions;
             //OLD code Start
             if(region_id) {
-                getRegionEmissions = await EmissionEncrypted.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"tplk9dgf")) )'),'emission_per_ton'],
-                    [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"tplk9dgf")) )'),'emission'],
+                getRegionEmissions = await Emission.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
                     where:where, 
@@ -351,9 +352,9 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     raw: true
                 });
             } else {
-                getRegionEmissions = await EmissionEncrypted.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"tplk9dgf")) )'),'emission_per_ton'],
-                    [ sequelize.literal('( SUM(AES_DECRYPT(emission,"tplk9dgf")) )'),'emission'],
+                getRegionEmissions = await Emission.findAll({
+                    attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],
+                    [ sequelize.literal('( SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
                     'region_id'],
                     where:where, 
@@ -504,7 +505,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     data:lables,
                 });
                 
-                
+
                 return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
@@ -670,9 +671,9 @@ exports.getRegionTableData=async(req,res) => {
         }
         //console.log(type,email,password);return 
         let getRegionTableData = await Emission.findAll({
-            attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],
-            [ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],
-            [ sequelize.literal('( SELECT SUM(emission) )'),'cost'],
+            attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'total_ton_miles'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'cost'],
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
@@ -763,7 +764,7 @@ exports.getRegionEmissionData=async(req,res) => {
             let getRegionEmissions;
             if(toggel_data == 1) {
                 getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+                    attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
                     where:where, include: [
                     {
                         model: Region,
@@ -775,7 +776,7 @@ exports.getRegionEmissionData=async(req,res) => {
                 });
             } else {
                 getRegionEmissions = await Emission.findAll({
-                    attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+                    attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
                     where:where, include: [
                     {
                         model: Region,
@@ -1056,9 +1057,9 @@ exports.getRegionIntensityByYear=async(req,res) => {
             console.log('where',where);
             let attributeArray = [];
             if(toggel == 1) {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'total_ton_miles'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             } else {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'total_ton_miles'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'total_ton_miles'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
                 
             }
 
@@ -1120,8 +1121,8 @@ exports.getRegionIntensityByYear=async(req,res) => {
             if(getRegionEmissions){
                 let data = [];
                 let convertToMillion  = 1000000;
-                let contributor = getRegionEmissions[0]['contributor'];
-                let detractor = getRegionEmissions.map(a => a.detractor);
+              //  let contributor = getRegionEmissions[0]['contributor'];
+            //    let detractor = getRegionEmissions.map(a => a.detractor);
                 let baseData = [];
                 for(const property of getRegionEmissions) {
                     let data = Helper.roundToDecimal(property.emission/property.total_ton_miles);
@@ -1194,9 +1195,9 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
             let convertToMillion  = 1000000;
             let attributeArray = [];
             if(toggel == 1) {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             } else {
-                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(emission) )'),'emission'],[ sequelize.literal('( SELECT SUM(total_ton_miles) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
+                attributeArray = ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%Y'), 'year'],[sequelize.fn('quarter', sequelize.col('date')), 'quarter']];
             }
 
             //NEW STATIC DATA CODE
@@ -1330,7 +1331,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
         //     where:where});
         let getRegionEmissionsReduction = await Emission.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(emission) DIV 1000000)'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1498,7 +1499,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
         //     where:where});
         let getRegionEmissionsReduction = await Emission.findAll({
             attributes :[ 
-            [ sequelize.literal('( SELECT SUM(emission) DIV 1000000)'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1509,7 +1510,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
 
         let regionEmissionsReduction = await Emission.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(emission) DIV 1000000)'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1529,8 +1530,6 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))],
             raw:true
         });
-        console.log('getRegionEmissionsReduction',getRegionEmissionsReduction);
-        console.log('regionEmissionsReduction',regionEmissionsReduction);
         //check password is matched or not then exec
         if(getRegionEmissionsReduction){
             let company_level = [];

@@ -9,6 +9,7 @@ const LaneEmissionStatic =require("../models").LaneEmissionStatic;
 const VendorEmissionStatic =require("../models").VendorEmissionStatic;
 const Helper=require("../helper/common-helper");
 const Response=require("../helper/api-response");
+const SQLToken = process.env.MY_SQL_TOKEN;
 
 
 exports.getLaneTableDataHighIntensity=async(req,res) => {
@@ -383,8 +384,8 @@ exports.getLaneEmissionData=async(req,res) => {
             //NEW CODE
             let getLaneEmissionData = await Emission.findAll({
                 attributes: ['id',['name','lane_name'],
-                [ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],
-                [ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+                [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],
+                [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
                 where:where,
                 group: [`lane_name`],
                 order:[[order_by,'desc']],
