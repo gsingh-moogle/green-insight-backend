@@ -1363,11 +1363,11 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let last_intensity = [];
             let last_target = [];
             console.log('target_level', getTargetReduction);
-            for(const property of getTargetReduction) {
-                //if(count < 6) {
-                    targer_level.push(property.target);
-                    last_target = property.target;
-            }
+            // for(const property of getTargetReduction) {
+            //     //if(count < 6) {
+            //         targer_level.push(property.target);
+            //         last_target = property.target;
+            // }
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
                     company_level.push(property.intensity);
@@ -1375,10 +1375,10 @@ exports.getRegionEmissionReduction=async(req,res) => {
                         intialCompanyLevel = property.intensity;
                     }
                     intialCompanyLevel = Helper.roundToDecimal((intialCompanyLevel-(intialCompanyLevel*10/100)));
-                 //   targer_level.push(intialCompanyLevel);
+                    targer_level.push(intialCompanyLevel);
                     max_array.push(property.intensity);
                     last_intensity = property.intensity;
-                 //   last_target = intialCompanyLevel;
+                    last_target = intialCompanyLevel;
                // }
                 count++;
             }
@@ -1557,11 +1557,11 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
                 count++;
             }
 
-            for(const property of getTargetReduction) {
-                //if(count < 6) {
-                    targer_level.push(property.target);
-                    last_target = property.target;
-            }
+            // for(const property of getTargetReduction) {
+            //     //if(count < 6) {
+            //         targer_level.push(property.target);
+            //         last_target = property.target;
+            // }
             for(const property of regionEmissionsReduction) {
 
                 region_data.push(property.intensity);
@@ -1569,8 +1569,8 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
                     intialCompanyLevel = property.intensity;
                 }
                 intialCompanyLevel = Helper.roundToDecimal((intialCompanyLevel-(intialCompanyLevel*10/100)));
-             //   last_target = intialCompanyLevel;
-             //   targer_level.push(intialCompanyLevel);
+                last_target = intialCompanyLevel;
+                targer_level.push(intialCompanyLevel);
                 last_region_data = property.intensity;
                 max_array.push(property.intensity);
             }
