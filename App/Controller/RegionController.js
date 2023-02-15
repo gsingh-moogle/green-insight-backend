@@ -1370,7 +1370,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
             // }
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
-                    company_level.push(property.intensity);
+                    company_level.push(Helper.roundToDecimal(property.intensity));
                     if(intialCompanyLevel == undefined){
                         intialCompanyLevel = property.intensity;
                     }
@@ -1499,7 +1499,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
         //     where:where});
         let getRegionEmissionsReduction = await Emission.findAll({
             attributes :[ 
-            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV 1000000)'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) / 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1544,7 +1544,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             let intialCompanyLevel;
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
-                    company_level.push(property.intensity);
+                    company_level.push(Helper.roundToDecimal(property.intensity));
                     // if(intialCompanyLevel == undefined){
                     //     intialCompanyLevel = property.intensity;
                     // }
