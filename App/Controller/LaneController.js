@@ -384,7 +384,7 @@ exports.getLaneEmissionData=async(req,res) => {
             //NEW CODE
             let getLaneEmissionData = await Emission.findAll({
                 attributes: ['id',['name','lane_name'],
-                [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],
+                [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) / SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],
                 [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
                 where:where,
                 group: [`lane_name`],

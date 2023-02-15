@@ -1510,7 +1510,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
 
         let regionEmissionsReduction = await Emission.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV 1000000)'),'intensity'],
+            [ sequelize.literal('( SELECT (SUM(AES_DECRYPT(emission,"'+SQLToken+'"))/1000000))'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1521,7 +1521,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
 
         let getTargetReduction = await RegionTargetLevel.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(target_level) DIV 1000000)'),'target'],
+            [ sequelize.literal('( SELECT SUM(target_level)/1000000)'),'target'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1564,7 +1564,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             // }
             for(const property of regionEmissionsReduction) {
 
-                region_data.push(property.intensity);
+                region_data.push(Helper.roundToDecimal(property.intensity));
                 if(intialCompanyLevel == undefined){
                     intialCompanyLevel = property.intensity;
                 }
