@@ -1349,7 +1349,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let last_target = [];
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
-                    company_level.push(property.intensity);
+                    company_level.push(Helper.roundToDecimal(property.intensity));
                     if(intialCompanyLevel == undefined){
                         intialCompanyLevel = property.intensity;
                     }
