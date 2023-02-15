@@ -502,8 +502,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     name:'lables',
                     data:lables,
                 });
-                var data = CryptoJS.AES.encrypt(JSON.stringify(dataObject), 'Il6xjiYoJHJOaTs3').toString();
-                return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
+              //  var data = CryptoJS.AES.encrypt(JSON.stringify(dataObject), 'Il6xjiYoJHJOaTs3').toString();
+                return Response.customSuccessResponseWithData(res,'Region Emissions',dataObject,200)
             } else { return Response.errorRespose(res,'No Record Found!');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
