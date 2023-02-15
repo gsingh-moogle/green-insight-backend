@@ -1328,7 +1328,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
         //     where:where});
         let getRegionEmissionsReduction = await Emission.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT round((SUM(emission) / 1000000),1))'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(emission) / 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
