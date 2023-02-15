@@ -1349,7 +1349,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let last_target = [];
             for(const property of getRegionEmissionsReduction) {
                 //if(count < 6) {
-                    company_level.push(property.intensity);
+                    company_level.push(Helper.roundToDecimal(property.intensity));
                     if(intialCompanyLevel == undefined){
                         intialCompanyLevel = property.intensity;
                     }
@@ -1527,7 +1527,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             }
             for(const property of regionEmissionsReduction) {
 
-                region_data.push(property.intensity);
+                region_data.push(Helper.roundToDecimal(property.intensity));
                 if(intialCompanyLevel == undefined){
                     intialCompanyLevel = property.intensity;
                 }
@@ -1541,7 +1541,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
                 let countData = 0
                 for (let i = 0; i < 4; i++) {
                     last_intensity = Helper.roundToDecimal((last_intensity-(last_intensity*7/100)));
-                    company_level.push(last_intensity);
+                    company_level.push(Helper.roundToDecimal(property.intensity));
                     last_target = Helper.roundToDecimal((last_target-(last_target*10/100)));
                     targer_level.push(last_target);
                     last_region_data = Helper.roundToDecimal((last_region_data-(last_region_data*10/100)));
