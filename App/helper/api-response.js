@@ -65,7 +65,7 @@ exports.customSuccessResponseWithData = (res, msg, data,statuscode) => {
     var data = {
         status: statuscode,
         message: msg,
-        data: data
+        data: encryptData(data)
     };
 //data: encryptData(data)
     return res.status(statuscode).json(data);
