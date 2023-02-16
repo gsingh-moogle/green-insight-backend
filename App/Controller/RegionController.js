@@ -1112,6 +1112,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                         attributes: ['name']
                     }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
+                    order: [sequelize.fn('YEAR', sequelize.col('date'))],
                     raw: true
                 });
                 console.log('getRegionEmissions',getRegionEmissions);
@@ -1220,6 +1221,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                         attributes: ['name']
                     }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
+                    order: [sequelize.fn('YEAR', sequelize.col('date'))],
                     raw: true
                 });
                 console.log('getRegionEmissions',getRegionEmissions);
