@@ -1,10 +1,12 @@
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const User = require("../models").User;
 const Region =require("../models").Region;
 const Profile =require("../models").Profile;
 const UserOtp =require("../models").UserOtp;
-const e = require("express");
 const Response=require("../helper/api-response");
-const Twilio=require("../helper/twilio-helper");
+const SQLToken = process.env.MY_SQL_TOKEN;
+const AES = require('mysql-aes')
 
 const createOrUpdateUser = (values,condition) => {
     UserOtp.findOne({ where: condition }).then(function(obj) {
@@ -22,8 +24,8 @@ exports.login=async(req,res) => {
             //code...
             //console.log(type,email,password);return 
             let getUser=await User.findOne({
-              //  attributes: ['id','name','email','role','createdAt'],
-                where:{email:email},
+                attributes: ['id','name','email','password','role','createdAt'],
+                where:{email:AES.encrypt(email, SQLToken)},
                 include: [
                 {
                     model: Region,
@@ -35,8 +37,48 @@ exports.login=async(req,res) => {
             });
             //check password is matched or not then exec
             if(getUser){
-                 if(getUser?.role==0){
-                if(getUser) {
+                getUser.email = AES.decrypt(getUser.email, SQLToken);
+                getUser.Profile.phone_number = AES.decrypt(getUser.Profile.phone_number, SQLToken);
+                if(getUser?.role==0){
+                    if(getUser) {
+                        let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
+                        if(checkPasswordExists){
+                            if(getUser.Profile.phone_number && getUser.Profile.country_code){
+                                let code = Math.floor(100000 + Math.random() * 900000)
+                                code = 903412;
+                                let whereCondition = {
+                                    user_id : getUser.id,
+                                    phone_number: AES.encrypt(getUser.Profile.phone_number, SQLToken),
+                                };
+                                let updateValues = {
+                                    user_id : getUser.id,
+                                    phone_number : sequelize.literal('HEX( aes_encrypt('+getUser.Profile.phone_number+',"'+SQLToken+'") )'),
+                                    otp : sequelize.literal('HEX( aes_encrypt('+code+',"'+SQLToken+'") )'),
+                                    status : 0,
+                                }
+                                createOrUpdateUser(updateValues,whereCondition);
+                                //generate token for authentication
+                                //new code
+                                
+                                let messageData = {
+                                    message: 'Your verification code is :'+code,
+                                    phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
+                                }
+                            //   let sendMessage=await Twilio.sendVerificationCode(messageData);
+                            // if(sendMessage) {
+                                    return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200)
+                                // } else {
+                                //     return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
+                                // }
+                            } else {
+                                return Response.errorRespose(res,"User phone number not found!");
+                            }   
+                        } else {return Response.errorRespose(res,"Password should be matched");}
+                    } else {
+                        return Response.errorRespose(res,'Email address is not exists');
+                    }
+                } else if(getUser.role==1) {
+                //check password is matched or not then exec
                     let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
                     if(checkPasswordExists){
                         if(getUser.Profile.phone_number && getUser.Profile.country_code){
@@ -44,65 +86,12 @@ exports.login=async(req,res) => {
                             code = 903412;
                             let whereCondition = {
                                 user_id : getUser.id,
-                                phone_number : getUser.Profile.phone_number
+                                phone_number: AES.encrypt(getUser.Profile.phone_number, SQLToken),
                             };
                             let updateValues = {
                                 user_id : getUser.id,
-                                phone_number : getUser.Profile.phone_number,
-                                otp : code,
-                                status : 0,
-                            }
-                            createOrUpdateUser(updateValues,whereCondition);
-                            //generate token for authentication
-                            //new code
-                            
-                            let messageData = {
-                                message: 'Your verification code is :'+code,
-                                phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
-                            }
-                         //   let sendMessage=await Twilio.sendVerificationCode(messageData);
-                           // if(sendMessage) {
-                                return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200)
-                            // } else {
-                            //     return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
-                            // }
-                        } else {
-                            return Response.errorRespose(res,"User phone number not found!");
-                        }   
-                    } else {return Response.errorRespose(res,"Password should be matched");}
-                } else {
-                    return Response.errorRespose(res,'Email address is not exists');
-                }
-            } else {
-                //code...
-            let getUser=await User.findOne({
-               // attributes: ['id','name','email','role','createdAt'],
-                where:{email:email},
-                include: [
-                    {
-                        model: Region,
-                        attributes: ['id','name']
-                    },{
-                        model: Profile,
-                        attributes: ['first_name','last_name','country_code','phone_number','image','status']
-                    }]
-            });
-            //check password is matched or not then exec
-            if(getUser.role==1){
-                if(getUser) {
-                    let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
-                    if(checkPasswordExists){
-                        if(getUser.Profile.phone_number && getUser.Profile.country_code){
-                            let code = Math.floor(100000 + Math.random() * 900000)
-                            code = 903412;
-                            let whereCondition = {
-                                user_id : getUser.id,
-                                phone_number : getUser.Profile.phone_number
-                            };
-                            let updateValues = {
-                                user_id : getUser.id,
-                                phone_number : getUser.Profile.phone_number,
-                                otp : code,
+                                phone_number : sequelize.literal('HEX( aes_encrypt('+getUser.Profile.phone_number+',"'+SQLToken+'") )'),
+                                otp : sequelize.literal('HEX( aes_encrypt('+code+',"'+SQLToken+'") )'),
                                 status : 0,
                             }
                             createOrUpdateUser(updateValues,whereCondition);
@@ -112,9 +101,9 @@ exports.login=async(req,res) => {
                                 message: 'Your verification code is :'+code,
                                 phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
                             }
-                           // let sendMessage=await Twilio.sendVerificationCode(messageData);
+                        // let sendMessage=await Twilio.sendVerificationCode(messageData);
                             //generate token for authentication
-                          //  if(sendMessage) {
+                        //  if(sendMessage) {
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200);
                             // } else {
                             //     return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
@@ -125,12 +114,8 @@ exports.login=async(req,res) => {
                     } else {return Response.errorRespose(res,"Password are not matched");}
                 } else {
                     return Response.errorRespose(res,'Email address is not exists');
-                }
-            } else {
-                return Response.errorRespose(res,'something went wrong')
-            }
-        }
-            } else { return Response.errorRespose(res,'Email is not Exists, Please Check');}
+                } 
+        } else { return Response.errorRespose(res,'Email is not Exists, Please Check');}
     } catch (error) {
         console.log('____________________________________________________________error',error);
     }
@@ -141,26 +126,34 @@ exports.verifyOtp=async(req,res) => {
             var {otp,email}=req.body;
 
             let user = await User.findOne({
-                //  attributes: ['id','name','email','role','createdAt'],
-                  where:{email:email},
-                  include: [
-                  {
-                      model: Region,
-                      attributes: ['id','name']
-                  },{
-                      model: Profile,
-                      attributes: ['first_name','last_name','country_code','phone_number','image','status']
-                  }]
+                    attributes: ['id','name','email','password','role','createdAt'],
+                    where:{email:AES.encrypt(email, SQLToken)},
+                    include: [
+                    {
+                        model: Region,
+                        attributes: ['id','name']
+                    },{
+                        model: Profile,
+                        attributes: ['first_name','last_name','country_code','phone_number','image','status']
+                    }]
               });
+
+            // let data =   Response.encryptDatabaseData(user.email);
+            // console.log('dataEnc',data);
             if(otp && user) {
+                user.email = AES.decrypt(user.email, SQLToken);
+                user.Profile.phone_number = AES.decrypt(user.Profile.phone_number, SQLToken);
                 let condition = {
                     user_id:user.id,
-                    phone_number: user.Profile.phone_number
+                    phone_number : AES.encrypt(user.Profile.phone_number, SQLToken)
                 }
-                console.log('condition',condition);
-                let otpData = await UserOtp.findOne({ where: condition });                   
+                let otpData = await UserOtp.findOne({ 
+                    attributes: ['otp'],
+                    where: condition });                   
                 //check password is matched or not then exec
                 if(otpData){
+
+                    otpData.otp = AES.decrypt(otpData.otp, SQLToken);
                     if(otpData.otp == otp){
                         let token=await Response.generateToken(user);
                         user.dataValues.token=token;

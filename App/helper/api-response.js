@@ -7,6 +7,7 @@ const iv = crypto.randomBytes(parseInt(process.env.IV));
 const sKey = crypto.randomBytes(parseInt(process.env.SKEY));
 const CryptoKey = process.env.CRYPTO_JS;
 let encryptedData="";
+const SQLToken = process.env.MY_SQL_TOKEN;
 const jwt=require("jsonwebtoken");
 
 const encryptData = (data) => {
@@ -21,15 +22,10 @@ exports.generateAuthTag =(data) => {
     const authTag = cipher.getAuthTag().toString("hex");
     return authTag;
 }
-// exports.encryptData = (data) => {
-//     //converting to encrypted form
-//     const authTag=this.generateAuthTag(data);
-//     const decipher = crypto.createDecipheriv(process.env.ALGORITHUM, sKey, iv);
-//     decipher.setAuthTag(Buffer.from(authTag, 'hex'));
-//     let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
-//     decryptedData += decipher.final('utf-8');
-//     return {encryptedData,decryptedData,authTag};
-// }
+exports.encryptDatabaseData = (data) => {
+    var dc = crypto.createDecipheriv("aes-128-ecb", convertCryptKey(SQLToken), "");
+    return dc.update(data, 'hex', 'utf8') + dc.final('utf8');
+}
 
 
 exports.unAuthorizedResponse = (res, msg) => {
