@@ -1,10 +1,10 @@
 {
   "development": {
-    "username": "master",
-    "password": "gt5#kc@xc!59",
-    "database": "GreensightSQL",
-    "host": "greensightsqlserver.database.windows.net",
-    "dialect": "mssql"
+    "username": "moogle",
+    "password": "admin",
+    "database": "green_sight",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
   "test": {
     "username": "root",
