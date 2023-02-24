@@ -1,6 +1,7 @@
 const express =require("express");
 const router=express.Router();
 const {validateAdmin} = require("../middleware/auth");
+const {createConnection} = require("../middleware/dynamicConnection");
 const GreenInsightController=require("../Controller/GreenInsightController");
 const RegionController=require("../Controller/RegionController");
 const UserController=require("../Controller/UserController");
@@ -15,6 +16,7 @@ const Validations=require("../helper/api-validator");
 router.post("/login",GreenInsightController.login);
 router.post("/verify-otp",GreenInsightController.verifyOtp);
 router.use(validateAdmin);
+// router.use(createConnection);
 // Verify Otp
 
 

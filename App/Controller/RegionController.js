@@ -964,7 +964,8 @@ exports.getRegionEmissionData=async(req,res) => {
                 const data = {
                     contributor:contributor,
                     detractor:detractor,
-                    unit :unit
+                    unit :unit,
+                    average:Helper.roundToDecimal(average)
                 };
                 //const data = getRegionEmissions.map((item) => [item["Region.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Region Emissions',data,200)
