@@ -574,7 +574,8 @@ exports.getLaneEmissionData=async(req,res) => {
                 const data = {
                     contributor:contributor,
                     detractor:detractor,
-                    unit :unit
+                    unit :unit,
+                    average:Helper.roundToDecimal(average)
                 };
                // const data = getLaneEmissionData.map((item) => [item["Lane.name"],item.contributor]);
                 return Response.customSuccessResponseWithData(res,'Lane Emissions',data,200);
