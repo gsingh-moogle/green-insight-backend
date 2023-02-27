@@ -19,7 +19,7 @@ const Response=require("../helper/api-response");
 const Helper=require("../helper/common-helper");
 const CryptoJS = require("crypto-js");
 const SQLToken = process.env.MY_SQL_TOKEN;
- 
+const DB = require("../models");
 
 exports.getRegions=async(req,res) => {
     try {
@@ -184,6 +184,8 @@ exports.getRegionIntensity=async(req,res) => {
 
 exports.getRegionEmissionsMonthly=async(req,res) => {
     try {
+            // console.log('DB',DB);
+            // return false;
             //console.log(type,email,password);return 
             let {region_id, company_id, year, toggel_data}=req.body;
             //const where = {emission_type:'region'}
@@ -201,8 +203,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     })
                 }
                 if (year) {
-                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
-                    )
+                    where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year))
                 }
             }
             where[Op.or] = [];
@@ -336,7 +337,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             let getRegionEmissions;
             //OLD code Start
             if(region_id) {
-                getRegionEmissions = await Emission.findAll({
+                console.log('DB.main.Emission',);
+                getRegionEmissions = await DB.main.models.Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],
                     [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
@@ -344,7 +346,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     where:where, 
                     include: [
                         {
-                            model: Region,
+                            model: DB.main.models.Region,
                             attributes: ['name']
                         }],
                     group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
@@ -369,7 +371,8 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 });
             }
             
-            
+            console.log('getRegionEmissions',getRegionEmissions);
+            return false;
             
             let getCompanyData = await CompanyData.findOne({
                 attributes: ['target_level','base_level'],

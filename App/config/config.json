@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "moogle",
-    "password": "admin",
-    "database": "green_sight",
+    "username": "root",
+    "password": "",
+    "database": "green_sight_main",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
@@ -19,5 +19,35 @@
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "databases": {
+    "main_db": {
+      "username": "root",
+      "password": "",
+      "database": "green_sight_main", 
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "green_sight": {
+      "username": "root",
+      "password": "",
+      "database": "green_sight", 
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "green_sight_pepsico": {
+      "username": "root",
+      "password": "",
+      "database": "green_sight_pepsico",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "green_sight_schneider": {
+      "username": "root",
+      "password": "",
+      "database": "green_sight_schneider",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
   }
 }

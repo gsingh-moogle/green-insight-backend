@@ -1,9 +1,6 @@
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
-const User = require("../models").User;
-const Region =require("../models").Region;
-const Profile =require("../models").Profile;
-const UserOtp =require("../models").UserOtp;
+const {User,Region,Profile,UserOtp} = require("../models");
 const Response=require("../helper/api-response");
 const SQLToken = process.env.MY_SQL_TOKEN;
 const AES = require('mysql-aes')
