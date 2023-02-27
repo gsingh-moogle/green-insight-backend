@@ -10,11 +10,11 @@ exports.getCompanyData=async(req,res) => {
         
             let {company_id,region_id}=req.body;
             const where = {company_id: 1}            
-            let getCompanyData = await CompanyData.findOne({
+            let getCompanyData = await req.db.CompanyData.findOne({
                 where:where,
                 include: [
                 {
-                    model: Company,
+                    model: req.db.Company,
                     attributes: ['name']
                 }]
             });

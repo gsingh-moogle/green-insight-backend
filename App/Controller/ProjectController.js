@@ -27,7 +27,7 @@ exports.getProjectCount=async(req,res) => {
             } 
         }
         console.log('region_id',region_id);
-        let getProject= await Project.findOne({
+        let getProject= await req.db.Project.findOne({
             attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active'],[ sequelize.literal('( SELECT count(id) )'),'Total']],
             where:where
         });
@@ -55,7 +55,7 @@ exports.saveProject=async(req,res) => {
 
         let randomString = randomstring.generate(10);
         //console.log(type,email,password);return 
-        const ManagerData = await ProjectManager.create({
+        const ManagerData = await req.db.ProjectManager.create({
             name:manager_name, 
             email: manager_email,
             }).then(function(obj) {
@@ -65,7 +65,7 @@ exports.saveProject=async(req,res) => {
         if(ManagerData){
             let startDate = moment(start_date).format("YYYY-MM-DD HH:mm:ss");
             let endDate = moment(end_date).format("YYYY-MM-DD HH:mm:ss");
-            const ProjectData = await Project.create({
+            const ProjectData = await req.db.Project.create({
                 project_unique_id : randomString,
                 region_id:region_id,
                 decarb_id: decarb_id,

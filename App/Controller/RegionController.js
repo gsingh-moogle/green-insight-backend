@@ -24,8 +24,8 @@ const DB = require("../models");
 exports.getRegions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
-        let getRegionEmissions = await Region.findAll();
-        let getCompanies = await Company.findOne({where:{'id':1}});
+        let getRegionEmissions = await req.db.Region.findAll();
+        let getCompanies = await req.db.Company.findOne({where:{'id':1}});
         //check password is matched or not then exec
         if(getRegionEmissions){
             let data = {
@@ -57,11 +57,11 @@ exports.getRegionEmissions=async(req,res) => {
                 }
             }
             //console.log(type,email,password);return 
-            let getRegionEmissions = await Emission.findAll({
+            let getRegionEmissions = await req.db.Emission.findAll({
                 attributes: ['id','contributor','detractor'],
                 where:where, include: [
                     {
-                        model: Region,
+                        model: req.db.Region,
                         attributes: ['name']
                     }],
                     group: ['region_id'],
@@ -133,11 +133,11 @@ exports.getRegionIntensity=async(req,res) => {
                     )
             }
             
-            let getRegionEmissions = await Emission.findAll({
+            let getRegionEmissions = await req.db.Emission.findAll({
                 attributes: ['id','truck_load','inter_modal'],
                 where:where, include: [
                     {
-                        model: Region,
+                        model: req.db.Region,
                         attributes: ['name']
                     }],
                     group: ['region_id'],
@@ -337,8 +337,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
             let getRegionEmissions;
             //OLD code Start
             if(region_id) {
-                console.log('DB.main.Emission',);
-                getRegionEmissions = await DB.main.models.Emission.findAll({
+                getRegionEmissions = await req.db.Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],
                     [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
@@ -346,7 +345,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     where:where, 
                     include: [
                         {
-                            model: DB.main.models.Region,
+                            model: req.db.Region,
                             attributes: ['name']
                         }],
                     group: ['region_id',sequelize.fn('YEAR', sequelize.col('date'))],
@@ -354,7 +353,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     raw: true
                 });
             } else {
-                getRegionEmissions = await Emission.findAll({
+                getRegionEmissions = await req.db.Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton'],
                     [ sequelize.literal('( SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
                     [ sequelize.literal('( SELECT YEAR(date) )'),'year'],
@@ -362,7 +361,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     where:where, 
                     include: [
                         {
-                            model: Region,
+                            model: req.db.Region,
                             attributes: ['name']
                         }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
@@ -371,15 +370,11 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 });
             }
             
-            console.log('getRegionEmissions',getRegionEmissions);
-            return false;
-            
-            let getCompanyData = await CompanyData.findOne({
+            let getCompanyData = await req.db.CompanyData.findOne({
                 attributes: ['target_level','base_level'],
                 where:{company_id:1},
                 raw: true
             });
-                console.log('getCompanyData',getCompanyData);
             if(getRegionEmissions){
                 let convertToMillion  = 1000000 * 1000000;
                 let emissionUnit ='M';
@@ -390,15 +385,9 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let allDataArray = [];
                 let maxCountArray = [];
                 let targetLevel = [];
-              //  const colors = ['#215154','#5F9A80','#D88D49','#C1D3C0','#367C90','#FFCB77','#215154','#5F9A80','#D88D49','#C1D3C0']
-             //   const colors = ['#FFCB77','#367C90','#C1D3C0','#D88D49','#5F9A80','#215154','#FFCB77','#367C90','#C1D3C0','#D88D49']
-              //  const colors = ['#215154','#5f9a80','#d8856b','#c1d3c0','#367c90','#ffcb77','#215154','#5f9a80','#d8856b','#c1d3c0']
                 const colors = ['#ffcb77','#367c90','#c1d3c0','#d8856b','#5f9a80','#215154','#ffcb77','#367c90','#c1d3c0','#d8856b'];
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
                 const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
-                console.log('labels', lables);
-                console.log('regions', regions);
-                console.log('getRegionEmissions', getRegionEmissions);
                 for (let i = 0; i < regions.length; i++) {
                     let tempDataObject = {};
                     let tempArray = [];
@@ -521,11 +510,11 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
 exports.getFacilityEmissions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
-        let getRegionEmissions = await Emission.findAll({
+        let getRegionEmissions = await req.db.Emission.findAll({
             attributes: ['id', 'contributor', 'detractor'],
             where:{emission_type:'facilities'}, include: [
                 {
-                    model: Region,
+                    model: req.db.Region,
                     attributes: ['name']
                 }]
             });
@@ -565,11 +554,11 @@ exports.getFacilityEmissions=async(req,res) => {
 exports.getVendorEmissions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
-        let getRegionEmissions = await Emission.findAll({
+        let getRegionEmissions = await req.db.Emission.findAll({
             attributes: ['id', 'contributor', 'detractor'],
             where:{emission_type:'vendor'}, include: [
                 {
-                    model: Vendor,
+                    model: req.db.Vendor,
                     attributes: ['name']
                 }]
             });
@@ -610,11 +599,11 @@ exports.getVendorEmissions=async(req,res) => {
 exports.getLaneEmissions=async(req,res) => {
     try {
         //console.log(type,email,password);return 
-        let getRegionEmissions = await Emission.findAll({
+        let getRegionEmissions = await req.db.Emission.findAll({
             attributes: ['id', 'contributor', 'detractor'],
             where:{emission_type:'lane'}, include: [
                 {
-                    model: Lane,
+                    model: req.db.Lane,
                     attributes: ['name']
                 }]
             });
@@ -673,18 +662,18 @@ exports.getRegionTableData=async(req,res) => {
             }
         }
         //console.log(type,email,password);return 
-        let getRegionTableData = await Emission.findAll({
+        let getRegionTableData = await req.db.Emission.findAll({
             attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],
             [ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'total_ton_miles'],
             [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'cost'],
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
             where:where, include: [
                 {
-                    model: Region,
+                    model: req.db.Region,
                     attributes: ['name'],
                     include: [
                     {
-                        model: User,
+                        model: req.db.User,
                         attributes: ['name']
                     }]
                 }],
@@ -766,11 +755,11 @@ exports.getRegionEmissionData=async(req,res) => {
             //console.log(type,email,password);return 
             let getRegionEmissions;
             if(toggel_data == 1) {
-                getRegionEmissions = await Emission.findAll({
+                getRegionEmissions = await req.db.Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
                     where:where, include: [
                     {
-                        model: Region,
+                        model: req.db.Region,
                         attributes: ['name']
                     }],
                     group: ['region_id'],
@@ -778,11 +767,11 @@ exports.getRegionEmissionData=async(req,res) => {
                     raw: true
                 });
             } else {
-                getRegionEmissions = await Emission.findAll({
+                getRegionEmissions = await req.db.Emission.findAll({
                     attributes: ['id',[ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
                     where:where, include: [
                     {
-                        model: Region,
+                        model: req.db.Region,
                         attributes: ['name']
                     }],
                     group: ['region_id'],
@@ -1108,11 +1097,11 @@ exports.getRegionIntensityByYear=async(req,res) => {
 
 
             //OLD CODE START
-            let getRegionEmissions = await Emission.findAll({
+            let getRegionEmissions = await req.db.Emission.findAll({
                 attributes: attributeArray,
                 where:where, include: [
                     {
-                        model: Region,
+                        model: req.db.Region,
                         attributes: ['name']
                     }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
@@ -1217,11 +1206,11 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
             //     });
             //     console.log('getRegionEmissions',getRegionEmissions);
 
-            let getRegionEmissions = await Emission.findAll({
+            let getRegionEmissions = await req.db.Emission.findAll({
                 attributes: attributeArray,
                 where:where, include: [
                     {
-                        model: Region,
+                        model: req.db.Region,
                         attributes: ['name']
                     }],
                     group: [sequelize.fn('YEAR', sequelize.col('date'))],
@@ -1335,7 +1324,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
         // let getRegionEmissionsReduction = await EmissionReduction.findAll({
         //     attributes: ['type', ['quater1','Q1'], ['quater2','Q2'],['quater3','Q3'],['quater4','Q4'],'now'],
         //     where:where});
-        let getRegionEmissionsReduction = await Emission.findAll({
+        let getRegionEmissionsReduction = await req.db.Emission.findAll({
             attributes :[
             [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
@@ -1346,7 +1335,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
             order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))]
         });
 
-        let getTargetReduction = await RegionTargetLevel.findAll({
+        let getTargetReduction = await req.db.RegionTargetLevel.findAll({
             attributes :[
             [ sequelize.literal('( SELECT SUM(target_level) DIV 1000000)'),'target'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
@@ -1368,7 +1357,6 @@ exports.getRegionEmissionReduction=async(req,res) => {
             let intialCompanyLevel;
             let last_intensity = [];
             let last_target = [];
-            console.log('target_level', getTargetReduction);
             // for(const property of getTargetReduction) {
             //     //if(count < 6) {
             //         targer_level.push(property.target);
@@ -1503,7 +1491,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
         //     attributes: ['type', ['quater1','Q1'], ['quater2','Q2'],['quater3','Q3'],['quater4','Q4'],'now'],
         //  [sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],
         //     where:where});
-        let getRegionEmissionsReduction = await Emission.findAll({
+        let getRegionEmissionsReduction = await req.db.Emission.findAll({
             attributes :[ 
             [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) / 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
@@ -1514,7 +1502,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))]
         });
 
-        let regionEmissionsReduction = await Emission.findAll({
+        let regionEmissionsReduction = await req.db.Emission.findAll({
             attributes :[
             [ sequelize.literal('( SELECT (SUM(AES_DECRYPT(emission,"'+SQLToken+'"))/1000000))'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
@@ -1525,7 +1513,7 @@ exports.getRegionEmissionReductionRegion=async(req,res) => {
             order: [sequelize.fn('YEAR', sequelize.col('date')),sequelize.fn('QUARTER', sequelize.col('date'))]
         });
 
-        let getTargetReduction = await RegionTargetLevel.findAll({
+        let getTargetReduction = await req.db.RegionTargetLevel.findAll({
             attributes :[
             [ sequelize.literal('( SELECT SUM(target_level)/1000000)'),'target'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],

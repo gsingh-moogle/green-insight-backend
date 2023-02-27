@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     role: {
       type:DataTypes.INTEGER,
       comment:'0 => substain login, 1 => region login'
+    },
+    db_name: {
+      type:DataTypes.STRING
     }
   }, {
     sequelize,

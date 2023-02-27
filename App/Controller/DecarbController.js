@@ -27,7 +27,7 @@ exports.getRecommendedLevers=async(req,res) => {
                 })
             }
         }
-        const Emissions = await Emission.findOne({
+        const Emissions = await req.db.Emission.findOne({
             attributes: [[ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'emission_per_ton']],
             where:where,
             raw:true
@@ -54,7 +54,7 @@ exports.getCustomizeLevers=async(req,res) => {
         let date = moment();
         let currentData = date.format("YYYY-MM-DD");
         let pastData = date.subtract(1, "year").format("YYYY-MM-DD");
-        let customizeData = await Decarb.findAll({
+        let customizeData = await req.db.Decarb.findAll({
             order : [['lane_name','desc']]
         });
         // for (const property in laneArray) {
@@ -106,7 +106,7 @@ exports.getCustomizeLevers=async(req,res) => {
                     laneData[property.lane_name] ={};
                     let route = []
                  //   laneData[property.lane_name][property.type] ={};
-                    let laneEmissionData = await Emission.findOne({
+                    let laneEmissionData = await req.db.Emission.findOne({
                         attributes: ['id', [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) DIV SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")) )'),'intensity'],
                         [ sequelize.literal('( SELECT SUM(shipments) )'),'shipments']],
                         where: {'name':property.lane_name,date: {
