@@ -54,7 +54,7 @@ exports.getCustomizeLevers=async(req,res) => {
         let date = moment();
         let currentData = date.format("YYYY-MM-DD");
         let pastData = date.subtract(1, "year").format("YYYY-MM-DD");
-        let customizeData = await req.db.Decarb.findAll({
+        let customizeData = await req.db.DecarbRecommendation.findAll({
             order : [['lane_name','desc']]
         });
         // for (const property in laneArray) {

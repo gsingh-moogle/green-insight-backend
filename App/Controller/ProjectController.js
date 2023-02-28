@@ -169,7 +169,7 @@ exports.getProjectList=async(req,res) => {
             let modal_shift = [];
             let alternative_fuel = [];
             for(const property of projectData) {
-                let DecarbRecommendations = await req.db.Decarb.findOne({
+                let DecarbRecommendations = await req.db.DecarbRecommendation.findOne({
                     where:{recommended_type:'original',type:property.type,decarb_id:property.decarb_id}
                 });
                 property.DecarbRecommendations = DecarbRecommendations;
