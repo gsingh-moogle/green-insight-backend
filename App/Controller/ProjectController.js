@@ -101,7 +101,7 @@ exports.saveProjectRating=async(req,res) => {
             })
         }
         var {project_id, description, rating}=req.body;
-        const RatingData = await ProjectFeedback.create({
+        const RatingData = await req.db.ProjectFeedback.create({
             project_id:project_id,
             user_id:req.currentUser.data.id,
             rating: rating,
@@ -157,7 +157,7 @@ exports.getProjectList=async(req,res) => {
                 where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), year))
             }
         }
-        const projectData = await Project.findAll({
+        const projectData = await req.db.Project.findAll({
             attributes: ['id',"project_unique_id","region_id","decarb_id","project_name","start_date",
             "end_date","desc","customize_emission","emission_percent","actual_emission","type",
             [sequelize.fn('quarter', sequelize.col('end_date')), 'quarter'],[sequelize.fn('year', sequelize.col('end_date')), 'year']],
@@ -169,7 +169,7 @@ exports.getProjectList=async(req,res) => {
             let modal_shift = [];
             let alternative_fuel = [];
             for(const property of projectData) {
-                let DecarbRecommendations = await Decarb.findOne({
+                let DecarbRecommendations = await req.db.Decarb.findOne({
                     where:{recommended_type:'original',type:property.type,decarb_id:property.decarb_id}
                 });
                 property.DecarbRecommendations = DecarbRecommendations;
@@ -192,7 +192,7 @@ exports.getProjectList=async(req,res) => {
 
 exports.getProjectSearchList=async(req,res) => {
     try {
-        const projectData = await Project.findAll({
+        const projectData = await req.db.Project.findAll({
             attributes:['project_name','project_unique_id']
         });
         // const RegionData = await Region.findAll({
