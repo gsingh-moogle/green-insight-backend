@@ -27,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.INTEGER,
       comment:'0 => substain login, 1 => region login'
     },
-    db_name: {
-      type:DataTypes.STRING
+    company_id: {
+      type:DataTypes.INTEGER,
     }
   }, {
     sequelize,
@@ -41,6 +41,9 @@ module.exports = (sequelize, DataTypes) => {
     });
     User.hasOne(models.Profile, {
       foreignKey: 'user_id'
+    });
+    User.belongsTo(models.Company, {
+      foreignKey: 'company_id'
     });
   };
   return User;

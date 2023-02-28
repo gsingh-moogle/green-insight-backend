@@ -30,6 +30,9 @@ exports.login=async(req,res) => {
             },{
                 model: DB.main_db.models.Profile,
                 attributes: ['first_name','last_name','country_code','phone_number','image','status']
+            },{
+                model: DB.main_db.models.Company,
+                attributes: ['name','db_name','logo']
             }]
         });
         //check password is matched or not then exec
@@ -132,6 +135,9 @@ exports.verifyOtp=async(req,res) => {
                     },{
                         model: DB.main_db.models.Profile,
                         attributes: ['first_name','last_name','country_code','phone_number','image','status']
+                    },{
+                        model: DB.main_db.models.Company,
+                        attributes: ['name','db_name','logo']
                     }]
               });
 

@@ -15,7 +15,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Company.init({
     name: DataTypes.STRING,
-    status: DataTypes.BOOLEAN
+    status: DataTypes.BOOLEAN,
+    db_name: DataTypes.STRING,
+    logo: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Company',
