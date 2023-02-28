@@ -14,7 +14,7 @@ const validateAdmin= async (req, res, next) => {
       });
       if (!userData) {
           return helper.unAuthorizedResponse(res, 'User not found!');
-      } else if(userData.db_name) {
+      } else if(decode.data.company.db_name) {
         req.currentUser = decode;
         req.db = DB[decode.data.company.db_name].models;
         next();
