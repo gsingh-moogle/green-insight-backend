@@ -10,6 +10,7 @@ const VendorEmissionStatic =require("../models").VendorEmissionStatic;
 const Helper=require("../helper/common-helper");
 const Response=require("../helper/api-response");
 const SQLToken = process.env.MY_SQL_TOKEN;
+const AES = require('mysql-aes')
 
 
 exports.getLaneTableDataHighIntensity=async(req,res) => {
@@ -375,19 +376,19 @@ exports.getLaneEmissionData=async(req,res) => {
             }
         }
 
-            let order_by = 'intensity';
+            let order_by = sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )');;
             if(toggel_data == 1) {
                 //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
-                order_by = 'emission' ;
+                order_by = sequelize.literal('( AES_DECRYPT(UNHEX(emission),"'+SQLToken+'") )');
             }
 
             //NEW CODE
             let getLaneEmissionData = await req.db.Emission.findAll({
                 attributes: ['id',['name','lane_name'],
-                [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(emission,"'+SQLToken+'")) / SUM(AES_DECRYPT(total_ton_miles,"'+SQLToken+'")), 2) )'),'intensity'],
-                [ sequelize.literal('( SELECT SUM(AES_DECRYPT(emission,"'+SQLToken+'")) )'),'emission']],
+                [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
+                [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) )'),'emission']],
                 where:where,
-                group: [`lane_name`],
+                group: [sequelize.literal('( AES_DECRYPT(UNHEX(name),"'+SQLToken+'") )')],
                 order:[[order_by,'desc']],
                 limit: 10,
                 raw: true
@@ -408,6 +409,7 @@ exports.getLaneEmissionData=async(req,res) => {
                 //NEW CODE
                 for (const property of getLaneEmissionData) {
                     let data = property.intensity;
+
                     if(toggel_data == 1) {
                     //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
                         data = parseFloat((property.emission).toFixed(2));
@@ -428,7 +430,7 @@ exports.getLaneEmissionData=async(req,res) => {
                     }
                     if( compareValue > average) {
                         contributor.push({
-                            name:property["lane_name"],
+                            name:AES.decrypt(property["lane_name"], SQLToken),
                             value:Math.abs(data),
                             total_emission: Helper.roundToDecimal(property.emission/convertToMillion),
                             total_intensity : Helper.roundToDecimal(property.intensity),
@@ -436,7 +438,7 @@ exports.getLaneEmissionData=async(req,res) => {
                         })
                     } else {
                         detractor.push({
-                            name:property["lane_name"],
+                            name:AES.decrypt(property["lane_name"], SQLToken),
                             value:Math.abs(data),
                             total_emission: Helper.roundToDecimal(property.emission/convertToMillion),
                             total_intensity : Helper.roundToDecimal(property.intensity),

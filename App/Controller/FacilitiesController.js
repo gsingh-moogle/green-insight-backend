@@ -16,7 +16,7 @@ exports.getFacilitiesTableData=async(req,res) => {
             where[Op.and] = []
             if (region_id) {
                 where[Op.and].push({
-                    region_id: region_id
+                    [region_id]: region_id
                 })
             }
             if (year) {

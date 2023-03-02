@@ -22,9 +22,9 @@ router.use(validateAdmin);
 
 //Sus Dashboard
 router.get("/get-regions",RegionController.getRegions);
-router.post("/get-region-emission-graph",RegionController.getRegionEmissions);
+// router.post("/get-region-emission-graph",RegionController.getRegionEmissions);
 router.post("/get-region-emission-monthly",RegionController.getRegionEmissionsMonthly);
-router.post("/get-region-intensity",RegionController.getRegionIntensity);
+// router.post("/get-region-intensity",RegionController.getRegionIntensity);
 router.post("/get-region-intensity-yearly",RegionController.getRegionIntensityByYear);
 router.post("/get-region-intensity-quarterly",RegionController.getRegionIntensityByQuarter);
 
