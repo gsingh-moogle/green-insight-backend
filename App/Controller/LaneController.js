@@ -76,7 +76,10 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
         // });
 
         let getLaneTableData = await req.db.Emission.findAll({
-            attributes: ['region_id',['name','lane_name'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+            attributes: ['region_id',['name','lane_name'],
+            [sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],
+            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
+            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")), 2) )'),'emission']],
             where:where,
             order:[['intensity','desc']],
             group: ['lane_name'],
@@ -109,7 +112,7 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
                 }
                 if(emissionData > average) {
                     property.Lane ={
-                        name :property.lane_name,
+                        name :AES.decrypt(property.lane_name, SQLToken),
                         color:'#d8856b'
                     };
                     showData.push(property);
@@ -222,10 +225,12 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         // });
 
         let getLaneTableData = await req.db.Emission.findAll({
-            attributes: ['region_id',['name','lane_name'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
+            attributes: ['region_id',['name','lane_name'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],
+            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
+            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")), 2) )'),'emission']],
             where:where,
-            order:[['intensity','desc']],
-            group: ['lane_name'],
+            order:[[sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )'),'desc']],
+            group: [sequelize.literal('( AES_DECRYPT(UNHEX(name),"'+SQLToken+'") )')],
             limit:10,
             raw:true
         });
@@ -253,7 +258,7 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
                 }
                 if(emissionData < average) {
                     property.Lane ={
-                        name :property.lane_name,
+                        name :AES.decrypt(property.lane_name, SQLToken),
                         color:'#215254'
                     };
                     showData.push(property);
@@ -376,7 +381,7 @@ exports.getLaneEmissionData=async(req,res) => {
             }
         }
 
-            let order_by = sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )');;
+            let order_by = sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )');
             if(toggel_data == 1) {
                 //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
                 order_by = sequelize.literal('( AES_DECRYPT(UNHEX(emission),"'+SQLToken+'") )');
