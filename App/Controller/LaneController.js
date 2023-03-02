@@ -107,12 +107,13 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
 
             for (const property of getLaneTableData) {
                 let emissionData = property.intensity;
+                property.lane_name = (property.lane_name)?AES.decrypt(property.lane_name, SQLToken):property.lane_name;
                 if(toggel_data == 1) {
                     emissionData = parseFloat((property.emission/convertToMillion).toFixed(2));
                 }
                 if(emissionData > average) {
                     property.Lane ={
-                        name :AES.decrypt(property.lane_name, SQLToken),
+                        name :property.lane_name,
                         color:'#d8856b'
                     };
                     showData.push(property);
@@ -252,13 +253,14 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             const average = total.reduce((a, b) => a + b, 0) / total.length;
             let showData = [];
             for (const property of getLaneTableData) {
+                property.lane_name = (property.lane_name)?AES.decrypt(property.lane_name, SQLToken):property.lane_name;
                 let emissionData = property.intensity;
                 if(toggel_data == 1) {
                     emissionData = parseFloat((property.emission/convertToMillion).toFixed(2));
                 }
                 if(emissionData < average) {
                     property.Lane ={
-                        name :AES.decrypt(property.lane_name, SQLToken),
+                        name :property.lane_name,
                         color:'#215254'
                     };
                     showData.push(property);
