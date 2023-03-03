@@ -25,6 +25,12 @@ module.exports = {
       last_name: {
         type: Sequelize.STRING
       },
+      country_code: {
+        type: Sequelize.STRING
+      },
+      phone_number: {
+        type: Sequelize.STRING
+      },
       image: {
         type: Sequelize.STRING
       },

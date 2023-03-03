@@ -4,7 +4,6 @@
  */
 var path = require('path');
 require('dotenv').config({ path: require('find-config')('.env') });
-var path = require('path');
 var express = require('express');
 var session = require('express-session');
 var createError = require('http-errors');

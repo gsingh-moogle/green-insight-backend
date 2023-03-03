@@ -2,44 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('projects', {
+    await queryInterface.createTable('user_otps', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      region_id: {
+      user_id: 
+      {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull:true,
         references:{
-          model:'regions',
+          model:'users',
           key:'id'
         },
         onDelete:'CASCADE',
         onUpdate:'NO ACTION'
       },
-      manager_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:'project_managers',
-          key:'id'
-        },
-        onDelete:'CASCADE',
-        onUpdate:'NO ACTION'
-      },
-      project_name: {
+      phone_number: {
         type: Sequelize.STRING
       },
-      start_date: {
-        type: Sequelize.DATE
-      },
-      end_date: {
-        type: Sequelize.DATE
-      },
-      desc: {
-        type: Sequelize.TEXT
+      otp: {
+        type: Sequelize.STRING
       },
       status: {
         type: Sequelize.BOOLEAN
@@ -55,6 +40,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('projects');
+    await queryInterface.dropTable('user_otps');
   }
 };

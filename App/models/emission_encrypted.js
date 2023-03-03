@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-class Emission extends Model {
+class EmissionEncrypted extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,7 +13,7 @@ class Emission extends Model {
       // define association here
     }
   }
-  Emission.init({
+  EmissionEncrypted.init({
     name : DataTypes.STRING,
     source : DataTypes.STRING,
     destination : DataTypes.STRING,
@@ -35,30 +35,30 @@ class Emission extends Model {
     status: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'Emission',
-    tableName:'emissions'
+    modelName: 'EmissionEncrypted',
+    tableName:'emissions_encrypted'
   });
 
 
 
-  Emission.associate = function(models) {
-    Emission.belongsTo(models.Region, {
+  EmissionEncrypted.associate = function(models) {
+    EmissionEncrypted.belongsTo(models.Region, {
       foreignKey: 'region_id'
     });
 
-    Emission.belongsTo(models.Facility, {
+    EmissionEncrypted.belongsTo(models.Facility, {
       foreignKey: 'facilities_id'
     });
 
-    Emission.belongsTo(models.Vendor, {
+    EmissionEncrypted.belongsTo(models.Vendor, {
       foreignKey: 'vendor_id'
     });
 
-    Emission.belongsTo(models.Lane, {
+    EmissionEncrypted.belongsTo(models.Lane, {
       foreignKey: 'lane_id',
     });
 
     
   };
-  return Emission;
+  return EmissionEncrypted;
 };

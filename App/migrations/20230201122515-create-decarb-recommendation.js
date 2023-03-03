@@ -2,33 +2,51 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('project_managers', {
+    await queryInterface.createTable('decarb_recommendations', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
-      },
-      first_name: {
-        type: Sequelize.STRING
-      },
-      last_name: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      designation: {
-        type: Sequelize.STRING
-      },
-      services: {
+      lane_name: {
         type: Sequelize.INTEGER
       },
-      status: {
-        type: Sequelize.BOOLEAN
+      origin: {
+        type: Sequelize.STRING
+      },
+      destination: {
+        type: Sequelize.STRING
+      },
+      LOB: {
+        type: Sequelize.STRING
+      },
+      fuel_type: {
+        type: Sequelize.STRING
+      },
+      emissions: {
+        type: Sequelize.FLOAT
+      },
+      date: {
+        type: Sequelize.DATE
+      },
+      grs_wgt_qty: {
+        type: Sequelize.STRING
+      },
+      loaded_miles: {
+        type: Sequelize.FLOAT
+      },
+      uploaded_miles: {
+        type: Sequelize.FLOAT
+      },
+      mpg: {
+        type: Sequelize.FLOAT
+      },
+      fuel_use: {
+        type: Sequelize.FLOAT
+      },
+      type: {
+        type: Sequelize.ENUM
       },
       createdAt: {
         allowNull: false,
@@ -41,6 +59,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('project_managers');
+    await queryInterface.dropTable('decarb_recommendations');
   }
 };

@@ -1,18 +1,14 @@
 {
   "development": {
-    "username": "root",
-<<<<<<< HEAD
-    "password": "Mind@123",
-=======
-    "password": "",
->>>>>>> 42ff5405c69b6196ad5edacdd797014b52fd64b4
+    "username": "moogle",
+    "password": "admin",
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": null,
+    "username": "moogle",
+    "password": "admin",
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
@@ -23,5 +19,35 @@
     "database": "green_sight",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "databases": {
+    "main_db": {
+      "username": "moogle",
+      "password": "admin",
+      "database": "green_sight", 
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "green_sight_lowes": {
+      "username": "moogle",
+      "password": "admin",
+      "database": "green_sight_lowes", 
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "green_sight_general_mills": {
+      "username": "moogle",
+      "password": "admin",
+      "database": "green_sight_general_mills",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "green_sight_schneider": {
+      "username": "moogle",
+      "password": "admin",
+      "database": "green_sight_schneider",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
   }
 }

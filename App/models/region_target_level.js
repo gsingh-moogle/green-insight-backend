@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class ProjectManager extends Model {
+  class RegionTargetLevel extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,18 +13,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  ProjectManager.init({
-    first_name: DataTypes.STRING,
-    name: DataTypes.STRING,
-    last_name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    designation: DataTypes.STRING,
-    services: DataTypes.INTEGER,
-    status: DataTypes.BOOLEAN
+  RegionTargetLevel.init({
+    region_id:DataTypes.INTEGER,
+    region_name:DataTypes.STRING,
+    target_level: DataTypes.FLOAT,
+    date: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'ProjectManager',
-    tableName:'project_managers'
+    modelName: 'RegionTargetLevel',
+    tableName:'region_target_level'
   });
-  return ProjectManager;
+  return RegionTargetLevel;
 };
