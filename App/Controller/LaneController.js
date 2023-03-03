@@ -230,8 +230,8 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
             [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")), 2) )'),'emission']],
             where:where,
-            order:[[sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )'),'desc']],
-            group: [sequelize.literal('( AES_DECRYPT(UNHEX(name),"'+SQLToken+'") )')],
+            order:[['intensity','desc']],
+            group: ['lane_name'],
             limit:10,
             raw:true
         });
@@ -383,7 +383,7 @@ exports.getLaneEmissionData=async(req,res) => {
             }
         }
 
-            let order_by = sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )');
+            let order_by = 'intensity';
             if(toggel_data == 1) {
                 //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
                 order_by = sequelize.literal('( AES_DECRYPT(UNHEX(emission),"'+SQLToken+'") )');
@@ -395,7 +395,7 @@ exports.getLaneEmissionData=async(req,res) => {
                 [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
                 [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) )'),'emission']],
                 where:where,
-                group: [sequelize.literal('( AES_DECRYPT(UNHEX(name),"'+SQLToken+'") )')],
+                group: ['lane_name'],
                 order:[[order_by,'desc']],
                 limit: 10,
                 raw: true
