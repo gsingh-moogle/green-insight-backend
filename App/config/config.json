@@ -2,21 +2,21 @@
   "development": {
     "username": "moogle",
     "password": "admin",
-    "database": "green_sight",
+    "database": "green_sight_dev",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "moogle",
     "password": "admin",
-    "database": "database_test",
+    "database": "green_sight_dev",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "moogle",
     "password": "admin",
-    "database": "green_sight",
+    "database": "green_sight_dev",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
@@ -24,28 +24,28 @@
     "main_db": {
       "username": "moogle",
       "password": "admin",
-      "database": "green_sight", 
+      "database": "green_sight_dev", 
       "host": "127.0.0.1",
       "dialect": "mysql"
     },
     "green_sight_lowes": {
       "username": "moogle",
       "password": "admin",
-      "database": "green_sight_lowes", 
+      "database": "green_sight_dev", 
       "host": "127.0.0.1",
       "dialect": "mysql"
     },
     "green_sight_general_mills": {
       "username": "moogle",
       "password": "admin",
-      "database": "green_sight_general_mills",
+      "database": "green_sight_dev",
       "host": "127.0.0.1",
       "dialect": "mysql"
     },
     "green_sight_schneider": {
       "username": "moogle",
       "password": "admin",
-      "database": "green_sight_schneider",
+      "database": "green_sight_dev",
       "host": "127.0.0.1",
       "dialect": "mysql"
     }
