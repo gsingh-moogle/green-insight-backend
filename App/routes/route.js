@@ -38,6 +38,7 @@ router.get("/get-lane-emission-graph",RegionController.getLaneEmissions);
 router.get("/get-user-profile",UserController.getProfileDetails);
 router.post("/get-company-data",CompanyController.getCompanyData);
 
+
 //By Region API's
 router.post("/get-region-table-data",RegionController.getRegionTableData);
 router.post("/get-region-emission-data",RegionController.getRegionEmissionData);
@@ -66,5 +67,7 @@ router.delete("/delete-project",ProjectController.deleteProject);
 // Decarb API's
 router.post("/get-recommended-levers",DecarbController.getRecommendedLevers);
 router.post("/get-customize-levers",DecarbController.getCustomizeLevers);
+
+
 
 module.exports=router;

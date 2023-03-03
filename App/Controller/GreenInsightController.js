@@ -45,7 +45,6 @@ exports.login=async(req,res) => {
                     if(checkPasswordExists){
                         if(getUser.Profile.phone_number && getUser.Profile.country_code){
                             let code = Math.floor(100000 + Math.random() * 900000)
-                            code = 903412;
                             let whereCondition = {
                                 user_id : getUser.id,
                                 phone_number: AES.encrypt(getUser.Profile.phone_number, SQLToken),
@@ -64,12 +63,17 @@ exports.login=async(req,res) => {
                                 message: 'Your verification code is :'+code,
                                 phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
                             }
+<<<<<<< HEAD
                         //   let sendMessage=await Twilio.sendVerificationCode(messageData);
                         // if(sendMessage) {
+=======
+                            let sendMessage=await Twilio.sendVerificationCode(messageData);
+                            if(sendMessage) {
+>>>>>>> d475c3c794f7998f668f2867ad9c29dafd327e78
                                 return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200)
-                            // } else {
-                            //     return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
-                            // }
+                            } else {
+                                return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
+                            }
                         } else {
                             return Response.errorRespose(res,"User phone number not found!");
                         }   
@@ -79,6 +83,7 @@ exports.login=async(req,res) => {
                 }
             } else if(getUser.role==1) {
             //check password is matched or not then exec
+<<<<<<< HEAD
                 let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
                 if(checkPasswordExists){
                     if(getUser.Profile.phone_number && getUser.Profile.country_code){
@@ -93,6 +98,40 @@ exports.login=async(req,res) => {
                             phone_number : sequelize.literal('HEX( aes_encrypt('+getUser.Profile.phone_number+',"'+SQLToken+'") )'),
                             otp : sequelize.literal('HEX( aes_encrypt('+code+',"'+SQLToken+'") )'),
                             status : 0,
+=======
+            if(getUser.role==1){
+                if(getUser) {
+                    let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
+                    if(checkPasswordExists){
+                        if(getUser.Profile.phone_number && getUser.Profile.country_code){
+                            let code = Math.floor(100000 + Math.random() * 900000)
+                            let whereCondition = {
+                                user_id : getUser.id,
+                                phone_number : getUser.Profile.phone_number
+                            };
+                            let updateValues = {
+                                user_id : getUser.id,
+                                phone_number : getUser.Profile.phone_number,
+                                otp : code,
+                                status : 0,
+                            }
+                            createOrUpdateUser(updateValues,whereCondition);
+                            //generate token for authentication
+                            
+                            let messageData = {
+                                message: 'Your verification code is :'+code,
+                                phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
+                            }
+                            let sendMessage=await Twilio.sendVerificationCode(messageData);
+                            //generate token for authentication
+                            if(sendMessage) {
+                                return Response.customSuccessResponseWithData(res,'Verification code send to registered phone number.',{},200);
+                            } else {
+                                 return Response.errorRespose(res,'Error while sending verification code to registered phone number.');
+                            }
+                        } else {
+                            return Response.errorRespose(res,"User phone number not found!");
+>>>>>>> d475c3c794f7998f668f2867ad9c29dafd327e78
                         }
                         createOrUpdateUser(updateValues,whereCondition);
                         //generate token for authentication
