@@ -632,7 +632,7 @@ exports.getRegionEmissionData=async(req,res) => {
                         attributes: ['name']
                     }],
                     group: ['region_id'],
-                    order:[[sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )'),'desc']],
+                    order:[['intensity','desc']],
                     raw: true
                 });
             }
