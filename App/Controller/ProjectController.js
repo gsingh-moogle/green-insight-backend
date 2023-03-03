@@ -11,8 +11,6 @@ const Validations=require("../helper/api-validator");
 const moment = require('moment');
 const randomstring = require("randomstring");
 const Decarb =require("../models").DecarbRecommendation;
-const AES = require('mysql-aes');
-const SQLToken = process.env.MY_SQL_TOKEN;
 
 exports.getProjectCount=async(req,res) => {
     try {
@@ -29,7 +27,7 @@ exports.getProjectCount=async(req,res) => {
             } 
         }
         console.log('region_id',region_id);
-        let getProject= await req.db.Project.findOne({
+        let getProject= await Project.findOne({
             attributes: [[ sequelize.literal('( SELECT SUM(status=0) )'),'Inactive'],[ sequelize.literal('( SELECT SUM(status=1) )'),'Active'],[ sequelize.literal('( SELECT count(id) )'),'Total']],
             where:where
         });
@@ -57,9 +55,9 @@ exports.saveProject=async(req,res) => {
 
         let randomString = randomstring.generate(10);
         //console.log(type,email,password);return 
-        const ManagerData = await req.db.ProjectManager.create({
-            name:AES.encrypt(manager_name, SQLToken),
-            email: AES.encrypt(manager_email, SQLToken)
+        const ManagerData = await ProjectManager.create({
+            name:manager_name, 
+            email: manager_email,
             }).then(function(obj) {
                 return obj.dataValues;
             }
@@ -67,17 +65,17 @@ exports.saveProject=async(req,res) => {
         if(ManagerData){
             let startDate = moment(start_date).format("YYYY-MM-DD HH:mm:ss");
             let endDate = moment(end_date).format("YYYY-MM-DD HH:mm:ss");
-            const ProjectData = await req.db.Project.create({
+            const ProjectData = await Project.create({
                 project_unique_id : randomString,
                 region_id:region_id,
                 decarb_id: decarb_id,
                 manager_id :  ManagerData.id,
-                project_name: AES.encrypt(project_name, SQLToken),
-                desc: AES.encrypt(description, SQLToken),
+                project_name: project_name,
+                desc: description,
                 start_date: startDate,
-                customize_emission:AES.encrypt(customize_emission, SQLToken),
-                emission_percent:AES.encrypt(emission_percent, SQLToken),
-                actual_emission:AES.encrypt(actual_emission, SQLToken),
+                customize_emission:customize_emission,
+                emission_percent:emission_percent,
+                actual_emission:actual_emission,
                 status:1,
                 type : type,
                 end_date:endDate });
@@ -103,11 +101,11 @@ exports.saveProjectRating=async(req,res) => {
             })
         }
         var {project_id, description, rating}=req.body;
-        const RatingData = await req.db.ProjectFeedback.create({
+        const RatingData = await ProjectFeedback.create({
             project_id:project_id,
             user_id:req.currentUser.data.id,
             rating: rating,
-            description:AES.encrypt(description, SQLToken),
+            description:description
             }).then(function(obj) {
                 return obj.dataValues;
             }
@@ -134,15 +132,16 @@ exports.getProjectList=async(req,res) => {
                 })
             }
             if (project_name) {
-                where[Op.and].push(
-                    sequelize.where(sequelize.literal('( AES_DECRYPT(UNHEX(project_name),"'+SQLToken+'") )'),project_name)
-                    )
+                where[Op.and].push({
+                    project_name: project_name
+                })
             }
             if (search) {
-                where[Op.and].push(sequelize.where(sequelize.literal('( AES_DECRYPT(UNHEX(project_name),"'+SQLToken+'") )'), {
+                where[Op.and].push({
+                    project_name: {
                         [Op.like]: `%${search}%`
-                }
-                ))
+                      }
+                })
             }
             if (project_unique_id) {
                 where[Op.and].push({
@@ -158,7 +157,7 @@ exports.getProjectList=async(req,res) => {
                 where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), year))
             }
         }
-        const projectData = await req.db.Project.findAll({
+        const projectData = await Project.findAll({
             attributes: ['id',"project_unique_id","region_id","decarb_id","project_name","start_date",
             "end_date","desc","customize_emission","emission_percent","actual_emission","type",
             [sequelize.fn('quarter', sequelize.col('end_date')), 'quarter'],[sequelize.fn('year', sequelize.col('end_date')), 'year']],
@@ -170,35 +169,10 @@ exports.getProjectList=async(req,res) => {
             let modal_shift = [];
             let alternative_fuel = [];
             for(const property of projectData) {
-
-                property.project_name = (property.project_name)?AES.decrypt(property.project_name, SQLToken):property.project_name;
-                property.actual_emission = (property.actual_emission)?AES.decrypt(property.actual_emission, SQLToken):property.actual_emission;
-                property.customize_emission = (property.customize_emission)?AES.decrypt(property.customize_emission, SQLToken):property.customize_emission;
-                property.emission_percent = (property.emission_percent)?AES.decrypt(property.emission_percent, SQLToken):property.emission_percent;
-                property.desc = (property.desc)?AES.decrypt(property.desc, SQLToken):property.desc;
-
-
-                let DecarbRecommendations = await req.db.DecarbRecommendation.findOne({
+                let DecarbRecommendations = await Decarb.findOne({
                     where:{recommended_type:'original',type:property.type,decarb_id:property.decarb_id}
                 });
-                property.DecarbRecommendations = null;
-                if(DecarbRecommendations) {
-                    DecarbRecommendations.lane_name = (DecarbRecommendations.lane_name)?AES.decrypt(DecarbRecommendations.lane_name, SQLToken):DecarbRecommendations.lane_name;
-                    DecarbRecommendations.origin = (DecarbRecommendations.origin)?AES.decrypt(DecarbRecommendations.origin, SQLToken):DecarbRecommendations.origin;
-                    DecarbRecommendations.destination = (DecarbRecommendations.destination)?AES.decrypt(DecarbRecommendations.destination, SQLToken):DecarbRecommendations.destination;
-                    DecarbRecommendations.LOB = (DecarbRecommendations.LOB)?AES.decrypt(DecarbRecommendations.LOB, SQLToken):DecarbRecommendations.LOB;
-                    DecarbRecommendations.fuel_type = (DecarbRecommendations.fuel_type)?AES.decrypt(DecarbRecommendations.fuel_type, SQLToken):DecarbRecommendations.fuel_type;
-                    DecarbRecommendations.emissions = (DecarbRecommendations.emissions)?AES.decrypt(DecarbRecommendations.emissions, SQLToken):DecarbRecommendations.emissions;
-
-                    DecarbRecommendations.grs_wgt_qty = (DecarbRecommendations.grs_wgt_qty)?AES.decrypt(DecarbRecommendations.grs_wgt_qty, SQLToken):DecarbRecommendations.grs_wgt_qty;
-                    DecarbRecommendations.loaded_miles = (DecarbRecommendations.loaded_miles)?AES.decrypt(DecarbRecommendations.loaded_miles, SQLToken):DecarbRecommendations.loaded_miles;
-                    DecarbRecommendations.uploaded_miles = (DecarbRecommendations.uploaded_miles)?AES.decrypt(DecarbRecommendations.uploaded_miles, SQLToken):DecarbRecommendations.uploaded_miles;
-                    DecarbRecommendations.mpg = (DecarbRecommendations.mpg)?AES.decrypt(DecarbRecommendations.mpg, SQLToken):DecarbRecommendations.mpg;
-                    DecarbRecommendations.fuel_use = (DecarbRecommendations.fuel_use)?AES.decrypt(DecarbRecommendations.fuel_use, SQLToken):DecarbRecommendations.fuel_use;
-                    property.DecarbRecommendations = DecarbRecommendations;
-                }
-
-                
+                property.DecarbRecommendations = DecarbRecommendations;
                 if(property.type == 'modal_shift') {
                     modal_shift.push(property);
                 } else {
@@ -218,7 +192,7 @@ exports.getProjectList=async(req,res) => {
 
 exports.getProjectSearchList=async(req,res) => {
     try {
-        const projectData = await req.db.Project.findAll({
+        const projectData = await Project.findAll({
             attributes:['project_name','project_unique_id']
         });
         // const RegionData = await Region.findAll({
@@ -241,7 +215,7 @@ exports.getProjectSearchList=async(req,res) => {
 exports.deleteProject=async(req,res) => {
     try {
         var {project_id}=req.body;
-        const projectData = await req.db.Project.destroy({
+        const projectData = await Project.destroy({
             where:{id:project_id}
         });
         

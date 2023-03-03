@@ -9,8 +9,6 @@ const LaneEmissionStatic =require("../models").LaneEmissionStatic;
 const VendorEmissionStatic =require("../models").VendorEmissionStatic;
 const Helper=require("../helper/common-helper");
 const Response=require("../helper/api-response");
-const SQLToken = process.env.MY_SQL_TOKEN;
-const AES = require('mysql-aes')
 
 
 exports.getLaneTableDataHighIntensity=async(req,res) => {
@@ -75,11 +73,8 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
         //     }],
         // });
 
-        let getLaneTableData = await req.db.Emission.findAll({
-            attributes: ['region_id',['name','lane_name'],
-            [sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],
-            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
-            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")), 2) )'),'emission']],
+        let getLaneTableData = await Emission.findAll({
+            attributes: ['region_id',['name','lane_name'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
             where:where,
             order:[['intensity','desc']],
             group: ['lane_name'],
@@ -107,7 +102,6 @@ exports.getLaneTableDataHighIntensity=async(req,res) => {
 
             for (const property of getLaneTableData) {
                 let emissionData = property.intensity;
-                property.lane_name = (property.lane_name)?AES.decrypt(property.lane_name, SQLToken):property.lane_name;
                 if(toggel_data == 1) {
                     emissionData = parseFloat((property.emission/convertToMillion).toFixed(2));
                 }
@@ -225,13 +219,11 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
         //     }],
         // });
 
-        let getLaneTableData = await req.db.Emission.findAll({
-            attributes: ['region_id',['name','lane_name'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],
-            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
-            [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")), 2) )'),'emission']],
+        let getLaneTableData = await Emission.findAll({
+            attributes: ['region_id',['name','lane_name'],[sequelize.fn('date_format', sequelize.col(`Emission.date`), '%M %Y'), 'contract'],[ sequelize.literal('( SELECT ROUND(SUM(emission) DIV SUM(total_ton_miles), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
             where:where,
-            order:[[sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )'),'desc']],
-            group: [sequelize.literal('( AES_DECRYPT(UNHEX(name),"'+SQLToken+'") )')],
+            order:[['intensity','desc']],
+            group: ['lane_name'],
             limit:10,
             raw:true
         });
@@ -253,7 +245,6 @@ exports.getLaneTableDataLowIntensity=async(req,res) => {
             const average = total.reduce((a, b) => a + b, 0) / total.length;
             let showData = [];
             for (const property of getLaneTableData) {
-                property.lane_name = (property.lane_name)?AES.decrypt(property.lane_name, SQLToken):property.lane_name;
                 let emissionData = property.intensity;
                 if(toggel_data == 1) {
                     emissionData = parseFloat((property.emission/convertToMillion).toFixed(2));
@@ -383,24 +374,19 @@ exports.getLaneEmissionData=async(req,res) => {
             }
         }
 
-            let order_by = sequelize.literal('( AES_DECRYPT(UNHEX(intensity),"'+SQLToken+'") )');
+            let order_by = 'intensity';
             if(toggel_data == 1) {
                 //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
-                order_by = sequelize.literal('( AES_DECRYPT(UNHEX(emission),"'+SQLToken+'") )');
+                order_by = 'emission' ;
             }
 
             //NEW CODE
-            let getLaneEmissionData = await req.db.Emission.findAll({
+            let getLaneEmissionData = await Emission.findAll({
                 attributes: ['id',['name','lane_name'],
-<<<<<<< HEAD
-                [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],
-                [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) )'),'emission']],
-=======
                 [ sequelize.literal('( SELECT ROUND(SUM(emission) / SUM(total_ton_miles), 2) )'),'intensity'],
                 [ sequelize.literal('( SELECT SUM(emission) )'),'emission']],
->>>>>>> d475c3c794f7998f668f2867ad9c29dafd327e78
                 where:where,
-                group: [sequelize.literal('( AES_DECRYPT(UNHEX(name),"'+SQLToken+'") )')],
+                group: [`lane_name`],
                 order:[[order_by,'desc']],
                 limit: 10,
                 raw: true
@@ -421,7 +407,6 @@ exports.getLaneEmissionData=async(req,res) => {
                 //NEW CODE
                 for (const property of getLaneEmissionData) {
                     let data = property.intensity;
-
                     if(toggel_data == 1) {
                     //    data = parseFloat((property.emission/convertToMillion).toFixed(2));
                         data = parseFloat((property.emission).toFixed(2));
@@ -442,7 +427,7 @@ exports.getLaneEmissionData=async(req,res) => {
                     }
                     if( compareValue > average) {
                         contributor.push({
-                            name:AES.decrypt(property["lane_name"], SQLToken),
+                            name:property["lane_name"],
                             value:Math.abs(data),
                             total_emission: Helper.roundToDecimal(property.emission/convertToMillion),
                             total_intensity : Helper.roundToDecimal(property.intensity),
@@ -450,7 +435,7 @@ exports.getLaneEmissionData=async(req,res) => {
                         })
                     } else {
                         detractor.push({
-                            name:AES.decrypt(property["lane_name"], SQLToken),
+                            name:property["lane_name"],
                             value:Math.abs(data),
                             total_emission: Helper.roundToDecimal(property.emission/convertToMillion),
                             total_intensity : Helper.roundToDecimal(property.intensity),

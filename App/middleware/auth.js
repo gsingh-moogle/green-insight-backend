@@ -1,6 +1,8 @@
 const jwt=require("jsonwebtoken");
+const User=require("../models").User;
+const Region =require("../models").Region;
+const Profile =require("../models").Profile;
 const helper=require("../helper/api-response");
-const DB = require("../models");
 
 const validateAdmin= async (req, res, next) => {
     try {
@@ -9,17 +11,13 @@ const validateAdmin= async (req, res, next) => {
         return helper.unAuthorizedResponse(res, 'Unauthorized');
       }
       let decode = jwt.verify(token, process.env.JWTSECRETKEY);
-      let userData = await DB.main_db.models.User.findOne({
-        where:{id:decode.data.id }
-      });
+      let userData = await User.findOne({id:decode.id });
       if (!userData) {
           return helper.unAuthorizedResponse(res, 'User not found!');
-      } else if(decode.data.Company.db_name) {
-        req.currentUser = decode;
-        req.db = DB[decode.data.Company.db_name].models;
-        next();
-      } else{
-        return helper.unAuthorizedResponse(res, 'User DB not found!');
+      }
+      else{
+          req.currentUser = decode;
+          next();
       }   
     } catch (err) {
       console.log('__________________________________________',err);
