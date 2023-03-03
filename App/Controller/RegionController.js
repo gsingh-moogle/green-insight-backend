@@ -1115,7 +1115,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
         //     where:where});
         let getRegionEmissionsReduction = await req.db.Emission.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) DIV 1000000)'),'intensity'],
+            [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / 1000000)'),'intensity'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
@@ -1126,7 +1126,7 @@ exports.getRegionEmissionReduction=async(req,res) => {
 
         let getTargetReduction = await req.db.RegionTargetLevel.findAll({
             attributes :[
-            [ sequelize.literal('( SELECT SUM(target_level) DIV 1000000)'),'target'],
+            [ sequelize.literal('( SELECT SUM(target_level) / 1000000)'),'target'],
             [sequelize.fn('QUARTER', sequelize.col('date')),'quarter'],
             [sequelize.fn('YEAR', sequelize.col('date')),'year']
         ],
