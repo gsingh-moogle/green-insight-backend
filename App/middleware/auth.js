@@ -18,6 +18,7 @@ const validateAdmin= async (req, res, next) => {
       else{
           req.currentUser = decode;
           next();
+          
       }   
     } catch (err) {
       console.log('__________________________________________',err);
