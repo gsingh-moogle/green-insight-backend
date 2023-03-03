@@ -510,21 +510,20 @@ exports.getRegionTableData=async(req,res) => {
                 })
             }
             if (year) {
-                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year)
-                )
+                where[Op.and].push(sequelize.where(sequelize.fn('YEAR', sequelize.col('date')), year))
             }
             if (quarter) {
-                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter)
-                )
+                where[Op.and].push(sequelize.where(sequelize.fn('quarter', sequelize.col('date')), quarter))
             }
         }
         //console.log(type,email,password);return 
         let getRegionTableData = await req.db.Emission.findAll({
-            attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) DIV SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) )'),'emission'],
+            attributes: ['id', [ sequelize.literal('( SELECT ROUND(SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) / SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")), 2) )'),'intensity'],[ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) )'),'emission'],
             [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(total_ton_miles),"'+SQLToken+'")) )'),'total_ton_miles'],
             [ sequelize.literal('( SELECT SUM(AES_DECRYPT(UNHEX(emission),"'+SQLToken+'")) )'),'cost'],
             [ sequelize.literal('( extract(quarter from date) )'),'quarter']],
-            where:where, include: [
+            where:where, 
+            include: [
                 {
                     model: req.db.Region,
                     attributes: ['name'],

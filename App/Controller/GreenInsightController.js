@@ -59,7 +59,6 @@ exports.login=async(req,res) => {
                             createOrUpdateUser(updateValues,whereCondition);
                             //generate token for authentication
                             //new code
-                            
                             let messageData = {
                                 message: 'Your verification code is :'+code,
                                 phone_number: `${getUser.Profile.country_code}${getUser.Profile.phone_number}`
