@@ -20,6 +20,7 @@ const Helper=require("../helper/common-helper");
 const CryptoJS = require("crypto-js");
 const SQLToken = process.env.MY_SQL_TOKEN;
 const DB = require("../models");
+const AES = require('mysql-aes');
 
 exports.getRegions=async(req,res) => {
     try {
@@ -28,6 +29,13 @@ exports.getRegions=async(req,res) => {
         let getCompanies = await req.db.Company.findOne({where:{'id':1}});
         //check password is matched or not then exec
         if(getRegionEmissions){
+            for (const property of getRegionEmissions) {
+                property.name = AES.decrypt(property.name, SQLToken);
+            }
+
+            getCompanies.name = (getCompanies.name)?AES.decrypt(getCompanies.name, SQLToken):null;
+            getCompanies.db_name = (getCompanies.db_name)?AES.decrypt(getCompanies.db_name, SQLToken):null;
+            getCompanies.logo = (getCompanies.logo)?AES.decrypt(getCompanies.logo, SQLToken):null;
             let data = {
                 regions: getRegionEmissions,
                 companies: getCompanies
@@ -244,11 +252,12 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 let targetLevel = [];
                 const colors = ['#ffcb77','#367c90','#c1d3c0','#d8856b','#5f9a80','#215154','#ffcb77','#367c90','#c1d3c0','#d8856b'];
                 const lables = [...new Set(getRegionEmissions.map(item => item.year))]
-                const regions = [...new Set(getRegionEmissions.map(item => item['Region.name']))]
+                const regions = [...new Set(getRegionEmissions.map(item => AES.decrypt(item['Region.name'], SQLToken)))]
                 for (let i = 0; i < regions.length; i++) {
                     let tempDataObject = {};
                     let tempArray = [];
                     for (const property of getRegionEmissions) {
+                        property['Region.name'] = AES.decrypt(property['Region.name'], SQLToken);
                         if(region_id) {
                             if(property['Region.name'] == regions[i]) {
                                // let data = (property.emission/property.emission_per_ton).toFixed(2);
@@ -555,6 +564,8 @@ exports.getRegionTableData=async(req,res) => {
             const averageEmission = totalEmission.reduce((a, b) => a + b, 0) / totalEmission.length;
             let avgData = [];
             for (const property of getRegionTableData) {
+                property['Region.name'] = (property['Region.name'])?AES.decrypt(property['Region.name'], SQLToken):null;
+                property['User.name'] = (property['User.name'])?AES.decrypt(property['User.name'], SQLToken):null;
                 let color;
                 let intensity = Helper.roundToDecimal(property.intensity);
                 let cost = Helper.roundToDecimal(property.cost/convertToMillion);
@@ -678,13 +689,13 @@ exports.getRegionEmissionData=async(req,res) => {
                     }
                     if( compareValue > average) {
                         contributor.push({
-                            name:property["Region.name"],
+                            name:AES.decrypt(property["Region.name"], SQLToken),
                             value:Math.abs(data),
                             color:'#d8856b'
                         })
                     } else {
                         detractor.push({
-                            name:property["Region.name"],
+                            name:AES.decrypt(property["Region.name"], SQLToken),
                             value:Math.abs(data),
                             color:'#215154'
                         })
@@ -902,6 +913,7 @@ exports.getRegionIntensityByYear=async(req,res) => {
                 let baseData = [];
                 let maxYearValue = current_year;
                 for(const property of getRegionEmissions) {
+                    property['Region.name'] = (property['Region.name'])?AES.decrypt(property['Region.name'], SQLToken):null;
                     let data = Helper.roundToDecimal(property.emission/property.total_ton_miles);
                     property.intensity = data;
                     baseData.push(data);
@@ -1016,6 +1028,7 @@ exports.getRegionIntensityByQuarter=async(req,res) => {
                 let maxYearValue;
                 for(const property of getRegionEmissions) {
                   //  let data = (property.emission/property.emission_per_ton).toFixed(2);
+                    property['Region.name'] = (property['Region.name'])?AES.decrypt(property['Region.name'], SQLToken):null;
                     let data = Helper.roundToDecimal(property.emission/convertToMillion);
                     property.contributor = data;
                     baseData.push(data);

@@ -37,8 +37,15 @@ exports.login=async(req,res) => {
         });
         //check password is matched or not then exec
         if(getUser){
-            getUser.email = AES.decrypt(getUser.email, SQLToken);
-            getUser.Profile.phone_number = AES.decrypt(getUser.Profile.phone_number, SQLToken);
+            getUser.email = (getUser.email)?AES.decrypt(getUser.email, SQLToken):null;
+            getUser.name = (getUser.name)?AES.decrypt(getUser.name, SQLToken):null;
+            getUser.Profile.phone_number = (getUser.Profile.phone_number)?AES.decrypt(getUser.Profile.phone_number, SQLToken):null;
+            getUser.Profile.first_name = (getUser.Profile.first_name)?AES.decrypt(getUser.Profile.first_name, SQLToken):null;
+            getUser.Profile.last_name = (getUser.Profile.last_name)?AES.decrypt(getUser.Profile.last_name, SQLToken):null;
+            getUser.Region.name = (getUser.Region.name)?AES.decrypt(getUser.Region.name, SQLToken):null;
+            getUser.Company.name = (getUser.Company.name)?AES.decrypt(getUser.Company.name, SQLToken):null;
+            getUser.Company.db_name = (getUser.Company.db_name)?AES.decrypt(getUser.Company.db_name, SQLToken):null;
+            getUser.Company.logo = (getUser.Company.logo)?AES.decrypt(getUser.Company.logo, SQLToken):null;
             if(getUser?.role==0){
                 if(getUser) {
                     let checkPasswordExists= await Response.comparePassword(req.body.password,getUser.password,async (res) => {return await res; });
@@ -125,7 +132,7 @@ exports.verifyOtp=async(req,res) => {
             var {otp,email}=req.body;
 
             let user = await DB.main_db.models.User.findOne({
-                    attributes: ['id','name','email','password','role','createdAt'],
+                    attributes: ['id','name','email','role','createdAt'],
                     where:{email:AES.encrypt(email, SQLToken)},
                     include: [
                     {
@@ -143,8 +150,15 @@ exports.verifyOtp=async(req,res) => {
             // let data =   Response.encryptDatabaseData(user.email);
             // console.log('dataEnc',data);
             if(otp && user) {
-                user.email = AES.decrypt(user.email, SQLToken);
-                user.Profile.phone_number = AES.decrypt(user.Profile.phone_number, SQLToken);
+                user.email = (user.email)?AES.decrypt(user.email, SQLToken):null;
+                user.name = (user.name)?AES.decrypt(user.name, SQLToken):null;
+                user.Profile.phone_number = (user.Profile.phone_number)?AES.decrypt(user.Profile.phone_number, SQLToken):null;
+                user.Profile.first_name = (user.Profile.first_name)?AES.decrypt(user.Profile.first_name, SQLToken):null;
+                user.Profile.last_name = (user.Profile.last_name)?AES.decrypt(user.Profile.last_name, SQLToken):null;
+                user.Region.name = (user.Region.name)?AES.decrypt(user.Region.name, SQLToken):null;
+                user.Company.name = (user.Company.name)?AES.decrypt(user.Company.name, SQLToken):null;
+                user.Company.db_name = (user.Company.db_name)?AES.decrypt(user.Company.db_name, SQLToken):null;
+                user.Company.logo = (user.Company.logo)?AES.decrypt(user.Company.logo, SQLToken):null;
                 let condition = {
                     user_id:user.id,
                     phone_number : AES.encrypt(user.Profile.phone_number, SQLToken)
