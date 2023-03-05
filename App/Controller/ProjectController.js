@@ -226,6 +226,9 @@ exports.getProjectSearchList=async(req,res) => {
         // });
 
         if(projectData){
+            for(const property of projectData) {
+                property.project_name = (property.project_name)?AES.decrypt(property.project_name, SQLToken):null;
+            }
             // let data = {
             //     project :projectData,
             //     region : RegionData
