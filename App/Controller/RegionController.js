@@ -227,11 +227,6 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                 });
             }
             
-            let getCompanyData = await req.db.CompanyData.findOne({
-                attributes: ['target_level','base_level'],
-                where:{company_id:1},
-                raw: true
-            });
             if(getRegionEmissions){
                 let convertToMillion  = 1000000 * 1000000;
                 let emissionUnit ='M';
