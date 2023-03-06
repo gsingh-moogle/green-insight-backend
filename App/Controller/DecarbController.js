@@ -82,6 +82,7 @@ exports.getCustomizeLevers=async(req,res) => {
                 let propertyEmissions = (property.emissions)?parseFloat(AES.decrypt(property.emissions, SQLToken)):0;
                 let propertyFuelType = AES.decrypt(property.fuel_type, SQLToken);
                 if (laneData[propertyLaneName]) {
+                    property.type = (property.type)?parseFloat(AES.decrypt(property.type, SQLToken)):0;
                     if(property.type == 'alternative_fuel') {
                         if(property.recommended_type == 'original') {
                             laneData[propertyLaneName][property.type]['original_emission'] += propertyEmissions;

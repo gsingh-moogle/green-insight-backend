@@ -177,7 +177,6 @@ exports.getProjectList=async(req,res) => {
                 property.emission_percent = (property.emission_percent)?AES.decrypt(property.emission_percent, SQLToken):property.emission_percent;
                 property.desc = (property.desc)?AES.decrypt(property.desc, SQLToken):property.desc;
 
-
                 let DecarbRecommendations = await req.db.DecarbRecommendation.findOne({
                     where:{recommended_type:'original',type:property.type,decarb_id:property.decarb_id}
                 });
@@ -195,6 +194,7 @@ exports.getProjectList=async(req,res) => {
                     DecarbRecommendations.uploaded_miles = (DecarbRecommendations.uploaded_miles)?AES.decrypt(DecarbRecommendations.uploaded_miles, SQLToken):DecarbRecommendations.uploaded_miles;
                     DecarbRecommendations.mpg = (DecarbRecommendations.mpg)?AES.decrypt(DecarbRecommendations.mpg, SQLToken):DecarbRecommendations.mpg;
                     DecarbRecommendations.fuel_use = (DecarbRecommendations.fuel_use)?AES.decrypt(DecarbRecommendations.fuel_use, SQLToken):DecarbRecommendations.fuel_use;
+                    DecarbRecommendations.type = (DecarbRecommendations.type)?AES.decrypt(DecarbRecommendations.type, SQLToken):DecarbRecommendations.type;
                     property.DecarbRecommendations = DecarbRecommendations;
                 }
 
