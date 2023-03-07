@@ -27,9 +27,9 @@ module.exports = (sequelize, DataTypes) => {
     end_date: DataTypes.DATE,
     desc: DataTypes.TEXT,
     status: DataTypes.BOOLEAN,
-    customize_emission:DataTypes.FLOAT,
-    emission_percent:DataTypes.FLOAT,
-    actual_emission:DataTypes.FLOAT,
+    customize_emission:DataTypes.STRING,
+    emission_percent:DataTypes.STRING,
+    actual_emission:DataTypes.STRING,
     type: {
       type:DataTypes.ENUM,
       values: ['alternative_fuel', 'modal_shift']
