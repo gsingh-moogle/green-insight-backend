@@ -75,9 +75,9 @@ exports.saveProject=async(req,res) => {
                 project_name: AES.encrypt(project_name, SQLToken),
                 desc: AES.encrypt(description, SQLToken),
                 start_date: startDate,
-                customize_emission:AES.encrypt(customize_emission, SQLToken),
-                emission_percent:AES.encrypt(emission_percent, SQLToken),
-                actual_emission:AES.encrypt(actual_emission, SQLToken),
+                customize_emission:(customize_emission)?AES.encrypt(customize_emission, SQLToken):customize_emission,
+                emission_percent:(emission_percent)?AES.encrypt(emission_percent, SQLToken):emission_percent,
+                actual_emission:(actual_emission)?AES.encrypt(actual_emission, SQLToken):actual_emission,
                 status:1,
                 type : type,
                 end_date:endDate });
