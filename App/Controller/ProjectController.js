@@ -72,12 +72,18 @@ exports.saveProject=async(req,res) => {
                 region_id:region_id,
                 decarb_id: decarb_id,
                 manager_id :  ManagerData.id,
-                project_name: AES.encrypt(project_name, SQLToken),
-                desc: AES.encrypt(description, SQLToken),
+                project_name: (project_name)?AES.encrypt(project_name, SQLToken):null,
+                desc: (description)?AES.encrypt(description, SQLToken):null,
                 start_date: startDate,
+<<<<<<< HEAD
                 customize_emission:(customize_emission)?AES.encrypt(customize_emission, SQLToken):customize_emission,
                 emission_percent:(emission_percent)?AES.encrypt(emission_percent, SQLToken):emission_percent,
                 actual_emission:(actual_emission)?AES.encrypt(actual_emission, SQLToken):actual_emission,
+=======
+                customize_emission:(customize_emission)?AES.encrypt(customize_emission, SQLToken):null,
+                emission_percent:(emission_percent)?AES.encrypt(emission_percent, SQLToken):null,
+                actual_emission:(actual_emission)?AES.encrypt(actual_emission, SQLToken):null,
+>>>>>>> 7eef7c9174e46a40349de3d09c2ee4fa93a61cb3
                 status:1,
                 type : type,
                 end_date:endDate });
@@ -170,16 +176,15 @@ exports.getProjectList=async(req,res) => {
             let modal_shift = [];
             let alternative_fuel = [];
             for(const property of projectData) {
-
+                console.log('property',property);
                 property.project_name = (property.project_name)?AES.decrypt(property.project_name, SQLToken):property.project_name;
                 property.actual_emission = (property.actual_emission)?AES.decrypt(property.actual_emission, SQLToken):property.actual_emission;
                 property.customize_emission = (property.customize_emission)?AES.decrypt(property.customize_emission, SQLToken):property.customize_emission;
                 property.emission_percent = (property.emission_percent)?AES.decrypt(property.emission_percent, SQLToken):property.emission_percent;
                 property.desc = (property.desc)?AES.decrypt(property.desc, SQLToken):property.desc;
 
-
                 let DecarbRecommendations = await req.db.DecarbRecommendation.findOne({
-                    where:{recommended_type:'original',type:property.type,decarb_id:property.decarb_id}
+                    where:{recommended_type:'original',type:AES.encrypt(property.type, SQLToken),decarb_id:property.decarb_id}
                 });
                 property.DecarbRecommendations = null;
                 if(DecarbRecommendations) {
@@ -195,6 +200,7 @@ exports.getProjectList=async(req,res) => {
                     DecarbRecommendations.uploaded_miles = (DecarbRecommendations.uploaded_miles)?AES.decrypt(DecarbRecommendations.uploaded_miles, SQLToken):DecarbRecommendations.uploaded_miles;
                     DecarbRecommendations.mpg = (DecarbRecommendations.mpg)?AES.decrypt(DecarbRecommendations.mpg, SQLToken):DecarbRecommendations.mpg;
                     DecarbRecommendations.fuel_use = (DecarbRecommendations.fuel_use)?AES.decrypt(DecarbRecommendations.fuel_use, SQLToken):DecarbRecommendations.fuel_use;
+                    DecarbRecommendations.type = (DecarbRecommendations.type)?AES.decrypt(DecarbRecommendations.type, SQLToken):DecarbRecommendations.type;
                     property.DecarbRecommendations = DecarbRecommendations;
                 }
 
