@@ -64,6 +64,7 @@ exports.saveProject=async(req,res) => {
                 return obj.dataValues;
             }
         );
+        
         if(ManagerData){
             let startDate = moment(start_date).format("YYYY-MM-DD HH:mm:ss");
             let endDate = moment(end_date).format("YYYY-MM-DD HH:mm:ss");
@@ -75,15 +76,9 @@ exports.saveProject=async(req,res) => {
                 project_name: (project_name)?AES.encrypt(project_name, SQLToken):null,
                 desc: (description)?AES.encrypt(description, SQLToken):null,
                 start_date: startDate,
-<<<<<<< HEAD
                 customize_emission:(customize_emission)?AES.encrypt(customize_emission, SQLToken):customize_emission,
                 emission_percent:(emission_percent)?AES.encrypt(emission_percent, SQLToken):emission_percent,
                 actual_emission:(actual_emission)?AES.encrypt(actual_emission, SQLToken):actual_emission,
-=======
-                customize_emission:(customize_emission)?AES.encrypt(customize_emission, SQLToken):null,
-                emission_percent:(emission_percent)?AES.encrypt(emission_percent, SQLToken):null,
-                actual_emission:(actual_emission)?AES.encrypt(actual_emission, SQLToken):null,
->>>>>>> 7eef7c9174e46a40349de3d09c2ee4fa93a61cb3
                 status:1,
                 type : type,
                 end_date:endDate });
