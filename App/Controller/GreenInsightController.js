@@ -2,16 +2,17 @@ const sequelize = require('sequelize');
 const Op = sequelize.Op;
 const Response=require("../helper/api-response");
 const SQLToken = process.env.MY_SQL_TOKEN;
-const AES = require('mysql-aes')
+const AES = require('mysql-aes');
+const {UserOtp,User,Region,Profile,} = require("../models");
 const DB = require("../models");
 
 const createOrUpdateUser = (values,condition) => {
-    DB.models.UserOtp.findOne({ where: condition }).then(function(obj) {
+    DB.UserOtp.findOne({ where: condition }).then(function(obj) {
         // update
         if(obj)
             return obj.update(values);
         // insert
-        return DB.models.UserOtp.create(values);
+        return DB.UserOtp.create(values);
     })
 }
 
@@ -19,22 +20,23 @@ exports.login=async(req,res) => {
     try {
         var {email,_password}=req.body;
         //code...
-        //console.log(type,email,password);return 
-        let getUser=await DB.models.User.findOne({
+       // console.log('db',db);return 
+        let getUser=await DB.User.findOne({
             attributes: ['id','name','email','password','role','createdAt'],
             where:{email:AES.encrypt(email, SQLToken)},
             include: [
             {
-                model: DB.models.Region,
+                model: DB.Region,
                 attributes: ['id','name']
             },{
-                model: DB.models.Profile,
+                model: DB.Profile,
                 attributes: ['first_name','last_name','country_code','phone_number','image','status']
             },{
-                model: DB.models.Company,
+                model: DB.Company,
                 attributes: ['name','db_name','logo']
             }]
         });
+        console.log('getUser',getUser);
         //check password is matched or not then exec
         if(getUser){
             getUser.email = (getUser.email)?AES.decrypt(getUser.email, SQLToken):null;
@@ -131,18 +133,18 @@ exports.verifyOtp=async(req,res) => {
     try {
             var {otp,email}=req.body;
 
-            let user = await DB.models.User.findOne({
+            let user = await DB.User.findOne({
                     attributes: ['id','name','email','role','createdAt'],
                     where:{email:AES.encrypt(email, SQLToken)},
                     include: [
                     {
-                        model: DB.models.Region,
+                        model: DB.Region,
                         attributes: ['id','name']
                     },{
-                        model: DB.models.Profile,
+                        model: DB.Profile,
                         attributes: ['first_name','last_name','country_code','phone_number','image','status']
                     },{
-                        model: DB.models.Company,
+                        model: DB.Company,
                         attributes: ['name','db_name','logo']
                     }]
               });
@@ -163,7 +165,7 @@ exports.verifyOtp=async(req,res) => {
                     user_id:user.id,
                     phone_number : AES.encrypt(user.Profile.phone_number, SQLToken)
                 }
-                let otpData = await DB.models.UserOtp.findOne({ 
+                let otpData = await DB.UserOtp.findOne({ 
                     attributes: ['otp'],
                     where: condition });                   
                 //check password is matched or not then exec
