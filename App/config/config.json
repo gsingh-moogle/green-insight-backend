@@ -1,22 +1,22 @@
 {
   "development": {
-    "username": "root",
-    "password": "Mind@123",
-    "database": "green_sight",
+    "username": "pepsigreen",
+    "password": "10@green%2123#",
+    "database": "green_sight_pepsico",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": "Mind@123",
-    "database": "database_test",
+    "username": "pepsigreen",
+    "password": "10@green%2123#",
+    "database": "green_sight_pepsico",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": "Mind@123",
-    "database": "green_sight",
+    "username": "pepsigreen",
+    "password": "10@green%2123#",
+    "database": "green_sight_pepsico",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
