@@ -1,5 +1,5 @@
 trigger:
-- optimize
+- pepsico_dev
 
 pool:
   vmImage: ubuntu-latest
@@ -37,7 +37,7 @@ stages:
   - deployment: VMDeploy
     displayName: Web deploy
     environment:
-      name: deployvmnew
+      name: pepsi-dev
       resourceType: VirtualMachine
     strategy:
       rolling:
@@ -58,7 +58,7 @@ stages:
                 sudo rm -rf *
                 sudo rm -rf .git/
                 sudo rm -rf .gitignore
-                sudo unzip /home/azureuser/azagent/_work/2/drop/green-insight-backend.zip -d /home/azureuser/green-insight-backend
+                sudo unzip /home/azureuser/azagent/_work/1/drop/green-insight-backend.zip -d /home/azureuser/green-insight-backend
                 cd /home/azureuser/green-insight-backend/App
                 sudo rm -rf node_modules
                 sudo npm install
