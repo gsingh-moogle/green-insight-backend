@@ -9,14 +9,14 @@ const validateAdmin= async (req, res, next) => {
         return helper.unAuthorizedResponse(res, 'Unauthorized');
       }
       let decode = jwt.verify(token, process.env.JWTSECRETKEY);
-      let userData = await DB.main_db.models.User.findOne({
+      let userData = await DB.models.User.findOne({
         where:{id:decode.data.id }
       });
       if (!userData) {
           return helper.unAuthorizedResponse(res, 'User not found!');
       } else if(decode.data.Company.db_name) {
         req.currentUser = decode;
-        req.db = DB[decode.data.Company.db_name].models;
+        req.db = DB.models;
         next();
       } else{
         return helper.unAuthorizedResponse(res, 'User DB not found!');
