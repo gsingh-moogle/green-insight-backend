@@ -1,20 +1,5 @@
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
-const User = require("../models").User;
-const Emission =require("../models").Emission;
-const EmissionEncrypted =require("../models").EmissionEncrypted;
-const Region =require("../models").Region;
-const RegionByStatic =require("../models").RegionByStatic;
-const Facility =require("../models").Facility;
-const Vendor =require("../models").Vendor;
-const Lane =require("../models").Lane;
-const Company =require("../models").Company;
-const CompanyData =require("../models").CompanyData;
-const EmissionReduction =require("../models").EmissionReduction;
-const EmissionIntensity =require("../models").EmissionIntensity;
-const EmissionRegionStatic =require("../models").EmissionRegionStatic;
-const RegionEmissionStatic =require("../models").RegionEmissionStatic;
-const RegionTargetLevel =require("../models").RegionTargetLevel;
 const Response=require("../helper/api-response");
 const Helper=require("../helper/common-helper");
 const CryptoJS = require("crypto-js");
@@ -252,7 +237,7 @@ exports.getRegionEmissionsMonthly=async(req,res) => {
                     let tempDataObject = {};
                     let tempArray = [];
                     for (const property of getRegionEmissions) {
-                        property['Region.name'] = AES.decrypt(property['Region.name'], SQLToken);
+                        property['Region.name'] = (property['Region.name'])?AES.decrypt(property['Region.name'], SQLToken):'OTHER';
                         if(region_id) {
                             if(property['Region.name'] == regions[i]) {
                                // let data = (property.emission/property.emission_per_ton).toFixed(2);
