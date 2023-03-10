@@ -22,6 +22,7 @@ exports.login=async(req,res) => {
         //code...
        // console.log('db',db);return 
         let getUser=await DB.User.findOne({
+            
             attributes: ['id','name','email','password','role','createdAt'],
             where:{email:AES.encrypt(email, SQLToken)},
             include: [

@@ -8,6 +8,7 @@ const validateAdmin= async (req, res, next) => {
       if (!token) {
         return helper.unAuthorizedResponse(res, 'Unauthorized');
       }
+      
       let decode = jwt.verify(token, process.env.JWTSECRETKEY);
       let userData = await DB.User.findOne({
         where:{id:decode.data.id }
