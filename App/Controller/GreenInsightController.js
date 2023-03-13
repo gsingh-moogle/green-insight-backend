@@ -37,6 +37,7 @@ exports.login=async(req,res) => {
         });
         //check password is matched or not then exec
         if(getUser){
+            console.log(getUser.Region);
             getUser.email = (getUser.email)?AES.decrypt(getUser.email, SQLToken):null;
             getUser.name = (getUser.name)?AES.decrypt(getUser.name, SQLToken):null;
             getUser.Profile.phone_number = (getUser.Profile.phone_number)?AES.decrypt(getUser.Profile.phone_number, SQLToken):null;
