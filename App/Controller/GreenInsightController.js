@@ -42,7 +42,7 @@ exports.login=async(req,res) => {
             getUser.Profile.phone_number = (getUser.Profile.phone_number)?AES.decrypt(getUser.Profile.phone_number, SQLToken):null;
             getUser.Profile.first_name = (getUser.Profile.first_name)?AES.decrypt(getUser.Profile.first_name, SQLToken):null;
             getUser.Profile.last_name = (getUser.Profile.last_name)?AES.decrypt(getUser.Profile.last_name, SQLToken):null;
-            getUser.Region.name = (getUser.Region.name)?AES.decrypt(getUser.Region.name, SQLToken):null;
+            getUser.Region.name = (getUser?.Region.name)?AES.decrypt(getUser?.Region.name, SQLToken):null;
             getUser.Company.name = (getUser.Company.name)?AES.decrypt(getUser.Company.name, SQLToken):null;
             getUser.Company.db_name = (getUser.Company.db_name)?AES.decrypt(getUser.Company.db_name, SQLToken):null;
             getUser.Company.logo = (getUser.Company.logo)?AES.decrypt(getUser.Company.logo, SQLToken):null;
