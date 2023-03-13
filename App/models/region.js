@@ -16,9 +16,6 @@ module.exports = (sequelize, DataTypes) => {
   Region.init({
     user_id: DataTypes.INTEGER,
     name: DataTypes.STRING,
-    latitude: DataTypes.FLOAT,
-    longitude: DataTypes.FLOAT,
-    location: DataTypes.STRING,
     status: DataTypes.BOOLEAN
   }, {
     sequelize,
